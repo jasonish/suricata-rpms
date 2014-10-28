@@ -1,5 +1,7 @@
 %ifarch %{ix86} x86_64 %{arm}
+%if 0%{?fedora}
 %global has_luajit 1
+%endif
 %endif
 
 Summary: Intrusion Detection System
