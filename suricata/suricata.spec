@@ -134,6 +134,10 @@ rm -rf %{buildroot}
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Tue Oct 28 2014 Jason Ish <ish@unx.ca> - 2.0.4-1
+- Don't use luajit on EPEL.
+- Use SIGHUP for log rotation instead of copytruncate.
+
 * Wed Sep 24 2014 Steve Grubb <sgrubb@redhat.com> 2.0.4-1
 - New upstream bug fix release
 - Fixes CVE-2014-6603 out-of-bounds access in SSH parser
