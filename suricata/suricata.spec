@@ -27,7 +27,9 @@ BuildRequires: libnfnetlink-devel libnetfilter_queue-devel libnet-devel
 BuildRequires: zlib-devel libpcap-devel pcre-devel libcap-ng-devel
 BuildRequires: nspr-devel nss-devel nss-softokn-devel file-devel
 BuildRequires: jansson-devel GeoIP-devel python2-devel lua-devel
+%if 0%{?fedora}
 BuildRequires: libhtp-devel
+%endif
 %if 0%{?has_luajit}
 BuildRequires: luajit-devel
 %endif
@@ -56,7 +58,12 @@ install -m 644 %{SOURCE4} doc/
 autoreconf -fv --install
 
 %build
-%configure --enable-gccprotect --disable-gccmarch-native --disable-coccinelle --enable-nfqueue --enable-af-packet --with-libnspr-includes=/usr/include/nspr4 --with-libnss-includes=/usr/include/nss3 --enable-jansson --enable-geoip --enable-lua --enable-non-bundled-htp \
+%configure --enable-gccprotect --disable-gccmarch-native --disable-coccinelle --enable-nfqueue --enable-af-packet --with-libnspr-includes=/usr/include/nspr4 --with-libnss-includes=/usr/include/nss3 --enable-jansson --enable-geoip --enable-lua \
+%if 0%{?fedora}
+    --enable-non-bundled-htp \
+%else
+    %{nil} \
+%endif
 %if 0%{?has_luajit}
     --enable-luajit
 %else
@@ -119,6 +126,11 @@ rm -rf %{buildroot}
 %doc doc/Setting_up_IPSinline_for_Linux.txt doc/fedora.notes
 %{_sbindir}/suricata
 %{_bindir}/suricatasc
+%if 0%{?fedora}
+%{nil}
+%else
+%{_libdir}/libhtp-*
+%endif
 %{python2_sitelib}/suricatasc*.egg-info
 %{python2_sitelib}/suricatasc/*
 %config(noreplace) %{_sysconfdir}/suricata/suricata.yaml
@@ -134,6 +146,9 @@ rm -rf %{buildroot}
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Fri Dec 12 2014 Jason Ish <ish@unx.ca> - 2.0.5-1
+- Disable bundled libhtp on non-Fedora.
+
 * Fri Dec 12 2014 Steve Grubb <sgrubb@redhat.com> 2.0.5-1
 - New upstream bug fix release
 - Use the system libhtp library
