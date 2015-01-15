@@ -134,6 +134,9 @@ rm -rf %{buildroot}
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Thu Jan 15 2015 Jason Ish <ish@unx.ca> - 2.0.6-1
+- Rotate json log files.
+
 * Thu Jan 15 2015 Steve Grubb <sgrubb@redhat.com> 2.0.6-1
 - New upstream bug fix release
 - Don't use the system libhtp library
