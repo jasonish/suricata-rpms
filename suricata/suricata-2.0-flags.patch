@@ -1,10 +1,12 @@
 diff -ur suricata-2.0.orig/doc/Makefile.am suricata-2.0/doc/Makefile.am
 --- suricata-2.0.orig/doc/Makefile.am	2014-03-25 04:47:37.000000000 -0400
 +++ suricata-2.0/doc/Makefile.am	2014-03-26 19:26:23.661081000 -0400
-@@ -30,5 +30,3 @@
+@@ -29,7 +29,3 @@
+ Ubuntu_Installation.txt \
  Ubuntu_Installation_from_GIT.txt \
  Windows.txt
- 
+-
+-datarootdir=@datarootdir@
 -docdir = ${datarootdir}/doc/${PACKAGE}
 -dist_doc_DATA = ${EXTRA_DIST}
 diff -ur suricata-2.0.orig/libhtp/configure.ac suricata-2.0/libhtp/configure.ac
