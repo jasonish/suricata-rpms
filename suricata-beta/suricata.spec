@@ -7,11 +7,11 @@
 Summary: Intrusion Detection System
 Name: suricata
 Version: 2.1
-Release: 0.3.beta3%{?dist}
+Release: 0.4.beta4%{?dist}
 License: GPLv2
 Group: Applications/Internet
 URL: http://suricata-ids.org/
-Source0: http://www.openinfosecfoundation.org/download/%{name}-%{version}beta3.tar.gz
+Source0: http://www.openinfosecfoundation.org/download/%{name}-%{version}beta4.tar.gz
 Source1: suricata.service
 Source2: suricata.sysconfig
 Source3: suricata.logrotate
@@ -19,6 +19,7 @@ Source4: fedora.notes
 Source5: suricata-tmpfiles.conf
 # Make suricata use PIE
 Patch1:  suricata-2.0-flags.patch
+Patch2:  doc_Makefile_am.patch
 # DESTDIR fixups.
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: libyaml-devel 
@@ -26,9 +27,6 @@ BuildRequires: libnfnetlink-devel libnetfilter_queue-devel libnet-devel
 BuildRequires: zlib-devel libpcap-devel pcre-devel libcap-ng-devel
 BuildRequires: nspr-devel nss-devel nss-softokn-devel file-devel
 BuildRequires: jansson-devel GeoIP-devel python2-devel lua-devel
-%if 0%{?fedora}
-BuildRequires: libhtp-devel
-%endif
 %if 0%{?has_luajit}
 BuildRequires: luajit-devel
 %endif
@@ -49,9 +47,10 @@ UDP, ICMP, HTTP, TLS, FTP and SMB! ), Gzip Decompression, Fast IP
 Matching, and GeoIP identification.
 
 %prep
-%setup -q -n suricata-2.1beta3
+%setup -q -n suricata-2.1beta4
 install -m 644 %{SOURCE4} doc/
 %patch1 -p1
+%patch2 -p1
 # This is to fix rpaths created by bad Makefile.in
 autoreconf -fv --install
 
@@ -66,11 +65,6 @@ autoreconf -fv --install
 	   --enable-jansson \
 	   --enable-geoip \
 	   --enable-lua \
-%if 0%{?fedora}
-    --enable-non-bundled-htp \
-%else
-    %{nil} \
-%endif
 %if 0%{?has_luajit}
     --enable-luajit
 %else
@@ -135,11 +129,7 @@ rm -rf %{buildroot}
 %doc doc/Setting_up_IPSinline_for_Linux.txt doc/fedora.notes
 %{_sbindir}/suricata
 %{_bindir}/suricatasc
-%if 0%{?fedora}
-%{nil}
-%else
 %{_libdir}/libhtp-*
-%endif
 %{python2_sitelib}/suricatasc*.egg-info
 %{python2_sitelib}/suricatasc/*
 %config(noreplace) %{_sysconfdir}/suricata/suricata.yaml
@@ -155,6 +145,9 @@ rm -rf %{buildroot}
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Fri May  8 2015 Jason Ish <ish@unx.ca> - 2.1-0.4.beta4
+- Update to Suricata 2.1beta4.
+
 * Mon Dec 29 2014 Jason Ish <ish@unx.ca> - 2.1-0.1.beta2
 - New package for suricata-beta.
 - Remove lua patch, doesn't appear to be needed anymore.
