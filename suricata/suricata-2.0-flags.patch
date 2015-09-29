@@ -21,7 +21,7 @@ diff -ur suricata-2.0.orig/libhtp/configure.ac suricata-2.0/libhtp/configure.ac
 +AC_INIT(htp/htp.h, m4_esyscmd([./get-version.sh VERSION]))
 +AM_INIT_AUTOMAKE(htp, $PACKAGE_VERSION, no-define)
  
- AC_CONFIG_HEADERS([config.h])
+ AC_CONFIG_HEADERS([htp_config_auto_gen.h])
  AC_CONFIG_FILES([htp/htp_version.h])
 diff -ur suricata-2.0.orig/src/Makefile.am suricata-2.0/src/Makefile.am
 --- suricata-2.0.orig/src/Makefile.am	2014-03-25 04:47:37.000000000 -0400
