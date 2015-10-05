@@ -4,7 +4,7 @@
 
 Summary: Intrusion Detection System
 Name: suricata
-Version: 2.0.8
+Version: 2.0.9
 Release: 1%{?dist}
 License: GPLv2
 Group: Applications/Internet
@@ -19,6 +19,8 @@ Source5: suricata-tmpfiles.conf
 Patch1:  suricata-2.0-flags.patch
 # liblua is not named correctly
 Patch2: suricata-2.0.2-lua.patch
+# Irrelevant docs are getting installed, drop them
+Patch3: suricata-2.0.9-docs.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: libyaml-devel 
 BuildRequires: libnfnetlink-devel libnetfilter_queue-devel libnet-devel
@@ -49,6 +51,7 @@ Matching, and GeoIP identification.
 install -m 644 %{SOURCE4} doc/
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 # This is to fix rpaths created by bad Makefile.in
 autoreconf -fv --install
 
@@ -132,6 +135,12 @@ rm -rf %{buildroot}
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Sat Oct 03 2015 Steve Grubb <sgrubb@redhat.com> 2.0.9-1
+- New upstream bug fix release
+
+* Fri Jun 19 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.0.8-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
+
 * Wed May 06 2015 Steve Grubb <sgrubb@redhat.com> 2.0.8-1
 - New upstream security bug fix release
 
