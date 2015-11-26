@@ -6,19 +6,19 @@
 
 Summary: Intrusion Detection System
 Name: suricata
-Version: 2.1
-Release: 0.4.beta4%{?dist}
+Version: 3.0
+Release: 0.1.rc1%{?dist}
 License: GPLv2
 Group: Applications/Internet
 URL: http://suricata-ids.org/
-Source0: http://www.openinfosecfoundation.org/download/%{name}-%{version}beta4.tar.gz
+Source0: http://www.openinfosecfoundation.org/download/%{name}-%{version}RC1.tar.gz
 Source1: suricata.service
 Source2: suricata.sysconfig
 Source3: suricata.logrotate
 Source4: fedora.notes
 Source5: suricata-tmpfiles.conf
 # Make suricata use PIE
-Patch1:  suricata-2.0-flags.patch
+Patch1:  suricata-pie.patch
 Patch2:  doc_Makefile_am.patch
 # DESTDIR fixups.
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -47,7 +47,7 @@ UDP, ICMP, HTTP, TLS, FTP and SMB! ), Gzip Decompression, Fast IP
 Matching, and GeoIP identification.
 
 %prep
-%setup -q -n suricata-2.1beta4
+%setup -q -n suricata-3.0RC1
 install -m 644 %{SOURCE4} doc/
 %patch1 -p1
 %patch2 -p1
@@ -145,6 +145,9 @@ rm -rf %{buildroot}
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Thu Nov 26 2015 Jason Ish <ish@unx.ca> - 3.0-0.1.rc1
+- Update to Suricata 3.0RC1.
+
 * Fri May  8 2015 Jason Ish <ish@unx.ca> - 2.1-0.4.beta4
 - Update to Suricata 2.1beta4.
 
