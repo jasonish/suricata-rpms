@@ -1,17 +1,17 @@
-RPMSPEC := rpmspec -E '%undefine dist'
+RPMSPEC =	rpmspec -E '%undefine dist'
 
-NAME := suricata
-SPEC := $(NAME).spec
-VERSION := $(shell $(RPMSPEC) -P $(SPEC) | awk '/^Version/ { print $$2 }')
-RELEASE := $(shell $(RPMSPEC) -P $(SPEC) | awk '/^Release/ { print $$2 }')
-SRPM :=	$(NAME)-$(VERSION)-$(RELEASE).src.rpm
+NAME =		suricata
+SPEC =		$(NAME).spec
+VERSION =	$(shell $(RPMSPEC) -P $(SPEC) | awk '/^Version/ { print $$2 }')
+RELEASE =	$(shell $(RPMSPEC) -P $(SPEC) | awk '/^Release/ { print $$2 }')
+SRPM =		$(NAME)-$(VERSION)-$(RELEASE).src.rpm
 
 all: fetch $(DISTS)
 
-fetch:
+fetch::
 	spectool -g $(SPEC)
 
-srpm:
+srpm: fetch
 	rpmbuild \
 		--define '_sourcedir .' \
 		--define '_specdir .' \
@@ -22,6 +22,13 @@ srpm:
 		--eval '%undefine dist' \
 		-v -bs $(SPEC)
 	@ls -l $(SRPM)
+
+local:
+	rpmbuild \
+		--define "_sourcedir `pwd`" \
+		--define "_specdir `pwd`" \
+		--eval '%undefine dist' \
+		-v -ba $(SPEC)
 
 copr: srpm
 	copr build $(COPR_PROJECT) $(SRPM)
@@ -35,5 +42,5 @@ mock: srpm
 $(DISTS):
 	$(MAKE) mock DIST="$@"
 
-clean:
+clean::
 	rm -rf output
