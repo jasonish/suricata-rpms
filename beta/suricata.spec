@@ -64,11 +64,10 @@ autoreconf -fv --install
 	   --with-libnss-includes=/usr/include/nss3 \
 	   --enable-jansson \
 	   --enable-geoip \
-	   --enable-lua \
 %if 0%{?has_luajit}
     --enable-luajit
 %else
-    %{nil}
+    --enable-lua
 %endif
 make %{?_smp_mflags}
 
