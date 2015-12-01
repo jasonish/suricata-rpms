@@ -1,5 +1,7 @@
 %ifarch %{ix86} x86_64 %{arm}
+%if 0%{?fedora}
 %global has_luajit 1
+%endif
 %endif
 
 Summary: Intrusion Detection System
@@ -150,13 +152,23 @@ rm -rf %{buildroot}
 * Thu Feb 26 2015 Steve Grubb <sgrubb@redhat.com> 2.0.7-1
 - New upstream security bug fix release for CVE-2015-0928
 
+* Thu Jan 15 2015 Jason Ish <ish@unx.ca> - 2.0.6-1
+- Rotate json log files.
+
 * Thu Jan 15 2015 Steve Grubb <sgrubb@redhat.com> 2.0.6-1
 - New upstream bug fix release
 - Don't use the system libhtp library
 
+* Fri Dec 12 2014 Jason Ish <ish@unx.ca> - 2.0.5-1
+- Disable bundled libhtp on non-Fedora.
+
 * Fri Dec 12 2014 Steve Grubb <sgrubb@redhat.com> 2.0.5-1
 - New upstream bug fix release
 - Use the system libhtp library
+
+* Tue Oct 28 2014 Jason Ish <ish@unx.ca> - 2.0.4-1
+- Don't use luajit on EPEL.
+- Use SIGHUP for log rotation instead of copytruncate.
 
 * Wed Sep 24 2014 Steve Grubb <sgrubb@redhat.com> 2.0.4-1
 - New upstream bug fix release
