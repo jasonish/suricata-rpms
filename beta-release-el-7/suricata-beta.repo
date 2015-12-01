@@ -1,6 +1,6 @@
 [suricata-beta]
 name=Suricata Beta Packages for Enterprise Linux 7 - $basearch
-baseurl=http://codemonkey.net/files/rpm/suricata-beta/el7
+baseurl=http://codemonkey.net/files/rpm/suricata/beta/el7
 enabled=1
 gpgcheck=0
 gpgkey=

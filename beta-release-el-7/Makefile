@@ -1,11 +1,17 @@
+SPEC := suricata-beta-release.spec
+
 .PHONY:	sources
 
 all:
-	fedpkg --dist epel7 --module-name suricata-beta-release-el mockbuild
-
-sources:
-	md5sum suricata-beta.repo > sources
+	rpmbuild --target noarch \
+		--define '_sourcedir .' \
+		--define '_specdir .' \
+		--define '_builddir .' \
+		--define '_srcrpmdir ./output' \
+		--define '_builddir .' \
+		--define '_rpmdir ./output' \
+		--define 'dist .el7' \
+		-v -ba $(SPEC)
 
 clean:
-	fedpkg clean
-	rm -f *~
+	rm -rf output

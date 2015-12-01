@@ -1,6 +1,6 @@
 Name: suricata-beta-release-el
 Version: 7
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Suricata Beta Packages for Enterprise Linux and EL Like Systems
 Group: Applications/Internet
 License: Freeware
