@@ -1,4 +1,4 @@
-NIGHTLY_VERSION = `cd suricata && git log -1 --format=%ct`
+NIGHTLY_VERSION = `date -d @$$(cd suricata && git log -1 --format=%at) +%Y.%m.%d.%s`
 
 all:
 
