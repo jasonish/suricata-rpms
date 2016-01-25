@@ -7,7 +7,7 @@
 Summary: Intrusion Detection System
 Name: suricata
 Version: 2.0.11
-Release: 0.1%{?dist}
+Release: 1%{?dist}
 License: GPLv2
 Group: Applications/Internet
 URL: http://suricata-ids.org/
@@ -137,6 +137,9 @@ rm -rf %{buildroot}
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Mon Dec 28 2015 Steve Grubb <sgrubb@redhat.com> 2.0.11-1
+- New upstream bug fix release
+
 * Mon Dec 21 2015 Jason Ish <ish@unx.ca> - 2.0.11-0.1
 - Update to 2.0.11.
 
