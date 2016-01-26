@@ -1,10 +1,11 @@
 Name: suricata-stable-release-el
 Version: 7
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Suricata Stable Packages for Enterprise Linux and EL Like Systems
 Group: Applications/Internet
 License: Freeware
 Source0: suricata-stable.repo
+Source1: RPM-GPG-KEY-suricata-rpms
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -28,6 +29,10 @@ packages for Enterprise Linux.
 %install
 rm -rf $RPM_BUILD_ROOT
 
+# GPG key.
+install -Dpm 644 %{SOURCE1} \
+	$RPM_BUILD_ROOT%{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-suricata-rpms
+
 # Create directories.
 install -d -m0755 $RPM_BUILD_ROOT%{_sysconfdir}/yum.repos.d
 
@@ -48,8 +53,12 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-,root,root,-)
 %config(noreplace) /etc/yum.repos.d/*
+/etc/pki/rpm-gpg/*
 
 
 %changelog
+* Tue Jan 26 2016 Jason Ish <ish@unx.ca> - 7-2
+- Add GPG key.
+
 * Mon Dec 29 2014 Jason Ish <ish@unx.ca> - 7-1
 - Initial package.
