@@ -144,6 +144,12 @@ rm -rf %{buildroot}
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Mon Dec 21 2015 Jason Ish <ish@unx.ca> - 3.0-0.1.rc3
+- Update to Suricata 3.0RC3.
+
+* Tue Dec  8 2015 Jason Ish <ish@unx.ca> - 3.0-0.1.rc2
+- Update to Suricata 3.0RC2.
+
 * Thu Nov 26 2015 Jason Ish <ish@unx.ca> - 3.0-0.1.rc1
 - Update to Suricata 3.0RC1.
 
