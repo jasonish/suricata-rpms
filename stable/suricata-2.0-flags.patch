@@ -25,15 +25,13 @@ diff -urp suricata-2.0.9.orig/src/Makefile.am suricata-2.0.9/src/Makefile.am
  suricata_LDADD = $(HTP_LDADD)
  
  # Rules to build CUDA ptx modules
-@@ -439,8 +439,8 @@ CLEANFILES = $(PTXS) cuda-ptxdump.h
+@@ -439,7 +439,7 @@ CLEANFILES = $(PTXS) cuda-ptxdump.h
  endif
  
- 
--#suricata_CFLAGS = -Wall -fno-strict-aliasing 
--AM_CFLAGS = -DLOCAL_STATE_DIR=\"$(localstatedir)\"
-+#suricata_CFLAGS = -Wall -fno-strict-aliasing
-+AM_CFLAGS = -DLOCAL_STATE_DIR=\"$(localstatedir)\" -DPIE -fPIE
- 
- if BUILD_UNITTESTS
- check-am:
+ # default CFLAGS
+-AM_CFLAGS = ${OPTIMIZATION_CFLAGS} ${GCC_CFLAGS} ${CLANG_CFLAGS} ${SECCFLAGS} ${PCAP_CFLAGS} -Wall -Wno-unused-parameter -std=gnu99 -DLOCAL_STATE_DIR=\"$(localstatedir)\"
++AM_CFLAGS = ${OPTIMIZATION_CFLAGS} ${GCC_CFLAGS} ${CLANG_CFLAGS} ${SECCFLAGS} ${PCAP_CFLAGS} -Wall -Wno-unused-parameter -std=gnu99 -DLOCAL_STATE_DIR=\"$(localstatedir)\" -DPIE -fPIE
+ # different flags for different cases
+ if DEBUG
+ AM_CFLAGS += -ggdb -O0
 Only in suricata-2.0.9/src: Makefile.am.orig

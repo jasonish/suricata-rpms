@@ -6,8 +6,8 @@
 
 Summary: Intrusion Detection System
 Name: suricata
-Version: 2.0.11
-Release: 1%{?dist}
+Version: 3.0
+Release: 0.1%{?dist}
 License: GPLv2
 Group: Applications/Internet
 URL: http://suricata-ids.org/
@@ -58,11 +58,11 @@ install -m 644 %{SOURCE4} doc/
 autoreconf -fv --install
 
 %build
-%configure --enable-gccprotect --disable-gccmarch-native --disable-coccinelle --enable-nfqueue --enable-af-packet --with-libnspr-includes=/usr/include/nspr4 --with-libnss-includes=/usr/include/nss3 --enable-jansson --enable-geoip --enable-lua \
+%configure --enable-gccprotect --disable-gccmarch-native --disable-coccinelle --enable-nfqueue --enable-af-packet --with-libnspr-includes=/usr/include/nspr4 --with-libnss-includes=/usr/include/nss3 --enable-jansson --enable-geoip \
 %if 0%{?has_luajit}
     --enable-luajit
 %else
-    %{nil}
+    --enable-lua
 %endif
 make %{?_smp_mflags}
 
@@ -137,6 +137,9 @@ rm -rf %{buildroot}
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Wed Jan 27 2016 Jason Ish <ish@unx.ca> - 3.0-0.1
+- Update to 3.0.
+
 * Mon Dec 28 2015 Steve Grubb <sgrubb@redhat.com> 2.0.11-1
 - New upstream bug fix release
 
