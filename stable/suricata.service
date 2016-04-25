@@ -1,6 +1,6 @@
 [Unit]
 Description=Suricata Intrusion Detection Service
-After=syslog.target
+After=syslog.target network-online.target
 
 [Service]
 ExecStart=/sbin/suricata -c /etc/suricata/suricata.yaml --pidfile /var/run/suricata.pid $OPTIONS

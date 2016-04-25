@@ -1,13 +1,7 @@
-%ifarch %{ix86} x86_64 %{arm}
-%if 0%{?fedora}
-%global has_luajit 1
-%endif
-%endif
-
 Summary: Intrusion Detection System
 Name: suricata
-Version: 3.0
-Release: 0.1%{?dist}
+Version: 3.0.1
+Release: 1%{?dist}
 License: GPLv2
 Group: Applications/Internet
 URL: http://suricata-ids.org/
@@ -17,24 +11,19 @@ Source2: suricata.sysconfig
 Source3: suricata.logrotate
 Source4: fedora.notes
 Source5: suricata-tmpfiles.conf
-# Make suricata use PIE
-Patch1:  suricata-2.0-flags.patch
 # liblua is not named correctly
-Patch2: suricata-2.0.2-lua.patch
+Patch1: suricata-2.0.2-lua.patch
 # Irrelevant docs are getting installed, drop them
-Patch3: suricata-2.0.9-docs.patch
+Patch2: suricata-2.0.9-docs.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-BuildRequires: libyaml-devel 
+BuildRequires: libyaml-devel
 BuildRequires: libnfnetlink-devel libnetfilter_queue-devel libnet-devel
 BuildRequires: zlib-devel libpcap-devel pcre-devel libcap-ng-devel
 BuildRequires: nspr-devel nss-devel nss-softokn-devel file-devel
 BuildRequires: jansson-devel GeoIP-devel python2-devel lua-devel
-%if 0%{?has_luajit}
-BuildRequires: luajit-devel
-%endif
-BuildRequires: systemd
-# Remove when rpath issues are fixed
 BuildRequires: autoconf automake libtool
+BuildRequires: systemd
+Requires(pre): /usr/sbin/useradd
 Requires(post): systemd
 Requires(preun): systemd
 Requires(postun): systemd
@@ -53,37 +42,31 @@ Matching, and GeoIP identification.
 install -m 644 %{SOURCE4} doc/
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
-# This is to fix rpaths created by bad Makefile.in
 autoreconf -fv --install
 
 %build
-%configure --enable-gccprotect --disable-gccmarch-native --disable-coccinelle --enable-nfqueue --enable-af-packet --with-libnspr-includes=/usr/include/nspr4 --with-libnss-includes=/usr/include/nss3 --enable-jansson --enable-geoip \
-%if 0%{?has_luajit}
-    --enable-luajit
-%else
-    --enable-lua
-%endif
-make %{?_smp_mflags}
+%configure --enable-gccprotect --enable-pie --disable-gccmarch-native --disable-coccinelle --enable-nfqueue --enable-af-packet --with-libnspr-includes=/usr/include/nspr4 --with-libnss-includes=/usr/include/nss3 --enable-jansson --enable-geoip --enable-lua 
+
+make CFLAGS="%{optflags}" %{?_smp_mflags}
 
 %install
 rm -rf %{buildroot}
 make DESTDIR="%{buildroot}" "bindir=%{_sbindir}" install
 
 # Setup etc directory
-mkdir -p %{buildroot}%{_sysconfdir}/suricata/rules
-install -m 600 rules/*.rules %{buildroot}%{_sysconfdir}/suricata/rules
-install -m 600 *.config %{buildroot}%{_sysconfdir}/suricata
-install -m 600 suricata.yaml %{buildroot}%{_sysconfdir}/suricata
+mkdir -p %{buildroot}%{_sysconfdir}/%{name}/rules
+install -m 600 rules/*.rules %{buildroot}%{_sysconfdir}/%{name}/rules
+install -m 600 *.config %{buildroot}%{_sysconfdir}/%{name}
+install -m 600 suricata.yaml %{buildroot}%{_sysconfdir}/%{name}
 mkdir -p %{buildroot}%{_unitdir}
 install -m 0644 %{SOURCE1} %{buildroot}%{_unitdir}/
 mkdir -p %{buildroot}%{_sysconfdir}/sysconfig
-install -m 0755 %{SOURCE2} %{buildroot}%{_sysconfdir}/sysconfig/suricata
-mkdir -p %{buildroot}%{_sysconfdir}/logrotate.d
-install -m 644 %{SOURCE3} %{buildroot}%{_sysconfdir}/logrotate.d/suricata
+install -m 0755 %{SOURCE2} %{buildroot}%{_sysconfdir}/sysconfig/%{name}
 
-# Make logging directory
-mkdir -p %{buildroot}/%{_var}/log/suricata
+#Setup logging
+mkdir -p %{buildroot}/%{_var}/log/%{name}
+mkdir -p %{buildroot}%{_sysconfdir}/logrotate.d
+install -m 644 %{SOURCE3} %{buildroot}%{_sysconfdir}/logrotate.d/%{name}
 
 # Remove a couple things so they don't get picked up
 rm -rf %{buildroot}%{_includedir}
@@ -104,7 +87,10 @@ make check
 %clean
 rm -rf %{buildroot}
 
-%post 
+%pre
+getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
+
+%post
 /sbin/ldconfig
 %systemd_post suricata.service
 
@@ -117,28 +103,42 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root,-)
-%doc COPYING doc/Basic_Setup.txt
+%doc doc/Basic_Setup.txt
 %doc doc/Setting_up_IPSinline_for_Linux.txt doc/fedora.notes
+%{!?_licensedir:%global license %%doc}
+%license COPYING
 %{_sbindir}/suricata
 %{_bindir}/suricatasc
 %{_libdir}/libhtp-*
 %{python2_sitelib}/suricatasc*.egg-info
 %{python2_sitelib}/suricatasc/*
-%config(noreplace) %{_sysconfdir}/suricata/suricata.yaml
-%config(noreplace) %{_sysconfdir}/suricata/*.config
-%config(noreplace) %{_sysconfdir}/suricata/rules/*.rules
-%config(noreplace) %attr(0600,root,root) %{_sysconfdir}/sysconfig/suricata
+%config(noreplace) %attr(-,suricata,-) %{_sysconfdir}/%{name}/suricata.yaml
+%config(noreplace) %attr(-,suricata,-) %{_sysconfdir}/%{name}/*.config
+%config(noreplace) %attr(-,suricata,-) %{_sysconfdir}/%{name}/rules/*.rules
+%config(noreplace) %attr(0600,suricata,root) %{_sysconfdir}/sysconfig/%{name}
 %attr(644,root,root) %{_unitdir}/suricata.service
-%config(noreplace) %attr(644,root,root) %{_sysconfdir}/logrotate.d/suricata
-%attr(750,root,root) %dir %{_var}/log/suricata
-%attr(750,root,root) %dir %{_sysconfdir}/suricata
-%attr(750,root,root) %dir %{_sysconfdir}/suricata/rules
+%config(noreplace) %attr(644,root,root) %{_sysconfdir}/logrotate.d/%{name}
+%attr(750,suricata,root) %dir %{_var}/log/%{name}
+%attr(750,suricata,root) %dir %{_sysconfdir}/%{name}
+%attr(750,suricata,root) %dir %{_sysconfdir}/%{name}/rules
 %dir /run/%{name}/
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
-* Wed Jan 27 2016 Jason Ish <ish@unx.ca> - 3.0-0.1
-- Update to 3.0.
+* Mon Apr 04 2016 Steve Grubb <sgrubb@redhat.com> 3.0.1-1
+- New upstream bug fix release
+
+* Wed Mar 16 2016 Steve Grubb <sgrubb@redhat.com> 3.0-2
+- Fixed Bug 1227085 - Have Suricata start after the network is online
+
+* Mon Mar 07 2016 Steve Grubb <sgrubb@redhat.com> 3.0-1
+- New upstream bug fix release
+
+* Wed Feb 10 2016 Peter Schiffer <pschiffe@redhat.com> 2.0.11-3
+- Run suricata under suricata user
+
+* Fri Feb 05 2016 Fedora Release Engineering <releng@fedoraproject.org> - 2.0.11-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
 
 * Mon Dec 28 2015 Steve Grubb <sgrubb@redhat.com> 2.0.11-1
 - New upstream bug fix release

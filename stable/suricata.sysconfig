@@ -5,4 +5,4 @@
 # --group <group name>
 
 # Add options to be passed to the daemon
-OPTIONS="-i eth0 "
+OPTIONS="-i eth0 --user suricata "
