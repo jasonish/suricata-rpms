@@ -1,6 +1,7 @@
-[suricata-stable]
-name=Suricata Stable Packages for Enterprise Linux 7 - $basearch
-baseurl=http://codemonkey.net/files/rpm/suricata/stable/epel-7-x86_64
-enabled=1
+[jasonish-suricata-stable]
+name=Copr repo for suricata-stable owned by jasonish
+baseurl=https://copr-be.cloud.fedoraproject.org/results/jasonish/suricata-stable/epel-7-$basearch/
+skip_if_unavailable=True
 gpgcheck=1
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-suricata-stable
+gpgkey=https://copr-be.cloud.fedoraproject.org/results/jasonish/suricata-stable/pubkey.gpg
+enabled=1

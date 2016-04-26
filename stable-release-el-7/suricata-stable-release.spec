@@ -1,6 +1,6 @@
 Name: suricata-stable-release-el
 Version: 7
-Release: 3%{?dist}
+Release: 4%{?dist}
 Summary: Suricata Stable Packages for Enterprise Linux and EL Like Systems
 Group: Applications/Internet
 License: Freeware
