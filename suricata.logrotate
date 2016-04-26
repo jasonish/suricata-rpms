@@ -1,0 +1,9 @@
+/var/log/suricata/*.log {
+        daily
+        missingok
+        rotate 5
+        compress
+        delaycompress
+        copytruncate
+        minsize 500k
+}
