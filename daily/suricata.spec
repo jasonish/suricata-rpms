@@ -1,11 +1,11 @@
 Summary: Intrusion Detection System
 Name: suricata
-Version: 3.0.1
+Version: %%VERSION%%
 Release: 1%{?dist}
 License: GPLv2
 Group: Applications/Internet
 URL: http://suricata-ids.org/
-Source0: http://www.openinfosecfoundation.org/download/%{name}-%{version}.tar.gz
+Source0: suricata.tar.gz
 Source1: suricata.service
 Source2: suricata.sysconfig
 Source3: suricata.logrotate
@@ -38,7 +38,7 @@ UDP, ICMP, HTTP, TLS, FTP and SMB! ), Gzip Decompression, Fast IP
 Matching, and GeoIP identification.
 
 %prep
-%setup -q
+%setup -q -n suricata
 install -m 644 %{SOURCE4} doc/
 %patch1 -p1
 %patch2 -p1

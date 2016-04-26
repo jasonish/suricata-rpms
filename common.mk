@@ -1,7 +1,7 @@
 RPMSPEC =	rpmspec -E '%undefine dist'
 
 NAME =		suricata
-SPEC =		$(NAME).spec
+SPEC ?=		$(NAME).spec
 VERSION =	$(shell $(RPMSPEC) -P $(SPEC) | awk '/^Version/ { print $$2 }')
 RELEASE =	$(shell $(RPMSPEC) -P $(SPEC) | awk '/^Release/ { print $$2 }')
 SRPM =		$(NAME)-$(VERSION)-$(RELEASE).src.rpm
