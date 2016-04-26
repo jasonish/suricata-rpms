@@ -1,11 +1,11 @@
 Summary: Intrusion Detection System
 Name: suricata
 Version: 3.0.1
-Release: 1%{?dist}
+Release: 0.1rc1%{?dist}
 License: GPLv2
 Group: Applications/Internet
 URL: http://suricata-ids.org/
-Source0: http://www.openinfosecfoundation.org/download/%{name}-%{version}.tar.gz
+Source0: http://www.openinfosecfoundation.org/download/%{name}-%{version}RC1.tar.gz
 Source1: suricata.service
 Source2: suricata.sysconfig
 Source3: suricata.logrotate
@@ -38,7 +38,7 @@ UDP, ICMP, HTTP, TLS, FTP and SMB! ), Gzip Decompression, Fast IP
 Matching, and GeoIP identification.
 
 %prep
-%setup -q
+%setup -q -n suricata-3.0.1RC1
 install -m 644 %{SOURCE4} doc/
 %patch1 -p1
 %patch2 -p1
@@ -125,6 +125,9 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Tue Apr 26 2016 Jason Ish <ish@unx.ca> - 3.0.1-0.1rc1
+- Basic 3.0.1RC1 RPM on the 3.0.1 stable RPM.
+
 * Mon Apr 04 2016 Steve Grubb <sgrubb@redhat.com> 3.0.1-1
 - New upstream bug fix release
 
