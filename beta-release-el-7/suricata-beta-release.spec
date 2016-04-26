@@ -1,11 +1,10 @@
 Name: suricata-beta-release-el
 Version: 7
-Release: 3%{?dist}
+Release: 4%{?dist}
 Summary: Suricata Beta Packages for Enterprise Linux and EL Like Systems
 Group: Applications/Internet
 License: Freeware
-Source0: suricata-beta.repo
-Source1: RPM-GPG-KEY-suricata-beta
+Source0: jasonish-suricata-beta-epel-7.repo
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -28,10 +27,6 @@ packages for Enterprise Linux.
 %install
 rm -rf $RPM_BUILD_ROOT
 
-# GPG key.
-install -Dpm 644 %{SOURCE1} \
-        $RPM_BUILD_ROOT%{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-suricata-beta
-
 # Create directories.
 install -d -m0755 $RPM_BUILD_ROOT%{_sysconfdir}/yum.repos.d
 
@@ -52,10 +47,12 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-,root,root,-)
 %config(noreplace) /etc/yum.repos.d/*
-/etc/pki/rpm-gpg
 
 
 %changelog
+* Tue Apr 26 2016 Jason Ish <ish@unx.ca> - 7-4
+- Point to copr.
+
 * Tue Jan 26 2016 Jason Ish <ish@unx.ca> - 7-3
 - GPG key; new URL.
 
