@@ -1,6 +1,6 @@
 RPMSPEC =	rpmspec -E '%undefine dist'
 
-NAME =		suricata
+NAME ?=		suricata
 SPEC ?=		$(NAME).spec
 VERSION =	$(shell $(RPMSPEC) -P $(SPEC) | awk '/^Version/ { print $$2 }')
 RELEASE =	$(shell $(RPMSPEC) -P $(SPEC) | awk '/^Release/ { print $$2 }')
@@ -33,11 +33,15 @@ local:
 copr: srpm
 	copr build $(COPR_PROJECT) $(SRPM)
 
+pre-mock::
+
 mock: CONFIGDIR := $(shell test -e ../mock/$(DIST).cfg && \
 	echo ../mock || echo /etc/mock)
-mock: srpm
+mock: srpm pre-mock
 	mock --configdir $(CONFIGDIR) -r $(DIST) \
-		--resultdir output/$(DIST) $(SRPM)
+		--resultdir output/$(DIST) \
+		--no-clean \
+		$(SRPM)
 
 $(DISTS):
 	$(MAKE) mock DIST="$@"
