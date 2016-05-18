@@ -43,6 +43,9 @@ make %{?_smp_mflags}
 rm -rf %{buildroot}
 make install DESTDIR=%{buildroot}
 
+# Fixup for CentOS (Jason Ish)
+rm -rf %{buildroot}%{_docdir}
+
 %clean
 rm -rf %{buildroot}
 
