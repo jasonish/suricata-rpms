@@ -9,4 +9,7 @@ include ../../common.mk
 pre-mock::
 	mock --configdir $(CONFIGDIR) \
 		-r $(DIST) \
+		clean
+	mock --configdir $(CONFIGDIR) \
+		-r $(DIST) \
 		--install ../ragel/output/$(DIST)/ragel-*.x86_64.rpm
