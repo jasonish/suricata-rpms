@@ -1,6 +1,6 @@
 Name:		hyperscan
 Version:	4.2.0
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	High-performance regular expression matching library
 
 License:	BSD
@@ -40,6 +40,8 @@ Hyperscan is typically used in a DPI library stack.
 
 
 %build
+export CFLAGS="$RPM_OPT_FLAGS -march=core2"
+export CXXFLAGS="${CFLAGS}"
 %cmake -DLIB_INSTALL_DIR:PATH=%{_libdir} -DBUILD_SHARED_LIBS:BOOL=OFF \
        -DBUILD_STATIC_AND_SHARED:BOOL=ON .
 make %{?_smp_mflags}
@@ -62,6 +64,9 @@ mv %{buildroot}%{_prefix}/lib/* %{buildroot}%{_libdir}
 
 
 %changelog
+* Fri Jul  1 2016 Jason Ish <ish@unx.ca> - 4.2.0-2
+- Use -mtune=generic instead of native.
+
 * Tue Jun  7 2016 Jason Ish <ish@unx.ca> - 4.2.0-1
 - Update to Hyperscan 4.2.0.
 
