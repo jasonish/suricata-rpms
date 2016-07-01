@@ -1,0 +1,62 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index c824b6a..106c7a4 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -37,7 +37,7 @@ else()
+ endif()
+ 
+ set(BINDIR "${PROJECT_BINARY_DIR}/bin")
+-set(LIBDIR "${PROJECT_BINARY_DIR}/lib")
++set(LIBDIR "${PROJECT_BINARY_DIR}/lib${LIB_SUFFIX}")
+ 
+ # First for the generic no-config case
+ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${BINDIR}")
+@@ -362,7 +362,7 @@ if (NOT WIN32)
+ 
+     configure_file(libhs.pc.in libhs.pc @ONLY) # only replace @ quoted vars
+     install(FILES ${CMAKE_BINARY_DIR}/libhs.pc
+-            DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig")
++            DESTINATION "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}/pkgconfig")
+ endif()
+ 
+ # only set these after all tests are done
+@@ -959,7 +959,7 @@ add_library(hs_runtime STATIC src/hs_version.c $<TARGET_OBJECTS:hs_exec>)
+ set_target_properties(hs_runtime PROPERTIES
+     LINKER_LANGUAGE C)
+ if (NOT BUILD_SHARED_LIBS)
+-    install(TARGETS hs_runtime DESTINATION lib)
++    install(TARGETS hs_runtime DESTINATION lib${LIB_SUFFIX})
+ endif()
+ 
+ if (BUILD_STATIC_AND_SHARED OR BUILD_SHARED_LIBS)
+@@ -972,8 +972,8 @@ if (BUILD_STATIC_AND_SHARED OR BUILD_SHARED_LIBS)
+         LINKER_LANGUAGE C)
+     install(TARGETS hs_runtime_shared
+         RUNTIME DESTINATION bin
+-        ARCHIVE DESTINATION lib
+-        LIBRARY DESTINATION lib)
++        ARCHIVE DESTINATION lib${LIB_SUFFIX}
++        LIBRARY DESTINATION lib${LIB_SUFFIX})
+ endif()
+ 
+ # we want the static lib for testing
+@@ -982,7 +982,7 @@ add_library(hs STATIC ${hs_SRCS} $<TARGET_OBJECTS:hs_exec>)
+ add_dependencies(hs ragel_Parser)
+ 
+ if (NOT BUILD_SHARED_LIBS)
+-install(TARGETS hs DESTINATION lib)
++install(TARGETS hs DESTINATION lib${LIB_SUFFIX})
+ endif()
+ 
+ if (BUILD_STATIC_AND_SHARED OR BUILD_SHARED_LIBS)
+@@ -995,8 +995,8 @@ if (BUILD_STATIC_AND_SHARED OR BUILD_SHARED_LIBS)
+         MACOSX_RPATH ON)
+ install(TARGETS hs_shared
+     RUNTIME DESTINATION bin
+-    ARCHIVE DESTINATION lib
+-    LIBRARY DESTINATION lib)
++    ARCHIVE DESTINATION lib${LIB_SUFFIX}
++    LIBRARY DESTINATION lib${LIB_SUFFIX})
+ endif()
+ 
+ if(NOT WIN32)
