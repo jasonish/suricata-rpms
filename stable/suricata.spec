@@ -125,8 +125,8 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
-* Tue Jun 21 2016 Jason Ish <ish@unx.ca> - 3.1-1
-- Update to Suricata 3.1.
+* Wed Jun 22 2016 Steve Grubb <sgrubb@redhat.com> 3.1-1
+- New upstream bug fix release
 
 * Mon Apr 04 2016 Steve Grubb <sgrubb@redhat.com> 3.0.1-1
 - New upstream bug fix release
@@ -146,9 +146,6 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 * Mon Dec 28 2015 Steve Grubb <sgrubb@redhat.com> 2.0.11-1
 - New upstream bug fix release
 
-* Mon Dec 21 2015 Jason Ish <ish@unx.ca> - 2.0.11-0.1
-- Update to 2.0.11.
-
 * Wed Nov 25 2015 Steve Grubb <sgrubb@redhat.com> 2.0.10-1
 - New upstream bug fix release
 
@@ -164,22 +161,15 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 * Thu Feb 26 2015 Steve Grubb <sgrubb@redhat.com> 2.0.7-1
 - New upstream security bug fix release for CVE-2015-0928
 
-* Thu Jan 15 2015 Jason Ish <ish@unx.ca> - 2.0.6-1
-- Rotate json log files.
-
 * Thu Jan 15 2015 Steve Grubb <sgrubb@redhat.com> 2.0.6-1
 - New upstream bug fix release
 - Don't use the system libhtp library
-
-* Fri Dec 12 2014 Jason Ish <ish@unx.ca> - 2.0.5-1
-- Disable bundled libhtp on non-Fedora.
 
 * Fri Dec 12 2014 Steve Grubb <sgrubb@redhat.com> 2.0.5-1
 - New upstream bug fix release
 - Use the system libhtp library
 
 * Tue Oct 28 2014 Jason Ish <ish@unx.ca> - 2.0.4-1
-- Don't use luajit on EPEL.
 - Use SIGHUP for log rotation instead of copytruncate.
 
 * Wed Sep 24 2014 Steve Grubb <sgrubb@redhat.com> 2.0.4-1
