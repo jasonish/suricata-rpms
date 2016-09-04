@@ -1,0 +1,15 @@
+--- CMakeLists.txt.orig	2016-09-04 08:49:38.542131261 -0400
++++ CMakeLists.txt	2016-09-04 08:50:14.332837936 -0400
+@@ -222,10 +222,10 @@
+ 
+     if (NOT CMAKE_C_FLAGS MATCHES .*march.*)
+         message(STATUS "Building for current host CPU")
+-        set(EXTRA_C_FLAGS "${EXTRA_C_FLAGS} -march=native -mtune=native")
++        set(EXTRA_C_FLAGS "${EXTRA_C_FLAGS} -march=core2 -mtune=generic")
+     endif()
+     if (NOT CMAKE_CXX_FLAGS MATCHES .*march.*)
+-        set(EXTRA_CXX_FLAGS "${EXTRA_CXX_FLAGS} -march=native -mtune=native")
++        set(EXTRA_CXX_FLAGS "${EXTRA_CXX_FLAGS} -march=core2 -mtune=generic")
+     endif()
+ 
+     if(CMAKE_COMPILER_IS_GNUCC)
