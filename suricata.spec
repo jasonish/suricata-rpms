@@ -1,11 +1,11 @@
 Summary: Intrusion Detection System
 Name: suricata
-Version: 3.0.1
+Version: 3.1.2
 Release: 1%{?dist}
 License: GPLv2
 Group: Applications/Internet
 URL: http://suricata-ids.org/
-Source0: http://www.openinfosecfoundation.org/download/%{name}-%{version}.tar.gz
+Source0:  http://downloads.suricata-ids.org/%{name}-%{version}.tar.gz
 Source1: suricata.service
 Source2: suricata.sysconfig
 Source3: suricata.logrotate
@@ -125,6 +125,18 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Wed Sep 07 2016 Steve Grubb <sgrubb@redhat.com> 3.1.2-1
+- New upstream bug fix release
+
+* Tue Jul 19 2016 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 3.1.1-2
+- https://fedoraproject.org/wiki/Changes/Automatic_Provides_for_Python_RPM_Packages
+
+* Wed Jul 13 2016 Steve Grubb <sgrubb@redhat.com> 3.1.1-1
+- New upstream bug fix release
+
+* Wed Jun 22 2016 Steve Grubb <sgrubb@redhat.com> 3.1-1
+- New upstream bug fix release
+
 * Mon Apr 04 2016 Steve Grubb <sgrubb@redhat.com> 3.0.1-1
 - New upstream bug fix release
 
