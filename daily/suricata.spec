@@ -121,10 +121,25 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %attr(750,suricata,root) %dir %{_var}/log/%{name}
 %attr(750,suricata,root) %dir %{_sysconfdir}/%{name}
 %attr(750,suricata,root) %dir %{_sysconfdir}/%{name}/rules
-%dir /run/%{name}/
+%dir %attr(-,suricata,suricata) /run/%{name}/
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Wed Oct  5 2016 Jason Ish <ish@unx.ca> - 3.1.2-2
+- Fix ownership of /var/suricata.
+
+* Wed Sep 07 2016 Steve Grubb <sgrubb@redhat.com> 3.1.2-1
+- New upstream bug fix release
+
+* Tue Jul 19 2016 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 3.1.1-2
+- https://fedoraproject.org/wiki/Changes/Automatic_Provides_for_Python_RPM_Packages
+
+* Wed Jul 13 2016 Steve Grubb <sgrubb@redhat.com> 3.1.1-1
+- New upstream bug fix release
+
+* Wed Jun 22 2016 Steve Grubb <sgrubb@redhat.com> 3.1-1
+- New upstream bug fix release
+
 * Mon Apr 04 2016 Steve Grubb <sgrubb@redhat.com> 3.0.1-1
 - New upstream bug fix release
 
