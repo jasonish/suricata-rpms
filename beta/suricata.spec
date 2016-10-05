@@ -1,9 +1,9 @@
-%define prerelease_tag RC1
+%define prerelease_tag beta1
 
 Summary: Intrusion Detection System
 Name: suricata
-Version: 3.1
-Release: 0.1RC1%{?dist}
+Version: 3.2
+Release: 0.1%{prerelease_tag}%{?dist}
 License: GPLv2
 Group: Applications/Internet
 URL: http://suricata-ids.org/
@@ -123,10 +123,26 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %attr(750,suricata,root) %dir %{_var}/log/%{name}
 %attr(750,suricata,root) %dir %{_sysconfdir}/%{name}
 %attr(750,suricata,root) %dir %{_sysconfdir}/%{name}/rules
-%dir /run/%{name}/
+%dir %attr(-,suricata,suricata) /run/%{name}/
 %{_tmpfilesdir}/%{name}.conf
+%{_mandir}/man1/suricata*
 
 %changelog
+* Wed Oct  5 2016 Jason Ish <ish@unx.ca> - 3.1.2-2
+- Fix ownership of /var/suricata.
+
+* Wed Sep 07 2016 Steve Grubb <sgrubb@redhat.com> 3.1.2-1
+- New upstream bug fix release
+
+* Tue Jul 19 2016 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 3.1.1-2
+- https://fedoraproject.org/wiki/Changes/Automatic_Provides_for_Python_RPM_Packages
+
+* Wed Jul 13 2016 Steve Grubb <sgrubb@redhat.com> 3.1.1-1
+- New upstream bug fix release
+
+* Wed Jun 22 2016 Steve Grubb <sgrubb@redhat.com> 3.1-1
+- New upstream bug fix release
+
 * Tue Jun  7 2016 Jason Ish <ish@unx.ca> - 3.1-0.1RC1
 - Update to Suricata 3.1RC1.
 
