@@ -23,6 +23,7 @@ BuildRequires: nspr-devel nss-devel nss-softokn-devel file-devel
 BuildRequires: jansson-devel GeoIP-devel python2-devel lua-devel
 BuildRequires: autoconf automake libtool
 BuildRequires: systemd
+BuildRequires: python-sphinx
 Requires(pre): /usr/sbin/useradd
 Requires(post): systemd
 Requires(preun): systemd
@@ -123,8 +124,12 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %attr(750,suricata,root) %dir %{_sysconfdir}/%{name}/rules
 %dir %attr(-,suricata,suricata) /run/%{name}/
 %{_tmpfilesdir}/%{name}.conf
+%{_mandir}/man1/suricata*
 
 %changelog
+* Tue Nov 01 2016 Steve Grubb <sgrubb@redhat.com> 3.1.3-1
+- New upstream bug fix release
+
 * Wed Oct  5 2016 Jason Ish <ish@unx.ca> - 3.1.2-2
 - Fix ownership of /var/suricata.
 
@@ -139,6 +144,12 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 
 * Wed Jun 22 2016 Steve Grubb <sgrubb@redhat.com> 3.1-1
 - New upstream bug fix release
+
+* Tue Jun  7 2016 Jason Ish <ish@unx.ca> - 3.1-0.1RC1
+- Update to Suricata 3.1RC1.
+
+* Tue Apr 26 2016 Jason Ish <ish@unx.ca> - 3.0.1-0.1rc1
+- Basic 3.0.1RC1 RPM on the 3.0.1 stable RPM.
 
 * Mon Apr 04 2016 Steve Grubb <sgrubb@redhat.com> 3.0.1-1
 - New upstream bug fix release
@@ -180,6 +191,9 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 * Fri Dec 12 2014 Steve Grubb <sgrubb@redhat.com> 2.0.5-1
 - New upstream bug fix release
 - Use the system libhtp library
+
+* Tue Oct 28 2014 Jason Ish <ish@unx.ca> - 2.0.4-1
+- Use SIGHUP for log rotation instead of copytruncate.
 
 * Wed Sep 24 2014 Steve Grubb <sgrubb@redhat.com> 2.0.4-1
 - New upstream bug fix release
