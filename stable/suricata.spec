@@ -125,11 +125,11 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
-* Wed Oct  5 2016 Jason Ish <ish@unx.ca> - 3.1.2-2
-- Fix ownership of /var/suricata.
-
 * Tue Nov 01 2016 Steve Grubb <sgrubb@redhat.com> 3.1.3-1
 - New upstream bug fix release
+
+* Wed Oct  5 2016 Jason Ish <ish@unx.ca> - 3.1.2-2
+- Fix ownership of /var/suricata.
 
 * Wed Sep 07 2016 Steve Grubb <sgrubb@redhat.com> 3.1.2-1
 - New upstream bug fix release
