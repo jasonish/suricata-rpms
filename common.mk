@@ -43,6 +43,10 @@ mock: srpm pre-mock
 		--no-clean \
 		$(SRPM)
 
+update-sources: SOURCES=$(shell spectool -l $(SPEC) | basename `awk '/:\/\// { print $$2 }'`)
+update-sources:
+	md5sum $(SOURCES) > sources
+
 $(DISTS):
 	$(MAKE) mock DIST="$@"
 
