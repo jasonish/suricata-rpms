@@ -1,9 +1,9 @@
-%define prerelease_tag beta1
+%define prerelease_tag RC1
 
 Summary: Intrusion Detection System
 Name: suricata
 Version: 3.2
-Release: 0.1%{prerelease_tag}%{?dist}
+Release: 0.2%{prerelease_tag}%{?dist}
 License: GPLv2
 Group: Applications/Internet
 URL: http://suricata-ids.org/
@@ -128,6 +128,12 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %{_mandir}/man1/suricata*
 
 %changelog
+* Wed Nov  2 2016 Jason Ish <ish@unx.ca> - 3.2-0.2RC1
+- Update to Suricata 3.2RC1.
+
+* Tue Nov 01 2016 Steve Grubb <sgrubb@redhat.com> 3.1.3-1
+- New upstream bug fix release
+
 * Wed Oct  5 2016 Jason Ish <ish@unx.ca> - 3.1.2-2
 - Fix ownership of /var/suricata.
 
@@ -189,6 +195,9 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 * Fri Dec 12 2014 Steve Grubb <sgrubb@redhat.com> 2.0.5-1
 - New upstream bug fix release
 - Use the system libhtp library
+
+* Tue Oct 28 2014 Jason Ish <ish@unx.ca> - 2.0.4-1
+- Use SIGHUP for log rotation instead of copytruncate.
 
 * Wed Sep 24 2014 Steve Grubb <sgrubb@redhat.com> 2.0.4-1
 - New upstream bug fix release
