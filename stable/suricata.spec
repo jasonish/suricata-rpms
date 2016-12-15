@@ -1,6 +1,6 @@
 Summary: Intrusion Detection System
 Name: suricata
-Version: 3.1.3
+Version: 3.2
 Release: 1%{?dist}
 License: GPLv2
 Group: Applications/Internet
@@ -123,6 +123,7 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %attr(750,suricata,root) %dir %{_sysconfdir}/%{name}/rules
 %dir %attr(-,suricata,suricata) /run/%{name}/
 %{_tmpfilesdir}/%{name}.conf
+%{_mandir}/man1/suricata*
 
 %changelog
 * Tue Nov 01 2016 Steve Grubb <sgrubb@redhat.com> 3.1.3-1
