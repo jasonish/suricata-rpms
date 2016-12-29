@@ -1,63 +1,88 @@
+%bcond_with bootstrap
+
 Name:           ragel   
-Version:        6.8
-Release:        6%{?dist}
+Version:        7.0.0.9
+Release:        1%{?dist}
 Summary:        Finite state machine compiler
 
-Group:          Development/Tools
-License:        GPLv2+
+# aapl/ is the LGPLv2+
+License:        GPLv2+ and LGPLv2+
 URL:            http://www.complang.org/%{name}/
-Source0:        http://www.complang.org/%{name}/%{name}-%{version}.tar.gz
-BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+Source0:        https://www.colm.net/files/%{name}/%{name}-%{version}.tar.gz
 
-# for documentation building
-BuildRequires:  gcc-objc, autoconf, gcc-c++
-Requires:       gawk
+BuildRequires:  gcc
+BuildRequires:  gcc-c++
+BuildRequires:  autoconf
+BuildRequires:  automake
+BuildRequires:  libtool
+BuildRequires:  make
+%if %{with bootstrap}
+BuildRequires:  kelbt
+BuildRequires:  ragel
+%endif
+BuildRequires:  colm-devel
+
+# Unfortunately, upstream doesn't exist and not possible to find version
+Provides:       bundled(aapl)
 
 %description
-Ragel compiles finite state machines from regular languages into executable C,
-C++, Objective-C, or D code. Ragel state machines can not only recognize byte
-sequences as regular expression machines do, but can also execute code at
-arbitrary points in the recognition of a regular language. Code embedding is
-done using inline operators that do not disrupt the regular language syntax.
+Ragel compiles executable finite state machines from regular languages.
+Ragel targets C, C++ and ASM. Ragel state machines can not only recognize
+byte sequences as regular expression machines do, but can also execute code
+at arbitrary points in the recognition of a regular language. Code embedding
+is done using inline operators that do not disrupt the regular language syntax.
+
+%package devel
+Summary:        Development libraries header files for %{name}
+Requires:       %{name}%{?_isa} = %{?epoch:%{epoch}:}%{version}-%{release}
+
+%description devel
+%{summary}.
 
 %prep
-%setup -q
-
-# Pass fedora cflags correctly
-sed -i.flags \
-    -e '\@^CXXFLAGS=@d' \
-    configure{.in,}
-touch timestamp
-touch -r timestamp \
-    aclocal.m4 configure.in configure config.h.in \
-    Makefile.in */Makefile.in
+%autosetup
+# Do not pollute with docs
+sed -i -e "/dist_doc_DATA/d" Makefile.am
+# Put headers under subdir
+sed -i -e "s/include_HEADERS/pkginclude_HEADERS/g" src/Makefile.am aapl/Makefile.am
 
 %build
-# set the names of the other programming commandline programs
-%configure --docdir=%{_docdir}/%{name} RUBY=ruby JAVAC=javac GMCS=gmcs 
-
-make %{?_smp_mflags}
-
+autoreconf -vfi
+%configure --disable-static
+%make_build
 
 %install
-rm -rf %{buildroot}
-make install DESTDIR=%{buildroot}
+%make_install
+find %{buildroot}%{_libdir} -type f -name '*.la' -print -delete
+install -p -m 0644 -D %{name}.vim %{buildroot}%{_datadir}/vim/vimfiles/syntax/%{name}.vim
 
-# Fixup for CentOS (Jason Ish)
-rm -rf %{buildroot}%{_docdir}
-
-%clean
-rm -rf %{buildroot}
-
+%post -p /sbin/ldconfig
+%postun -p /sbin/ldconfig
 
 %files
-%defattr(-,root,root,-)
-%doc COPYING ragel.vim CREDITS ChangeLog
-%doc doc/ragel-guide.pdf
-%{_bindir}/ragel
-%{_mandir}/*/*
+%license COPYING
+%doc CREDITS ChangeLog
+#doc doc/ragel-guide.pdf
+%{_bindir}/%{name}
+%{_mandir}/man1/%{name}.1*
+%{_libdir}/lib%{name}.so.*
+%{_libdir}/libfsm.so.*
+%dir %{_datadir}/vim
+%dir %{_datadir}/vim/vimfiles
+%dir %{_datadir}/vim/vimfiles/syntax
+%{_datadir}/vim/vimfiles/syntax/%{name}.vim
+
+%files devel
+%{_libdir}/lib%{name}.so
+%{_libdir}/libfsm.so
+%{_includedir}/%{name}/
 
 %changelog
+* Fri Oct 07 2016 Igor Gnatenko <i.gnatenko.brain@gmail.com> - 7.0.0.9-1
+- Fix FTBFS
+- Update to 7.0.0.9
+- Trivial fixes in spec
+
 * Thu Feb 04 2016 Fedora Release Engineering <releng@fedoraproject.org> - 6.8-6
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
 
