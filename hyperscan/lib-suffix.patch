@@ -1,17 +1,15 @@
-diff --git a/CMakeLists.txt b/CMakeLists.txt
-index c824b6a..106c7a4 100644
---- a/CMakeLists.txt
-+++ b/CMakeLists.txt
-@@ -37,7 +37,7 @@ else()
+--- hyperscan-4.4.0/CMakeLists.txt.orig	2017-01-30 17:23:19.101484553 +0000
++++ hyperscan-4.4.0/CMakeLists.txt	2017-01-30 17:27:04.870261459 +0000
+@@ -35,7 +35,7 @@
  endif()
  
  set(BINDIR "${PROJECT_BINARY_DIR}/bin")
 -set(LIBDIR "${PROJECT_BINARY_DIR}/lib")
-+set(LIBDIR "${PROJECT_BINARY_DIR}/lib${LIB_SUFFIX}")
++set(LIBDIR "${PROJECT_BINARY_DIR}/lib${LIB_SUFFIX}/")
  
  # First for the generic no-config case
  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${BINDIR}")
-@@ -362,7 +362,7 @@ if (NOT WIN32)
+@@ -435,7 +435,7 @@
  
      configure_file(libhs.pc.in libhs.pc @ONLY) # only replace @ quoted vars
      install(FILES ${CMAKE_BINARY_DIR}/libhs.pc
@@ -20,16 +18,16 @@ index c824b6a..106c7a4 100644
  endif()
  
  # only set these after all tests are done
-@@ -959,7 +959,7 @@ add_library(hs_runtime STATIC src/hs_version.c $<TARGET_OBJECTS:hs_exec>)
- set_target_properties(hs_runtime PROPERTIES
-     LINKER_LANGUAGE C)
+@@ -1151,7 +1151,7 @@
+ 
+ set_target_properties(hs_runtime PROPERTIES LINKER_LANGUAGE C)
  if (NOT BUILD_SHARED_LIBS)
 -    install(TARGETS hs_runtime DESTINATION lib)
 +    install(TARGETS hs_runtime DESTINATION lib${LIB_SUFFIX})
  endif()
  
  if (BUILD_STATIC_AND_SHARED OR BUILD_SHARED_LIBS)
-@@ -972,8 +972,8 @@ if (BUILD_STATIC_AND_SHARED OR BUILD_SHARED_LIBS)
+@@ -1174,8 +1174,8 @@
          LINKER_LANGUAGE C)
      install(TARGETS hs_runtime_shared
          RUNTIME DESTINATION bin
@@ -39,8 +37,8 @@ index c824b6a..106c7a4 100644
 +        LIBRARY DESTINATION lib${LIB_SUFFIX})
  endif()
  
- # we want the static lib for testing
-@@ -982,7 +982,7 @@ add_library(hs STATIC ${hs_SRCS} $<TARGET_OBJECTS:hs_exec>)
+ if (NOT FAT_RUNTIME)
+@@ -1190,7 +1190,7 @@
  add_dependencies(hs ragel_Parser)
  
  if (NOT BUILD_SHARED_LIBS)
@@ -49,7 +47,7 @@ index c824b6a..106c7a4 100644
  endif()
  
  if (BUILD_STATIC_AND_SHARED OR BUILD_SHARED_LIBS)
-@@ -995,8 +995,8 @@ if (BUILD_STATIC_AND_SHARED OR BUILD_SHARED_LIBS)
+@@ -1213,8 +1213,8 @@
          MACOSX_RPATH ON)
  install(TARGETS hs_shared
      RUNTIME DESTINATION bin

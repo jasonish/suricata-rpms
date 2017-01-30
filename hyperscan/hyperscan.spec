@@ -1,10 +1,10 @@
 %global commit0 d2e5089dc33c3f9d762898eefece67fe5ab323ea
-%global gittag0 v4.3.1
+%global gittag0 v4.4.0
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 %global _hardened_build 1
 
 Name:		hyperscan
-Version:	4.3.1
+Version:	4.4.0
 Release:	1%{?dist}
 Summary:	High-performance regular expression matching library
 
@@ -19,8 +19,10 @@ BuildRequires:  cmake
 BuildRequires:	pcre-devel
 BuildRequires:	python
 BuildRequires:  ragel
+BuildRequires:	sqlite-devel
 
 Requires:	pcre
+Requires:	sqlite-libs
 
 #package requires SSE support and fails to build on non x86_64 archs
 ExclusiveArch: x86_64
@@ -59,7 +61,7 @@ needed for developing Hyperscan applications.
 %prep
 %setup -q
 %patch1 -p1
-%patch2
+%patch2 -p1
 
 %build
 %cmake -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_STATIC_AND_SHARED:BOOL=OFF .
@@ -85,6 +87,9 @@ make install DESTDIR=%{buildroot}
 %{_includedir}/hs/
 
 %changelog
+* Mon Jan 30 2017 Jason Ish <ish@unx.ca> - 4.4.0-1
+- Update to 4.4.0.
+
 * Fri Sep 2 2016 Jason Taylor <jtfas90@gmail.com> - 4.3.1-1
 - Updated to latest upstream release.
 
