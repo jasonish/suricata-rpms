@@ -1,5 +1,5 @@
 Name:		hyperscan
-Version:	4.3.2
+Version:	4.4.0
 Release:	2%{?dist}
 Summary:	High-performance regular expression matching library
 
@@ -14,8 +14,12 @@ BuildRequires:	cmake pcre-devel ragel
 # Fedora has a recent enough version of boost.
 %if 0%{?fedora}
 BuildRequires:	boost-devel
+Requires:	sqlite-libs
+%else
+Requires:	sqlite
 %endif
 BuildRequires:	python
+BuildRequires:	sqlite-devel
 Requires:	pcre
 
 %description
