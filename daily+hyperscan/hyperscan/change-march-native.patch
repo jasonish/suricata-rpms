@@ -1,0 +1,16 @@
+--- a/CMakeLists.txt	2017-01-19 21:16:41.000000000 -0600
++++ b/CMakeLists.txt	2017-01-30 10:54:04.017659325 -0600
+@@ -217,11 +217,11 @@
+     endif()
+ 
+     if (NOT CMAKE_C_FLAGS MATCHES .*march.*)
+-        set(ARCH_C_FLAGS "${ARCH_C_FLAGS} -march=native -mtune=native")
++        set(ARCH_C_FLAGS "${ARCH_C_FLAGS} -march=core2 -mtune=generic")
+     endif()
+ 
+     if (NOT CMAKE_CXX_FLAGS MATCHES .*march.*)
+-        set(ARCH_CXX_FLAGS "${ARCH_CXX_FLAGS} -march=native -mtune=native")
++        set(ARCH_CXX_FLAGS "${ARCH_CXX_FLAGS} -march=generic -mtune=core2")
+     endif()
+ 
+     if(CMAKE_COMPILER_IS_GNUCC)
