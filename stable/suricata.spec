@@ -1,6 +1,6 @@
 Summary: Intrusion Detection System
 Name: suricata
-Version: 3.2
+Version: 3.2.1
 Release: 1%{?dist}
 License: GPLv2
 Group: Applications/Internet
@@ -107,6 +107,7 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %doc doc/Setting_up_IPSinline_for_Linux.txt doc/fedora.notes
 %{!?_licensedir:%global license %%doc}
 %license COPYING
+%attr(644,root,root) %{_mandir}/man1/*
 %{_sbindir}/suricata
 %{_bindir}/suricatasc
 %{_libdir}/libhtp-*
@@ -121,11 +122,21 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %attr(750,suricata,root) %dir %{_var}/log/%{name}
 %attr(750,suricata,root) %dir %{_sysconfdir}/%{name}
 %attr(750,suricata,root) %dir %{_sysconfdir}/%{name}/rules
-%dir %attr(-,suricata,suricata) /run/%{name}/
+%attr(750,suricata,root) %dir /run/%{name}/
 %{_tmpfilesdir}/%{name}.conf
-%{_mandir}/man1/suricata*
 
 %changelog
+* Wed Feb 15 2017 Steve Grubb <sgrubb@redhat.com> 3.2.1-1
+- Upstream security update
+
+* Mon Feb 13 2017 Steve Grubb <sgrubb@redhat.com> 3.2-1
+- New upstream feature release
+- Rotate /var/log/suricata/eve.json (#1396151)
+- Fix ownership of /run/suricata (#1396150)
+
+* Sat Feb 11 2017 Fedora Release Engineering <releng@fedoraproject.org> - 3.1.3-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
+
 * Tue Nov 01 2016 Steve Grubb <sgrubb@redhat.com> 3.1.3-1
 - New upstream bug fix release
 
