@@ -1,0 +1,60 @@
+--- hyperscan-4.4.0/CMakeLists.txt.orig	2017-01-30 17:23:19.101484553 +0000
++++ hyperscan-4.4.0/CMakeLists.txt	2017-01-30 17:27:04.870261459 +0000
+@@ -35,7 +35,7 @@
+ endif()
+ 
+ set(BINDIR "${PROJECT_BINARY_DIR}/bin")
+-set(LIBDIR "${PROJECT_BINARY_DIR}/lib")
++set(LIBDIR "${PROJECT_BINARY_DIR}/lib${LIB_SUFFIX}/")
+ 
+ # First for the generic no-config case
+ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${BINDIR}")
+@@ -435,7 +435,7 @@
+ 
+     configure_file(libhs.pc.in libhs.pc @ONLY) # only replace @ quoted vars
+     install(FILES ${CMAKE_BINARY_DIR}/libhs.pc
+-            DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig")
++            DESTINATION "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}/pkgconfig")
+ endif()
+ 
+ # only set these after all tests are done
+@@ -1151,7 +1151,7 @@
+ 
+ set_target_properties(hs_runtime PROPERTIES LINKER_LANGUAGE C)
+ if (NOT BUILD_SHARED_LIBS)
+-    install(TARGETS hs_runtime DESTINATION lib)
++    install(TARGETS hs_runtime DESTINATION lib${LIB_SUFFIX})
+ endif()
+ 
+ if (BUILD_STATIC_AND_SHARED OR BUILD_SHARED_LIBS)
+@@ -1174,8 +1174,8 @@
+         LINKER_LANGUAGE C)
+     install(TARGETS hs_runtime_shared
+         RUNTIME DESTINATION bin
+-        ARCHIVE DESTINATION lib
+-        LIBRARY DESTINATION lib)
++        ARCHIVE DESTINATION lib${LIB_SUFFIX}
++        LIBRARY DESTINATION lib${LIB_SUFFIX})
+ endif()
+ 
+ if (NOT FAT_RUNTIME)
+@@ -1190,7 +1190,7 @@
+ add_dependencies(hs ragel_Parser)
+ 
+ if (NOT BUILD_SHARED_LIBS)
+-install(TARGETS hs DESTINATION lib)
++install(TARGETS hs DESTINATION lib${LIB_SUFFIX})
+ endif()
+ 
+ if (BUILD_STATIC_AND_SHARED OR BUILD_SHARED_LIBS)
+@@ -1213,8 +1213,8 @@
+         MACOSX_RPATH ON)
+ install(TARGETS hs_shared
+     RUNTIME DESTINATION bin
+-    ARCHIVE DESTINATION lib
+-    LIBRARY DESTINATION lib)
++    ARCHIVE DESTINATION lib${LIB_SUFFIX}
++    LIBRARY DESTINATION lib${LIB_SUFFIX})
+ endif()
+ 
+ if(NOT WIN32)
