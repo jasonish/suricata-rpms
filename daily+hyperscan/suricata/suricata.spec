@@ -23,6 +23,7 @@ BuildRequires: nspr-devel nss-devel nss-softokn-devel file-devel
 BuildRequires: jansson-devel GeoIP-devel python2-devel lua-devel
 BuildRequires: autoconf automake libtool
 BuildRequires: systemd
+BuildRequires: python-sphinx
 BuildRequires: hyperscan
 Requires(pre): /usr/sbin/useradd
 Requires(post): systemd
@@ -108,6 +109,7 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %doc doc/Setting_up_IPSinline_for_Linux.txt doc/fedora.notes
 %{!?_licensedir:%global license %%doc}
 %license COPYING
+%attr(644,root,root) %{_mandir}/man1/*
 %{_sbindir}/suricata
 %{_bindir}/suricatasc
 %{_libdir}/libhtp-*
@@ -122,10 +124,27 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %attr(750,suricata,root) %dir %{_var}/log/%{name}
 %attr(750,suricata,root) %dir %{_sysconfdir}/%{name}
 %attr(750,suricata,root) %dir %{_sysconfdir}/%{name}/rules
-%dir %attr(-,suricata,suricata) /run/%{name}/
+%attr(750,suricata,root) %dir /run/%{name}/
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Tue Mar  7 2017 Jason Ish <ish@unx.ca> - %%VERSION%%-1
+- Remove usage of pidfile, systemctl reload can be used.
+
+* Wed Feb 15 2017 Steve Grubb <sgrubb@redhat.com> 3.2.1-1
+- Upstream security update
+
+* Mon Feb 13 2017 Steve Grubb <sgrubb@redhat.com> 3.2-1
+- New upstream feature release
+- Rotate /var/log/suricata/eve.json (#1396151)
+- Fix ownership of /run/suricata (#1396150)
+
+* Sat Feb 11 2017 Fedora Release Engineering <releng@fedoraproject.org> - 3.1.3-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
+
+* Tue Nov 01 2016 Steve Grubb <sgrubb@redhat.com> 3.1.3-1
+- New upstream bug fix release
+
 * Wed Oct  5 2016 Jason Ish <ish@unx.ca> - 3.1.2-2
 - Fix ownership of /var/suricata.
 
@@ -140,6 +159,12 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 
 * Wed Jun 22 2016 Steve Grubb <sgrubb@redhat.com> 3.1-1
 - New upstream bug fix release
+
+* Tue Jun  7 2016 Jason Ish <ish@unx.ca> - 3.1-0.1RC1
+- Update to Suricata 3.1RC1.
+
+* Tue Apr 26 2016 Jason Ish <ish@unx.ca> - 3.0.1-0.1rc1
+- Basic 3.0.1RC1 RPM on the 3.0.1 stable RPM.
 
 * Mon Apr 04 2016 Steve Grubb <sgrubb@redhat.com> 3.0.1-1
 - New upstream bug fix release
@@ -181,6 +206,9 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 * Fri Dec 12 2014 Steve Grubb <sgrubb@redhat.com> 2.0.5-1
 - New upstream bug fix release
 - Use the system libhtp library
+
+* Tue Oct 28 2014 Jason Ish <ish@unx.ca> - 2.0.4-1
+- Use SIGHUP for log rotation instead of copytruncate.
 
 * Wed Sep 24 2014 Steve Grubb <sgrubb@redhat.com> 2.0.4-1
 - New upstream bug fix release

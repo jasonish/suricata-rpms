@@ -11,3 +11,6 @@ pre-mock::
 		../colm/output/$(DIST)/colm-*.x86_64.rpm \
 		../ragel/output/$(DIST)/ragel-*.x86_64.rpm \
 		../hyperscan/output/$(DIST)/hyperscan-*.x86_64.rpm
+
+clean::
+	rm -rf RPMS
