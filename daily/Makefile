@@ -4,3 +4,6 @@ SPEC =		suricata-daily.spec
 
 include daily.mk
 include ../common.mk
+
+clean::
+	rm -rf RPMS

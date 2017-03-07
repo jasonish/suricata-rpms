@@ -27,6 +27,7 @@ local:
 	rpmbuild \
 		--define "_sourcedir `pwd`" \
 		--define "_specdir `pwd`" \
+		--define "_rpmdir `pwd`/RPMS" \
 		--eval '%undefine dist' \
 		-v -ba $(SPEC)
 
