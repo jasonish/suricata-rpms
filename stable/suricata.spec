@@ -1,7 +1,7 @@
 Summary: Intrusion Detection System
 Name: suricata
 Version: 3.2.1
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2
 Group: Applications/Internet
 URL: http://suricata-ids.org/
@@ -126,6 +126,9 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Tue Mar 14 2017 Jason Ish <ish@unx.ca> - 3.2.1-2
+- Use systemctl instead of a PID file for log rotation.
+
 * Wed Feb 15 2017 Steve Grubb <sgrubb@redhat.com> 3.2.1-1
 - Upstream security update
 
