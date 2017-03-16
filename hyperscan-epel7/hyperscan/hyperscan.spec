@@ -1,11 +1,11 @@
-%global commit0 d2e5089dc33c3f9d762898eefece67fe5ab323ea
-%global gittag0 v4.4.0
+%global commit0 7aff6f6136e659f9dab48f2d383baa0fcb08bbc0
+%global gittag0 v4.4.1
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 %global _hardened_build 1
 
 Name:		hyperscan
-Version:	4.4.0
-Release:	3%{?dist}
+Version:	4.4.1
+Release:	1%{?dist}
 Summary:	High-performance regular expression matching library
 
 License:	BSD
