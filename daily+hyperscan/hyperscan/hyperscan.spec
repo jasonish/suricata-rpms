@@ -1,11 +1,11 @@
 %global commit0 d2e5089dc33c3f9d762898eefece67fe5ab323ea
-%global gittag0 v4.4.0
+%global gittag0 v4.4.1
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 %global _hardened_build 1
 
 Name:		hyperscan
-Version:	4.4.0
-Release:	3%{?dist}
+Version:	4.4.1
+Release:	1%{?dist}
 Summary:	High-performance regular expression matching library
 
 License:	BSD
@@ -98,6 +98,9 @@ make install DESTDIR=%{buildroot}
 %{_includedir}/hs/
 
 %changelog
+* Thu Mar 16 2017 Jason Ish <ish@unx.ca> - 4.4.1-1
+- Update to 4.4.1.
+
 * Mon Jan 30 2017 Jason Ish <ish@unx.ca> - 4.4.0-1
 - Update to 4.4.0.
 
