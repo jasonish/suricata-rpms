@@ -47,7 +47,7 @@ install -m 644 %{SOURCE4} doc/
 autoreconf -fv --install
 
 %build
-%configure --enable-gccprotect --enable-pie --disable-gccmarch-native --disable-coccinelle --enable-nfqueue --enable-af-packet --with-libnspr-includes=/usr/include/nspr4 --with-libnss-includes=/usr/include/nss3 --enable-jansson --enable-geoip --enable-lua
+%configure --enable-gccprotect --enable-pie --disable-gccmarch-native --disable-coccinelle --enable-nfqueue --enable-af-packet --with-libnspr-includes=/usr/include/nspr4 --with-libnss-includes=/usr/include/nss3 --enable-jansson --enable-geoip --enable-lua 
 
 make CFLAGS="%{optflags}" %{?_smp_mflags}
 
@@ -128,8 +128,8 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
-* Tue Mar  7 2017 Jason Ish <ish@unx.ca> - %%VERSION%%-1
-- Remove usage of pidfile, systemctl reload can be used.
+* Tue Mar 14 2017 Jason Ish <ish@unx.ca> - 3.2.1-2
+- Use systemctl instead of a PID file for log rotation.
 
 * Wed Feb 15 2017 Steve Grubb <sgrubb@redhat.com> 3.2.1-1
 - Upstream security update
