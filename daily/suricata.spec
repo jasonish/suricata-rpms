@@ -127,6 +127,9 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Wed Mar 22 2017 Jason Ish <ish@unx.ca> - 3.2.1-2
+- Re-enable PID file due to selinux issues.
+
 * Tue Mar 14 2017 Jason Ish <ish@unx.ca> - 3.2.1-2
 - Use systemctl instead of a PID file for log rotation.
 
