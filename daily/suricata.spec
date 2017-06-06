@@ -24,6 +24,9 @@ BuildRequires: jansson-devel GeoIP-devel python2-devel lua-devel
 BuildRequires: autoconf automake libtool
 BuildRequires: systemd
 BuildRequires: python-sphinx
+%if 0%{?fedora} >= 25
+BuildRequires: hyperscan-devel
+%endif
 Requires(pre): /usr/sbin/useradd
 Requires(post): systemd
 Requires(preun): systemd
@@ -127,6 +130,9 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Tue Jun  6 2017 Jason Ish <ish@unx.ca> - 3.2.1-2
+- Enable Hyperscan on Fedora 25+.
+
 * Wed Mar 22 2017 Jason Ish <ish@unx.ca> - 3.2.1-2
 - Re-enable PID file due to selinux issues.
 
