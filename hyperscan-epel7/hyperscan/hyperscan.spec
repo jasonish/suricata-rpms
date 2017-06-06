@@ -1,25 +1,21 @@
-%global commit0 7aff6f6136e659f9dab48f2d383baa0fcb08bbc0
-%global gittag0 v4.4.1
-%global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
-%global _hardened_build 1
+Name:    hyperscan
+Version: 4.4.1
+Release: 1%{?dist}
+Summary: High-performance regular expression matching library
 
-Name:		hyperscan
-Version:	4.4.1
-Release:	1%{?dist}
-Summary:	High-performance regular expression matching library
+License: BSD
+URL:     https://01.org/hyperscan
+Source0: https://github.com/01org/%{name}/archive/v%{version}.tar.gz#/%{name}-%{version}.tar.gz
+Source1: http://downloads.sourceforge.net/project/boost/boost/1.61.0/boost_1_61_0.tar.gz
 
-License:	BSD
-URL:		https://01.org/hyperscan
-Source0:	https://github.com/01org/%{name}/archive/%{gittag0}.tar.gz#/%{name}-%{gittag0}.tar.gz
-Source1:	http://downloads.sourceforge.net/project/boost/boost/1.61.0/boost_1_61_0.tar.gz
-Patch1:		lib-suffix.patch
-Patch2:         change-march-native.patch
+Patch0:  honor-install-paths.patch
 
 BuildRequires:  cmake
 BuildRequires:	pcre-devel
 BuildRequires:	python
 BuildRequires:  ragel
 BuildRequires:	sqlite-devel
+BuildRequires:  libpcap-devel
 
 Requires:	pcre
 Requires:	sqlite
@@ -40,8 +36,8 @@ of data.
 Hyperscan is typically used in a DPI library stack.
 
 %package devel
-Summary:	Libraries and header files for the hyperscan library
-Requires:	%{name}%{?_isa} = %{version}-%{release}
+Summary: Libraries and header files for the hyperscan library
+Requires: %{name}%{?_isa} = %{version}-%{release}
 
 %description devel
 Hyperscan is a high-performance multiple regex matching library. It
@@ -59,20 +55,18 @@ This package provides the libraries, include files and other resources
 needed for developing Hyperscan applications.
 
 %prep
-%setup -q
-%patch1 -p1
-%patch2 -p1
-%if 0%{?fedora} == 0
+%autosetup
 (cd include && tar zxf %{SOURCE1} boost_1_61_0/boost --strip-components=1)
-%endif
 
 
 %build
 %cmake -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_STATIC_AND_SHARED:BOOL=OFF .
-make %{?_smp_mflags}
+
+%make_build
 
 %install
 make install DESTDIR=%{buildroot}
+
 
 %post -p /sbin/ldconfig
 
@@ -91,6 +85,11 @@ make install DESTDIR=%{buildroot}
 %{_includedir}/hs/
 
 %changelog
+* Fri May 12 2017 Jason Taylor <jtfas90@gmail.com> - 4.4.1-1
+- Update to latest upstream
+- Add CMakeLists.txt path patch
+- Spec file updates to meet packaging standards
+
 * Mon Jan 30 2017 Jason Ish <ish@unx.ca> - 4.4.0-1
 - Update to 4.4.0.
 
