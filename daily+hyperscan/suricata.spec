@@ -24,7 +24,7 @@ BuildRequires: jansson-devel GeoIP-devel python2-devel lua-devel
 BuildRequires: autoconf automake libtool
 BuildRequires: systemd
 BuildRequires: python-sphinx
-BuildRequires: hyperscan
+BuildRequires: hyperscan-devel
 Requires(pre): /usr/sbin/useradd
 Requires(post): systemd
 Requires(preun): systemd
