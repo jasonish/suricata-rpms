@@ -1,13 +1,13 @@
-%define prerelease_tag RC1
+%define prerelease_tag beta1
 
 Summary: Intrusion Detection System
 Name: suricata
-Version: 3.2
-Release: 0.2%{prerelease_tag}%{?dist}
+Version: 4.0.0
+Release: 0.1%{prerelease_tag}%{?dist}
 License: GPLv2
 Group: Applications/Internet
 URL: http://suricata-ids.org/
-Source0: http://www.openinfosecfoundation.org/download/%{name}-%{version}%{prerelease_tag}.tar.gz
+Source0: http://downloads.suricata-ids.org/%{name}-%{version}-%{prerelease_tag}.tar.gz
 Source1: suricata.service
 Source2: suricata.sysconfig
 Source3: suricata.logrotate
@@ -25,6 +25,12 @@ BuildRequires: nspr-devel nss-devel nss-softokn-devel file-devel
 BuildRequires: jansson-devel GeoIP-devel python2-devel lua-devel
 BuildRequires: autoconf automake libtool
 BuildRequires: systemd
+%if 0%{?fedora} >= 25
+%ifarch x86_64
+BuildRequires: hyperscan-devel
+Requires: hyperscan
+%endif
+%endif
 Requires(pre): /usr/sbin/useradd
 Requires(post): systemd
 Requires(preun): systemd
@@ -40,7 +46,7 @@ UDP, ICMP, HTTP, TLS, FTP and SMB! ), Gzip Decompression, Fast IP
 Matching, and GeoIP identification.
 
 %prep
-%setup -q -n suricata-%{version}%{prerelease_tag}
+%setup -q -n suricata-%{version}-%{prerelease_tag}
 install -m 644 %{SOURCE4} doc/
 %patch1 -p1
 %patch2 -p1
@@ -109,6 +115,7 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %doc doc/Setting_up_IPSinline_for_Linux.txt doc/fedora.notes
 %{!?_licensedir:%global license %%doc}
 %license COPYING
+%attr(644,root,root) %{_mandir}/man1/*
 %{_sbindir}/suricata
 %{_bindir}/suricatasc
 %{_libdir}/libhtp-*
@@ -123,11 +130,30 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %attr(750,suricata,root) %dir %{_var}/log/%{name}
 %attr(750,suricata,root) %dir %{_sysconfdir}/%{name}
 %attr(750,suricata,root) %dir %{_sysconfdir}/%{name}/rules
-%dir %attr(-,suricata,suricata) /run/%{name}/
+%attr(750,suricata,root) %dir /run/%{name}/
 %{_tmpfilesdir}/%{name}.conf
-%{_mandir}/man1/suricata*
 
 %changelog
+* Wed Jun  7 2017 Jason Ish <ish@unx.ca> - 3.2.2-2
+- Update to 3.2.2.
+
+* Wed Mar 22 2017 Jason Ish <ish@unx.ca> - 3.2.1-2
+- Re-enable PID file due to selinux issues.
+
+* Tue Mar 14 2017 Jason Ish <ish@unx.ca> - 3.2.1-2
+- Use systemctl instead of a PID file for log rotation.
+
+* Wed Feb 15 2017 Steve Grubb <sgrubb@redhat.com> 3.2.1-1
+- Upstream security update
+
+* Mon Feb 13 2017 Steve Grubb <sgrubb@redhat.com> 3.2-1
+- New upstream feature release
+- Rotate /var/log/suricata/eve.json (#1396151)
+- Fix ownership of /run/suricata (#1396150)
+
+* Sat Feb 11 2017 Fedora Release Engineering <releng@fedoraproject.org> - 3.1.3-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
+
 * Wed Nov  2 2016 Jason Ish <ish@unx.ca> - 3.2-0.2RC1
 - Update to Suricata 3.2RC1.
 
