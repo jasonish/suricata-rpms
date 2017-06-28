@@ -23,7 +23,7 @@ srpm: fetch
 		-v -bs $(SPEC)
 	@ls -l $(SRPM)
 
-local:
+local: fetch
 	rpmbuild \
 		--define "_sourcedir `pwd`" \
 		--define "_specdir `pwd`" \
