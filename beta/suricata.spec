@@ -1,9 +1,9 @@
-%define prerelease_tag beta1
+%define prerelease_tag rc1
 
 Summary: Intrusion Detection System
 Name: suricata
 Version: 4.0.0
-Release: 0.1%{prerelease_tag}%{?dist}
+Release: 0.2%{prerelease_tag}%{?dist}
 License: GPLv2
 Group: Applications/Internet
 URL: http://suricata-ids.org/
@@ -118,7 +118,7 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %attr(644,root,root) %{_mandir}/man1/*
 %{_sbindir}/suricata
 %{_bindir}/suricatasc
-%{_libdir}/libhtp-*
+%{_libdir}/libhtp*
 %{python2_sitelib}/suricatasc*.egg-info
 %{python2_sitelib}/suricatasc/*
 %config(noreplace) %attr(-,suricata,-) %{_sysconfdir}/%{name}/suricata.yaml
@@ -134,6 +134,12 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Wed Jun 28 2017 Jason Ish <ish@unx.ca> - 4.0.0-0.2rc1
+- Update to 4.0.0-rc1
+
+* Wed Jun  8 2017 Jason Ish <ish@unx.ca> - 4.0.0-0.1beta1
+- Update to 4.0.0-beta1.
+
 * Wed Jun  7 2017 Jason Ish <ish@unx.ca> - 3.2.2-2
 - Update to 3.2.2.
 
