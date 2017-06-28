@@ -1,6 +1,6 @@
 Name:    hyperscan
 Version: 4.4.1
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: High-performance regular expression matching library
 
 License: BSD
@@ -60,13 +60,13 @@ needed for developing Hyperscan applications.
 
 
 %build
-%cmake -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_STATIC_AND_SHARED:BOOL=OFF .
+%cmake -DBUILD_STATIC_AND_SHARED:BOOL=ON .
 
 %make_build
 
 %install
 make install DESTDIR=%{buildroot}
-
+cp lib/libhs.a %{buildroot}%{_libdir}
 
 %post -p /sbin/ldconfig
 
@@ -78,6 +78,7 @@ make install DESTDIR=%{buildroot}
 %license COPYING
 %license LICENSE
 %{_libdir}/*.so.*
+%{_libdir}/*.a
 
 %files devel
 %{_libdir}/*.so
@@ -85,6 +86,9 @@ make install DESTDIR=%{buildroot}
 %{_includedir}/hs/
 
 %changelog
+* Wed Jun 28 2017 Jason Ish <ish@unx.ca> - 4.4.1-2
+- Include static library.
+
 * Fri May 12 2017 Jason Taylor <jtfas90@gmail.com> - 4.4.1-1
 - Update to latest upstream
 - Add CMakeLists.txt path patch
