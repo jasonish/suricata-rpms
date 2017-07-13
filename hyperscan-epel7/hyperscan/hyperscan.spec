@@ -1,14 +1,12 @@
 Name:    hyperscan
-Version: 4.4.1
-Release: 2%{?dist}
+Version: 4.5.1
+Release: 1%{?dist}
 Summary: High-performance regular expression matching library
 
 License: BSD
 URL:     https://01.org/hyperscan
 Source0: https://github.com/01org/%{name}/archive/v%{version}.tar.gz#/%{name}-%{version}.tar.gz
 Source1: http://downloads.sourceforge.net/project/boost/boost/1.61.0/boost_1_61_0.tar.gz
-
-Patch0:  honor-install-paths.patch
 
 BuildRequires:  cmake
 BuildRequires:	pcre-devel
@@ -60,7 +58,7 @@ needed for developing Hyperscan applications.
 
 
 %build
-%cmake -DBUILD_STATIC_AND_SHARED:BOOL=ON .
+%cmake -DBUILD_SHARED_LIBS:BOOL=OFF -DBUILD_STATIC_AND_SHARED:BOOL=ON .
 
 %make_build
 
@@ -73,8 +71,9 @@ cp lib/libhs.a %{buildroot}%{_libdir}
 %postun -p /sbin/ldconfig
 
 %files
-%doc CHANGELOG.md
-%doc README.md
+%doc %{_defaultdocdir}/%{name}/examples/README.md
+%doc %{_defaultdocdir}/%{name}/examples/*.cc
+%doc %{_defaultdocdir}/%{name}/examples/*.c
 %license COPYING
 %license LICENSE
 %{_libdir}/*.so.*
@@ -88,6 +87,13 @@ cp lib/libhs.a %{buildroot}%{_libdir}
 %changelog
 * Wed Jun 28 2017 Jason Ish <ish@unx.ca> - 4.4.1-2
 - Include static library.
+
+* Fri Jun 16 2017 Jason Taylor <jtfas90@gmail.com> - 4.5.1-1
+- upstream bugfix release
+
+* Fri Jun 09 2017 Jason Taylor <jtfas90@gmail.com> - 4.5.0-1
+- Update to latest upstream
+- Removed CMakeLists.txt patch, moved into upstream
 
 * Fri May 12 2017 Jason Taylor <jtfas90@gmail.com> - 4.4.1-1
 - Update to latest upstream
