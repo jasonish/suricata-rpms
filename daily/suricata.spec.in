@@ -25,7 +25,10 @@ BuildRequires: autoconf automake libtool
 BuildRequires: systemd
 BuildRequires: python-sphinx
 %if 0%{?fedora} >= 25
+%ifarch x86_64
 BuildRequires: hyperscan-devel
+Requires: hyperscan
+%endif
 %endif
 Requires(pre): /usr/sbin/useradd
 Requires(post): systemd
