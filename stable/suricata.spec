@@ -1,6 +1,6 @@
 Summary: Intrusion Detection System
 Name: suricata
-Version: 3.2.2
+Version: 3.2.3
 Release: 1%{?dist}
 License: GPLv2
 Group: Applications/Internet
@@ -116,7 +116,7 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %attr(644,root,root) %{_mandir}/man1/*
 %{_sbindir}/suricata
 %{_bindir}/suricatasc
-%{_libdir}/libhtp-*
+%{_libdir}/libhtp*
 %{python2_sitelib}/suricatasc*.egg-info
 %{python2_sitelib}/suricatasc/*
 %config(noreplace) %attr(-,suricata,-) %{_sysconfdir}/%{name}/suricata.yaml
@@ -132,7 +132,10 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
-* Wed Jun  7 2017 Jason Ish <ish@unx.ca> - 3.2.2-2
+* Thu Jul 13 2017 Jason Ish <ish@unx.ca> - 3.2.3-1
+- Update to 3.2.3.
+
+* Wed Jun  7 2017 Jason Ish <ish@unx.ca> - 3.2.2-1
 - Update to 3.2.2.
 
 * Wed Mar 22 2017 Jason Ish <ish@unx.ca> - 3.2.1-2
