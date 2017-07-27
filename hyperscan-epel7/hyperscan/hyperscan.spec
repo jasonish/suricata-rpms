@@ -1,5 +1,5 @@
 Name:    hyperscan
-Version: 4.5.1
+Version: 4.5.2
 Release: 1%{?dist}
 Summary: High-performance regular expression matching library
 
@@ -33,6 +33,24 @@ of data.
 
 Hyperscan is typically used in a DPI library stack.
 
+%package static
+Summary: Static library library files for the hyperscan library
+Provides: %{name}%{?_isa}
+
+%description static
+Hyperscan is a high-performance multiple regex matching library. It
+follows the regular expression syntax of the commonly-used libpcre
+library, but is a standalone library with its own C API.
+
+Hyperscan uses hybrid automata techniques to allow simultaneous
+matching of large numbers (up to tens of thousands) of regular
+expressions and for the matching of regular expressions across streams
+of data.
+
+Hyperscan is typically used in a DPI library stack.
+
+This package provides static library files for the hyperscan library.
+
 %package devel
 Summary: Libraries and header files for the hyperscan library
 Requires: %{name}%{?_isa} = %{version}-%{release}
@@ -58,7 +76,8 @@ needed for developing Hyperscan applications.
 
 
 %build
-%cmake -DBUILD_SHARED_LIBS:BOOL=OFF -DBUILD_STATIC_AND_SHARED:BOOL=ON .
+%cmake -DBUILD_SHARED_LIBS:BOOL=OFF -DBUILD_STATIC_AND_SHARED:BOOL=ON \
+       -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true .
 
 %make_build
 
@@ -77,14 +96,22 @@ cp lib/libhs.a %{buildroot}%{_libdir}
 %license COPYING
 %license LICENSE
 %{_libdir}/*.so.*
+%{_libdir}/*.so
+
+%files static
 %{_libdir}/*.a
 
 %files devel
-%{_libdir}/*.so
 %{_libdir}/pkgconfig/libhs.pc
 %{_includedir}/hs/
 
 %changelog
+* Thu Jul 27 2017 Jason Ish <ish@unx.ca> - 4.5.2-1
+- Update to 4.5.2.
+
+* Thu Jul 27 2017 Jason Ish <ish@unx.ca> - 4.5.1-2
+- Break out the static libs into their own package.
+
 * Wed Jun 28 2017 Jason Ish <ish@unx.ca> - 4.4.1-2
 - Include static library.
 
