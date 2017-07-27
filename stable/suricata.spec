@@ -132,11 +132,17 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Thu Jul 13 2017 Jason Taylor <jtfas90@gmail.com> 3.2.3-1
+- Upstream bugfix update
+
 * Thu Jul 13 2017 Jason Ish <ish@unx.ca> - 3.2.3-1
 - Update to 3.2.3.
 
-* Wed Jun  7 2017 Jason Ish <ish@unx.ca> - 3.2.2-1
+* Wed Jun 07 2017 Jason Ish <ish@unx.ca> - 3.2.2-1
 - Update to 3.2.2.
+
+* Wed Jun 07 2017 Steve Grubb <sgrubb@redhat.com> 3.2.2-1
+- Upstream bugfix update
 
 * Wed Mar 22 2017 Jason Ish <ish@unx.ca> - 3.2.1-2
 - Re-enable PID file due to selinux issues.
