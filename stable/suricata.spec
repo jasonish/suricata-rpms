@@ -1,6 +1,6 @@
 Summary: Intrusion Detection System
 Name: suricata
-Version: 3.2.3
+Version: 4.0.0
 Release: 1%{?dist}
 License: GPLv2
 Group: Applications/Internet
