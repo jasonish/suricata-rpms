@@ -39,6 +39,8 @@ Requires(post): systemd
 Requires(preun): systemd
 Requires(postun): systemd
 
+BuildRequires: rust cargo
+
 %description
 The Suricata Engine is an Open Source Next Generation Intrusion
 Detection and Prevention Engine. This engine is not intended to
@@ -59,8 +61,8 @@ autoreconf -fv --install
 %if 0%{?centos} == 7
 export LIBS="-lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc"
 %endif
-%configure --enable-gccprotect --enable-pie --disable-gccmarch-native --disable-coccinelle --enable-nfqueue --enable-af-packet --with-libnspr-includes=/usr/include/nspr4 --with-libnss-includes=/usr/include/nss3 --enable-jansson --enable-geoip --enable-lua
-make CFLAGS="%{optflags}" %{?_smp_mflags} 
+%configure --enable-gccprotect --enable-pie --disable-gccmarch-native --disable-coccinelle --enable-nfqueue --enable-af-packet --with-libnspr-includes=/usr/include/nspr4 --with-libnss-includes=/usr/include/nss3 --enable-jansson --enable-geoip --enable-lua --enable-rust
+make %{?_smp_mflags} 
 
 %install
 rm -rf %{buildroot}
