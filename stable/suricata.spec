@@ -1,7 +1,7 @@
 Summary: Intrusion Detection System
 Name: suricata
 Version: 4.0.0
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2
 Group: Applications/Internet
 URL: http://suricata-ids.org/
@@ -11,11 +11,10 @@ Source2: suricata.sysconfig
 Source3: suricata.logrotate
 Source4: fedora.notes
 Source5: suricata-tmpfiles.conf
-# liblua is not named correctly
-Patch1: suricata-2.0.2-lua.patch
+
 # Irrelevant docs are getting installed, drop them
-Patch2: suricata-2.0.9-docs.patch
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+Patch1: suricata-2.0.9-docs.patch
+
 BuildRequires: libyaml-devel
 BuildRequires: libnfnetlink-devel libnetfilter_queue-devel libnet-devel
 BuildRequires: zlib-devel libpcap-devel pcre-devel libcap-ng-devel
@@ -23,12 +22,16 @@ BuildRequires: nspr-devel nss-devel nss-softokn-devel file-devel
 BuildRequires: jansson-devel GeoIP-devel python2-devel lua-devel
 BuildRequires: autoconf automake libtool
 BuildRequires: systemd
+BuildRequires: hiredis-devel
+BuildRequires: libevent-devel
+
 %if 0%{?fedora} >= 25
 %ifarch x86_64
 BuildRequires: hyperscan-devel
 Requires: hyperscan
 %endif
 %endif
+
 Requires(pre): /usr/sbin/useradd
 Requires(post): systemd
 Requires(preun): systemd
@@ -47,16 +50,16 @@ Matching, and GeoIP identification.
 %setup -q
 install -m 644 %{SOURCE4} doc/
 %patch1 -p1
-%patch2 -p1
+
 autoreconf -fv --install
 
 %build
-%configure --enable-gccprotect --enable-pie --disable-gccmarch-native --disable-coccinelle --enable-nfqueue --enable-af-packet --with-libnspr-includes=/usr/include/nspr4 --with-libnss-includes=/usr/include/nss3 --enable-jansson --enable-geoip --enable-lua 
+%configure --enable-gccprotect --enable-pie --disable-gccmarch-native --disable-coccinelle --enable-nfqueue --enable-af-packet --with-libnspr-includes=/usr/include/nspr4 --with-libnss-includes=/usr/include/nss3 --enable-jansson --enable-geoip --enable-lua --enable-hiredis
 
-make CFLAGS="%{optflags}" %{?_smp_mflags}
+%make_build
 
 %install
-rm -rf %{buildroot}
+
 make DESTDIR="%{buildroot}" "bindir=%{_sbindir}" install
 
 # Setup etc directory
@@ -69,7 +72,7 @@ install -m 0644 %{SOURCE1} %{buildroot}%{_unitdir}/
 mkdir -p %{buildroot}%{_sysconfdir}/sysconfig
 install -m 0755 %{SOURCE2} %{buildroot}%{_sysconfdir}/sysconfig/%{name}
 
-#Setup logging
+# Set up logging
 mkdir -p %{buildroot}/%{_var}/log/%{name}
 mkdir -p %{buildroot}%{_sysconfdir}/logrotate.d
 install -m 644 %{SOURCE3} %{buildroot}%{_sysconfdir}/logrotate.d/%{name}
@@ -132,6 +135,16 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Tue Sep 26 2017 Steve Grubb <sgrubb@redhat.com> 4.0.0-2
+- Make suricata user own /run/suricata (#1396150)
+
+* Mon Jul 31 2017 Jason Taylor <jtfas90@gmail.com> 4.0.0-1
+- Latest upstream major release
+- Build now has hyperscan and redis support
+
+* Thu Jul 27 2017 Fedora Release Engineering <releng@fedoraproject.org> - 3.2.3-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Mass_Rebuild
+
 * Thu Jul 13 2017 Jason Taylor <jtfas90@gmail.com> 3.2.3-1
 - Upstream bugfix update
 
