@@ -1,7 +1,7 @@
 Summary: Intrusion Detection System
 Name: suricata
-Version: 4.0.0
-Release: 2%{?dist}
+Version: 4.0.1
+Release: 1%{?dist}
 License: GPLv2
 Group: Applications/Internet
 URL: http://suricata-ids.org/
@@ -135,6 +135,9 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Wed Oct 18 2017 Jason Ish <ish@unx.ca> - 4.0.1-1
+- Update to Suricata 4.0.1.
+
 * Tue Sep 26 2017 Steve Grubb <sgrubb@redhat.com> 4.0.0-2
 - Make suricata user own /run/suricata (#1396150)
 
