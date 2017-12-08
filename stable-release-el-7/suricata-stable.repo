@@ -1,7 +1,0 @@
-[jasonish-suricata-stable]
-name=Copr repo for suricata-stable owned by jasonish
-baseurl=https://copr-be.cloud.fedoraproject.org/results/jasonish/suricata-stable/epel-7-$basearch/
-skip_if_unavailable=True
-gpgcheck=1
-gpgkey=https://copr-be.cloud.fedoraproject.org/results/jasonish/suricata-stable/pubkey.gpg
-enabled=1
