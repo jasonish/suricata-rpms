@@ -1,5 +1,5 @@
 Name:    hyperscan
-Version: 4.5.2
+Version: 4.6.0
 Release: 1%{?dist}
 Summary: High-performance regular expression matching library
 
@@ -106,6 +106,9 @@ cp lib/libhs.a %{buildroot}%{_libdir}
 %{_includedir}/hs/
 
 %changelog
+* Thu Jan  4 2018 Jason Ish <ish@unx.ca> - 4.6.0-1
+- Update to v4.6.0.
+
 * Thu Jul 27 2017 Jason Ish <ish@unx.ca> - 4.5.2-1
 - Update to 4.5.2.
 
