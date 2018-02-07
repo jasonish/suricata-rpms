@@ -67,7 +67,6 @@ export LIBS="-lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc"
 %make_build 
 
 %install
-
 make DESTDIR="%{buildroot}" "bindir=%{_sbindir}" install
 
 # Setup etc directory
@@ -146,8 +145,23 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Wed Feb  7 2018 Jason Ish <ish@unx.ca> 4.0.3-2
+- Sync up with Fedora package.
+
 * Wed Feb  7 2018 Jason Ish <ish@unx.ca> - %%VERSION%%-1
 - Add support for suricatactl.
+
+* Mon Dec 11 2017 Jason Taylor <ftfas90@gmail.com> 4.0.3-2
+- Added prelude support
+
+* Fri Dec 08 2017 Jason Taylor <jtfas90@gmail.com> 4.0.3-1
+- Upstream bugfix release
+
+* Fri Dec  8 2017 Jason Ish <ish@unx.ca> - 4.0.3-1
+- Update to 4.0.3.
+
+* Wed Oct 18 2017 Steve Grubb <sgrubb@redhat.com> 4.0.1-1
+- Upstream bugfix update
 
 * Wed Oct 18 2017 Jason Ish <ish@unx.ca> - 4.0.1-1
 - Update to Suricata 4.0.1.
