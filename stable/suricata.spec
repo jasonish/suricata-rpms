@@ -1,7 +1,7 @@
 Summary: Intrusion Detection System
 Name: suricata
 Version: 4.0.3
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2
 Group: Applications/Internet
 URL: http://suricata-ids.org/
@@ -24,11 +24,13 @@ BuildRequires: autoconf automake libtool
 BuildRequires: systemd
 BuildRequires: hiredis-devel
 BuildRequires: libevent-devel
+BuildRequires: libprelude-devel
+BuildRequires: pkgconfig(gnutls)
 
 %if 0%{?fedora} >= 25
 %ifarch x86_64
 BuildRequires: hyperscan-devel
-Requires: hyperscan
+Requires: ragel
 %endif
 %endif
 
@@ -54,12 +56,11 @@ install -m 644 %{SOURCE4} doc/
 autoreconf -fv --install
 
 %build
-%configure --enable-gccprotect --enable-pie --disable-gccmarch-native --disable-coccinelle --enable-nfqueue --enable-af-packet --with-libnspr-includes=/usr/include/nspr4 --with-libnss-includes=/usr/include/nss3 --enable-jansson --enable-geoip --enable-lua --enable-hiredis
+%configure --enable-gccprotect --enable-pie --disable-gccmarch-native --disable-coccinelle --enable-nfqueue --enable-af-packet --with-libnspr-includes=/usr/include/nspr4 --with-libnss-includes=/usr/include/nss3 --enable-jansson --enable-geoip --enable-lua --enable-hiredis --enable-prelude
 
 %make_build
 
 %install
-
 make DESTDIR="%{buildroot}" "bindir=%{_sbindir}" install
 
 # Setup etc directory
@@ -135,8 +136,20 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Wed Feb  7 2018 Jason Ish <ish@unx.ca> 4.0.3-2
+- Sync up with Fedora package.
+
+* Mon Dec 11 2017 Jason Taylor <ftfas90@gmail.com> 4.0.3-2
+- Added prelude support
+
+* Fri Dec 08 2017 Jason Taylor <jtfas90@gmail.com> 4.0.3-1
+- Upstream bugfix release
+
 * Fri Dec  8 2017 Jason Ish <ish@unx.ca> - 4.0.3-1
 - Update to 4.0.3.
+
+* Wed Oct 18 2017 Steve Grubb <sgrubb@redhat.com> 4.0.1-1
+- Upstream bugfix update
 
 * Wed Oct 18 2017 Jason Ish <ish@unx.ca> - 4.0.1-1
 - Update to Suricata 4.0.1.
