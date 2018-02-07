@@ -41,6 +41,7 @@ mock: CONFIGDIR := $(shell test -e ../mock/$(DIST).cfg && \
 mock: srpm pre-mock
 	mock --configdir $(CONFIGDIR) -r $(DIST) \
 		--resultdir output/$(DIST) \
+		--enable-network \
 		--no-clean \
 		$(SRPM)
 
