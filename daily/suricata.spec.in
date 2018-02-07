@@ -127,9 +127,12 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %attr(644,root,root) %{_mandir}/man1/*
 %{_sbindir}/suricata
 %{_bindir}/suricatasc
+%{_bindir}/suricatactl
 %{_libdir}/libhtp*
 %{python2_sitelib}/suricatasc*.egg-info
 %{python2_sitelib}/suricatasc/*
+%{python2_sitelib}/suricata-*.egg-info
+%{python2_sitelib}/suricata/*
 %config(noreplace) %attr(-,suricata,-) %{_sysconfdir}/%{name}/suricata.yaml
 %config(noreplace) %attr(-,suricata,-) %{_sysconfdir}/%{name}/*.config
 %config(noreplace) %attr(-,suricata,-) %{_sysconfdir}/%{name}/rules/*.rules
@@ -143,6 +146,9 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Wed Feb  7 2018 Jason Ish <ish@unx.ca> - %%VERSION%%-1
+- Add support for suricatactl.
+
 * Wed Oct 18 2017 Jason Ish <ish@unx.ca> - 4.0.1-1
 - Update to Suricata 4.0.1.
 

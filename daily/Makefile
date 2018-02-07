@@ -1,5 +1,5 @@
 COPR_PROJECT :=	suricata-daily
-DISTS :=	epel-7-x86_64 fedora-24-x86_64 fedora-25-x86_64
+DISTS :=	epel-7-x86_64 fedora-27-x86_64 fedora-26-x86_64
 SPEC =		suricata.spec
 
 include daily.mk
