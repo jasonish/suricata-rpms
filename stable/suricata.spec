@@ -1,7 +1,7 @@
 Summary: Intrusion Detection System
 Name: suricata
-Version: 4.0.3
-Release: 3%{?dist}
+Version: 4.0.4
+Release: 1%{?dist}
 License: GPLv2
 Group: Applications/Internet
 URL: http://suricata-ids.org/
@@ -104,9 +104,6 @@ install -d -m 0755 %{buildroot}/run/%{name}/
 %check
 make check
 
-%clean
-rm -rf %{buildroot}
-
 %pre
 getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 
@@ -148,6 +145,13 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %changelog
 * Fri Feb 16 2018 Jason Ish <ish@unx.ca> - 4.0.3-3
 - Only enable Prelude for Fedora 27+ and EPEL 7+.
+
+* Thu Feb 15 2018 Jason Taylor <jtfas90@gmail.com> - 4.0.4-1
+- fixes bz#1543250 and bz#1543251
+- multiple upstream bugfixes
+
+* Fri Feb 09 2018 Fedora Release Engineering <releng@fedoraproject.org> - 4.0.3-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
 
 * Wed Feb  7 2018 Jason Ish <ish@unx.ca> 4.0.3-2
 - Sync up with Fedora package.
