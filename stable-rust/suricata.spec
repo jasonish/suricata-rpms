@@ -2,8 +2,8 @@
 
 Summary: Intrusion Detection System
 Name: suricata-rust
-Version: 4.0.3
-Release: 2%{?dist}
+Version: 4.0.4
+Release: 1%{?dist}
 License: GPLv2
 Group: Applications/Internet
 URL: http://suricata-ids.org/
@@ -28,6 +28,18 @@ BuildRequires: autoconf automake libtool
 BuildRequires: systemd
 BuildRequires: hiredis-devel
 BuildRequires: libevent-devel
+
+%if 0%{?fedora} >= 27
+BuildRequires: libprelude-devel
+BuildRequires: pkgconfig(gnutls)
+%define _enable_prelude --enable-prelude
+%endif
+
+%if 0%{?epel} >= 7
+BuildRequires: libprelude-devel
+BuildRequires: pkgconfig(gnutls)
+%define _enable_prelude --enable-prelude
+%endif
 
 %if 0%{?fedora} >= 25
 %ifarch x86_64
@@ -62,7 +74,7 @@ install -m 644 %{SOURCE4} doc/
 autoreconf -fv --install
 
 %build
-%configure --enable-gccprotect --enable-pie --disable-gccmarch-native --disable-coccinelle --enable-nfqueue --enable-af-packet --with-libnspr-includes=/usr/include/nspr4 --with-libnss-includes=/usr/include/nss3 --enable-jansson --enable-geoip --enable-lua --enable-hiredis --enable-rust
+%configure --enable-gccprotect --enable-pie --disable-gccmarch-native --disable-coccinelle --enable-nfqueue --enable-af-packet --with-libnspr-includes=/usr/include/nspr4 --with-libnss-includes=/usr/include/nss3 --enable-jansson --enable-geoip --enable-lua --enable-hiredis %{_enable_prelude} --enable-rust
 
 %make_build
 
@@ -99,9 +111,6 @@ install -d -m 0755 %{buildroot}/run/%{name}/
 
 %check
 make check
-
-%clean
-rm -rf %{buildroot}
 
 %pre
 getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
@@ -142,6 +151,16 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Fri Feb 16 2018 Jason Ish <ish@unx.ca> - 4.0.3-3
+- Only enable Prelude for Fedora 27+ and EPEL 7+.
+
+* Thu Feb 15 2018 Jason Taylor <jtfas90@gmail.com> - 4.0.4-1
+- fixes bz#1543250 and bz#1543251
+- multiple upstream bugfixes
+
+* Fri Feb 09 2018 Fedora Release Engineering <releng@fedoraproject.org> - 4.0.3-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
+
 * Wed Feb  7 2018 Jason Ish <ish@unx.ca> 4.0.3-2
 - Sync up with Fedora package.
 
