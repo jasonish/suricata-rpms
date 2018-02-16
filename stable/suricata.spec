@@ -1,7 +1,7 @@
 Summary: Intrusion Detection System
 Name: suricata
 Version: 4.0.3
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2
 Group: Applications/Internet
 URL: http://suricata-ids.org/
@@ -24,8 +24,18 @@ BuildRequires: autoconf automake libtool
 BuildRequires: systemd
 BuildRequires: hiredis-devel
 BuildRequires: libevent-devel
+
+%if 0%{?fedora} >= 27
 BuildRequires: libprelude-devel
 BuildRequires: pkgconfig(gnutls)
+%define _enable_prelude --enable-prelude
+%endif
+
+%if 0%{?epel} >= 7
+BuildRequires: libprelude-devel
+BuildRequires: pkgconfig(gnutls)
+%define _enable_prelude --enable-prelude
+%endif
 
 %if 0%{?fedora} >= 25
 %ifarch x86_64
@@ -56,7 +66,7 @@ install -m 644 %{SOURCE4} doc/
 autoreconf -fv --install
 
 %build
-%configure --enable-gccprotect --enable-pie --disable-gccmarch-native --disable-coccinelle --enable-nfqueue --enable-af-packet --with-libnspr-includes=/usr/include/nspr4 --with-libnss-includes=/usr/include/nss3 --enable-jansson --enable-geoip --enable-lua --enable-hiredis --enable-prelude
+%configure --enable-gccprotect --enable-pie --disable-gccmarch-native --disable-coccinelle --enable-nfqueue --enable-af-packet --with-libnspr-includes=/usr/include/nspr4 --with-libnss-includes=/usr/include/nss3 --enable-jansson --enable-geoip --enable-lua --enable-hiredis %{_enable_prelude}
 
 %make_build
 
@@ -136,6 +146,9 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Fri Feb 16 2018 Jason Ish <ish@unx.ca> - 4.0.3-3
+- Only enable Prelude for Fedora 27+ and EPEL 7+.
+
 * Wed Feb  7 2018 Jason Ish <ish@unx.ca> 4.0.3-2
 - Sync up with Fedora package.
 
