@@ -1,23 +1,22 @@
-%define prerelease_tag rc2
+%define prerelease_tag beta1
 
 Summary: Intrusion Detection System
 Name: suricata
-Version: 4.0.0
-Release: 0.3%{prerelease_tag}%{?dist}
+Version: 4.1.0
+Release: 0.1%{prerelease_tag}%{?dist}
 License: GPLv2
 Group: Applications/Internet
 URL: http://suricata-ids.org/
-Source0: http://downloads.suricata-ids.org/%{name}-%{version}-%{prerelease_tag}.tar.gz
+Source0: https://www.openinfosecfoundation.org/download/%{name}-%{version}-%{prerelease_tag}.tar.gz
 Source1: suricata.service
 Source2: suricata.sysconfig
 Source3: suricata.logrotate
 Source4: fedora.notes
 Source5: suricata-tmpfiles.conf
-# liblua is not named correctly
-Patch1: suricata-2.0.2-lua.patch
+
 # Irrelevant docs are getting installed, drop them
-Patch2: suricata-2.0.9-docs.patch
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+Patch1: suricata-2.0.9-docs.patch
+
 BuildRequires: libyaml-devel
 BuildRequires: libnfnetlink-devel libnetfilter_queue-devel libnet-devel
 BuildRequires: zlib-devel libpcap-devel pcre-devel libcap-ng-devel
@@ -25,12 +24,28 @@ BuildRequires: nspr-devel nss-devel nss-softokn-devel file-devel
 BuildRequires: jansson-devel GeoIP-devel python2-devel lua-devel
 BuildRequires: autoconf automake libtool
 BuildRequires: systemd
+BuildRequires: hiredis-devel
+BuildRequires: libevent-devel
+
+%if 0%{?fedora} >= 27
+BuildRequires: libprelude-devel
+BuildRequires: pkgconfig(gnutls)
+%define _enable_prelude --enable-prelude
+%endif
+
+%if 0%{?epel} >= 7
+BuildRequires: libprelude-devel
+BuildRequires: pkgconfig(gnutls)
+%define _enable_prelude --enable-prelude
+%endif
+
 %if 0%{?fedora} >= 25
 %ifarch x86_64
 BuildRequires: hyperscan-devel
-Requires: hyperscan
+Requires: ragel
 %endif
 %endif
+
 Requires(pre): /usr/sbin/useradd
 Requires(post): systemd
 Requires(preun): systemd
@@ -49,16 +64,15 @@ Matching, and GeoIP identification.
 %setup -q -n suricata-%{version}-%{prerelease_tag}
 install -m 644 %{SOURCE4} doc/
 %patch1 -p1
-%patch2 -p1
+
 autoreconf -fv --install
 
 %build
-%configure --enable-gccprotect --enable-pie --disable-gccmarch-native --disable-coccinelle --enable-nfqueue --enable-af-packet --with-libnspr-includes=/usr/include/nspr4 --with-libnss-includes=/usr/include/nss3 --enable-jansson --enable-geoip --enable-lua 
+%configure --enable-gccprotect --enable-pie --disable-gccmarch-native --disable-coccinelle --enable-nfqueue --enable-af-packet --with-libnspr-includes=/usr/include/nspr4 --with-libnss-includes=/usr/include/nss3 --enable-jansson --enable-geoip --enable-lua --enable-hiredis %{_enable_prelude}
 
-make CFLAGS="%{optflags}" %{?_smp_mflags}
+%make_build
 
 %install
-rm -rf %{buildroot}
 make DESTDIR="%{buildroot}" "bindir=%{_sbindir}" install
 
 # Setup etc directory
@@ -71,7 +85,7 @@ install -m 0644 %{SOURCE1} %{buildroot}%{_unitdir}/
 mkdir -p %{buildroot}%{_sysconfdir}/sysconfig
 install -m 0755 %{SOURCE2} %{buildroot}%{_sysconfdir}/sysconfig/%{name}
 
-#Setup logging
+# Set up logging
 mkdir -p %{buildroot}/%{_var}/log/%{name}
 mkdir -p %{buildroot}%{_sysconfdir}/logrotate.d
 install -m 644 %{SOURCE3} %{buildroot}%{_sysconfdir}/logrotate.d/%{name}
@@ -91,9 +105,6 @@ install -d -m 0755 %{buildroot}/run/%{name}/
 
 %check
 make check
-
-%clean
-rm -rf %{buildroot}
 
 %pre
 getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
@@ -118,9 +129,12 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %attr(644,root,root) %{_mandir}/man1/*
 %{_sbindir}/suricata
 %{_bindir}/suricatasc
+%{_bindir}/suricatactl
+%{_bindir}/suricata-update
 %{_libdir}/libhtp*
-%{python2_sitelib}/suricatasc*.egg-info
 %{python2_sitelib}/suricatasc/*
+%{python2_sitelib}/suricata/*
+%{python2_sitelib}/suricata*.egg-info
 %config(noreplace) %attr(-,suricata,-) %{_sysconfdir}/%{name}/suricata.yaml
 %config(noreplace) %attr(-,suricata,-) %{_sysconfdir}/%{name}/*.config
 %config(noreplace) %attr(-,suricata,-) %{_sysconfdir}/%{name}/rules/*.rules
@@ -134,17 +148,58 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
-* Thu Jul 13 2017 Jason Ish <ish@unx.ca> - 4.0.0-0.3rc2
-- Update to Suricata 4.0.0-rc2.
+* Sun Mar 25 2018 Jason Ish <ish@unx.ca> - 4.1.0-0.1beta1
+- 4.1.0beta1.
 
-* Wed Jun 28 2017 Jason Ish <ish@unx.ca> - 4.0.0-0.2rc1
-- Update to 4.0.0-rc1
+* Fri Feb 16 2018 Jason Ish <ish@unx.ca> - 4.0.3-3
+- Only enable Prelude for Fedora 27+ and EPEL 7+.
 
-* Thu Jun  8 2017 Jason Ish <ish@unx.ca> - 4.0.0-0.1beta1
-- Update to 4.0.0-beta1.
+* Thu Feb 15 2018 Jason Taylor <jtfas90@gmail.com> - 4.0.4-1
+- fixes bz#1543250 and bz#1543251
+- multiple upstream bugfixes
 
-* Wed Jun  7 2017 Jason Ish <ish@unx.ca> - 3.2.2-2
+* Fri Feb 09 2018 Fedora Release Engineering <releng@fedoraproject.org> - 4.0.3-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
+
+* Wed Feb  7 2018 Jason Ish <ish@unx.ca> 4.0.3-2
+- Sync up with Fedora package.
+
+* Mon Dec 11 2017 Jason Taylor <ftfas90@gmail.com> 4.0.3-2
+- Added prelude support
+
+* Fri Dec 08 2017 Jason Taylor <jtfas90@gmail.com> 4.0.3-1
+- Upstream bugfix release
+
+* Fri Dec  8 2017 Jason Ish <ish@unx.ca> - 4.0.3-1
+- Update to 4.0.3.
+
+* Wed Oct 18 2017 Steve Grubb <sgrubb@redhat.com> 4.0.1-1
+- Upstream bugfix update
+
+* Wed Oct 18 2017 Jason Ish <ish@unx.ca> - 4.0.1-1
+- Update to Suricata 4.0.1.
+
+* Tue Sep 26 2017 Steve Grubb <sgrubb@redhat.com> 4.0.0-2
+- Make suricata user own /run/suricata (#1396150)
+
+* Mon Jul 31 2017 Jason Taylor <jtfas90@gmail.com> 4.0.0-1
+- Latest upstream major release
+- Build now has hyperscan and redis support
+
+* Thu Jul 27 2017 Fedora Release Engineering <releng@fedoraproject.org> - 3.2.3-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Mass_Rebuild
+
+* Thu Jul 13 2017 Jason Taylor <jtfas90@gmail.com> 3.2.3-1
+- Upstream bugfix update
+
+* Thu Jul 13 2017 Jason Ish <ish@unx.ca> - 3.2.3-1
+- Update to 3.2.3.
+
+* Wed Jun 07 2017 Jason Ish <ish@unx.ca> - 3.2.2-1
 - Update to 3.2.2.
+
+* Wed Jun 07 2017 Steve Grubb <sgrubb@redhat.com> 3.2.2-1
+- Upstream bugfix update
 
 * Wed Mar 22 2017 Jason Ish <ish@unx.ca> - 3.2.1-2
 - Re-enable PID file due to selinux issues.
@@ -163,9 +218,6 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 * Sat Feb 11 2017 Fedora Release Engineering <releng@fedoraproject.org> - 3.1.3-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
 
-* Wed Nov  2 2016 Jason Ish <ish@unx.ca> - 3.2-0.2RC1
-- Update to Suricata 3.2RC1.
-
 * Tue Nov 01 2016 Steve Grubb <sgrubb@redhat.com> 3.1.3-1
 - New upstream bug fix release
 
@@ -183,12 +235,6 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 
 * Wed Jun 22 2016 Steve Grubb <sgrubb@redhat.com> 3.1-1
 - New upstream bug fix release
-
-* Tue Jun  7 2016 Jason Ish <ish@unx.ca> - 3.1-0.1RC1
-- Update to Suricata 3.1RC1.
-
-* Tue Apr 26 2016 Jason Ish <ish@unx.ca> - 3.0.1-0.1rc1
-- Basic 3.0.1RC1 RPM on the 3.0.1 stable RPM.
 
 * Mon Apr 04 2016 Steve Grubb <sgrubb@redhat.com> 3.0.1-1
 - New upstream bug fix release
