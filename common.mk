@@ -47,7 +47,7 @@ mock: srpm pre-mock
 
 update-sources: SOURCES=$(shell spectool -l $(SPEC) | basename `awk '/:\/\// { print $$2 }'`)
 update-sources:
-	md5sum $(SOURCES) > sources
+	sha512sum --tag $(SOURCES) > sources
 
 $(DISTS):
 	$(MAKE) mock DIST="$@"
