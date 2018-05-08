@@ -128,7 +128,6 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %{_bindir}/suricatasc
 %{_bindir}/suricatactl
 %{_libdir}/libhtp*
-%{python2_sitelib}/suricatasc*.egg-info
 %{python2_sitelib}/suricatasc/*
 %{python2_sitelib}/suricata-*.egg-info
 %{python2_sitelib}/suricata/*
@@ -142,9 +141,14 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %attr(750,suricata,root) %dir %{_sysconfdir}/%{name}
 %attr(750,suricata,root) %dir %{_sysconfdir}/%{name}/rules
 %attr(750,suricata,root) %dir /run/%{name}/
+%attr(644,root,root) %{_datadir}/%{name}/rules
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Tue May  8 2018 Jason Ish <ish@unx.ca> - %%VERSION%%-1
+- Remove %file for suricatasc Python egg.
+- Add the rules that are not installed to the datadir.
+
 * Wed Feb  7 2018 Jason Ish <ish@unx.ca> 4.0.3-2
 - Sync up with Fedora package.
 
