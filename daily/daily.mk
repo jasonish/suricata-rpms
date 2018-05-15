@@ -9,7 +9,7 @@ fetch::
 	test -e suricata/libhtp && \
 		(cd suricata/libhtp && git pull) || \
 		(cd suricata && git clone https://github.com/OISF/libhtp.git)
-	tar zcf suricata.tar.gz suricata --exclude .git
+	tar zcf suricata.tar.gz suricata
 	sed -e "s#%%VERSION%%#$(DAILY_VERSION)#g" \
 		suricata.spec.in > suricata.spec
 
