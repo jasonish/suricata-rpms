@@ -43,6 +43,10 @@ Requires(postun): systemd
 
 BuildRequires: rust cargo
 
+Conflicts: suricata
+
+%define name suricata
+
 %description
 The Suricata Engine is an Open Source Next Generation Intrusion
 Detection and Prevention Engine. This engine is not intended to
@@ -53,7 +57,7 @@ UDP, ICMP, HTTP, TLS, FTP and SMB! ), Gzip Decompression, Fast IP
 Matching, and GeoIP identification.
 
 %prep
-%setup -q -n suricata
+%setup -q -n %{name}
 install -m 644 %{SOURCE4} doc/
 %patch1 -p1
 
