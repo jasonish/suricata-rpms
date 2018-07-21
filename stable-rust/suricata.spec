@@ -2,7 +2,7 @@
 
 Summary: Intrusion Detection System
 Name: suricata-rust
-Version: 4.0.4
+Version: 4.0.5
 Release: 1%{?dist}
 License: GPLv2
 Group: Applications/Internet
@@ -19,6 +19,8 @@ Patch1: suricata-2.0.9-docs.patch
 
 BuildRoot: %{_tmppath}/%{realname}-%{version}-%{release}-root-%(%{__id_u} -n)
 
+BuildRequires: gcc
+BuildRequires: gcc-c++
 BuildRequires: libyaml-devel
 BuildRequires: libnfnetlink-devel libnetfilter_queue-devel libnet-devel
 BuildRequires: zlib-devel libpcap-devel pcre-devel libcap-ng-devel
@@ -127,7 +129,6 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %systemd_postun_with_restart suricata.service
 
 %files
-%defattr(-,root,root,-)
 %doc doc/Basic_Setup.txt
 %doc doc/Setting_up_IPSinline_for_Linux.txt doc/fedora.notes
 %{!?_licensedir:%global license %%doc}
@@ -151,6 +152,16 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Wed Jul 18 2018 Jason Taylor <jtfas90@gmail.com> - 4.0.5-1
+- upstream security fix release
+- addresses CVE-2018-10242, CVE-2018-10243, CVE-2018-10244
+
+* Sat Jul 14 2018 Fedora Release Engineering <releng@fedoraproject.org> - 4.0.4-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
+
+* Mon Jul 09 2018 Jason Taylor <jtfas90@gmail.com> - 4.0.4-2
+- bumped release for build against hyperscan 5.0.0
+
 * Fri Feb 16 2018 Jason Ish <ish@unx.ca> - 4.0.3-3
 - Only enable Prelude for Fedora 27+ and EPEL 7+.
 
