@@ -1,4 +1,4 @@
-%define realname suricata
+%define distname suricata
 
 Summary: Intrusion Detection System
 Name: suricata-rust
@@ -7,7 +7,7 @@ Release: 1%{?dist}
 License: GPLv2
 Group: Applications/Internet
 URL: http://suricata-ids.org/
-Source0:  http://downloads.suricata-ids.org/%{realname}-%{version}.tar.gz
+Source0:  http://downloads.suricata-ids.org/%{distname}-%{version}.tar.gz
 Source1: suricata.service
 Source2: suricata.sysconfig
 Source3: suricata.logrotate
@@ -16,8 +16,6 @@ Source5: suricata-tmpfiles.conf
 
 # Irrelevant docs are getting installed, drop them
 Patch1: suricata-2.0.9-docs.patch
-
-BuildRoot: %{_tmppath}/%{realname}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires: gcc
 BuildRequires: gcc-c++
@@ -54,8 +52,8 @@ Requires(pre): /usr/sbin/useradd
 Requires(post): systemd
 Requires(preun): systemd
 Requires(postun): systemd
-BuildRequires: rust cargo
 
+BuildRequires: rust cargo
 Provides: suricata
 Conflicts: suricata
 
@@ -69,7 +67,7 @@ UDP, ICMP, HTTP, TLS, FTP and SMB! ), Gzip Decompression, Fast IP
 Matching, and GeoIP identification.
 
 %prep
-%setup -q -n %{realname}-%{version}
+%setup -q -n %{distname}-%{version}
 install -m 644 %{SOURCE4} doc/
 %patch1 -p1
 
