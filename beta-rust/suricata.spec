@@ -1,14 +1,14 @@
-%define realname suricata
-%define prerelease_tag beta1
+%define distname suricata
+%define prerelease_tag rc1
 
 Summary: Intrusion Detection System
 Name: suricata-rust
 Version: 4.1.0
-Release: 0.1%{prerelease_tag}%{?dist}
+Release: 0.2%{prerelease_tag}%{?dist}
 License: GPLv2
 Group: Applications/Internet
 URL: http://suricata-ids.org/
-Source0: https://www.openinfosecfoundation.org/download/%{realname}-%{version}-%{prerelease_tag}.tar.gz
+Source0: https://www.openinfosecfoundation.org/download/%{distname}-%{version}-%{prerelease_tag}.tar.gz
 Source1: suricata.service
 Source2: suricata.sysconfig
 Source3: suricata.logrotate
@@ -18,6 +18,8 @@ Source5: suricata-tmpfiles.conf
 # Irrelevant docs are getting installed, drop them
 Patch1: suricata-2.0.9-docs.patch
 
+BuildRequires: gcc
+BuildRequires: gcc-c++
 BuildRequires: libyaml-devel
 BuildRequires: libnfnetlink-devel libnetfilter_queue-devel libnet-devel
 BuildRequires: zlib-devel libpcap-devel pcre-devel libcap-ng-devel
@@ -53,9 +55,12 @@ Requires(preun): systemd
 Requires(postun): systemd
 
 BuildRequires: rust cargo
-
 Provides: suricata
 Conflicts: suricata
+
+# Redefine name here is most of the below can stay the same as the
+# non-rust version.
+%define name %{distname}
 
 %description
 The Suricata Engine is an Open Source Next Generation Intrusion
@@ -67,7 +72,7 @@ UDP, ICMP, HTTP, TLS, FTP and SMB! ), Gzip Decompression, Fast IP
 Matching, and GeoIP identification.
 
 %prep
-%setup -q -n %{realname}-%{version}-%{prerelease_tag}
+%setup -q -n %{name}-%{version}-%{prerelease_tag}
 install -m 644 %{SOURCE4} doc/
 %patch1 -p1
 
@@ -127,7 +132,6 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %systemd_postun_with_restart suricata.service
 
 %files
-%defattr(-,root,root,-)
 %doc doc/Basic_Setup.txt
 %doc doc/Setting_up_IPSinline_for_Linux.txt doc/fedora.notes
 %{!?_licensedir:%global license %%doc}
@@ -151,11 +155,18 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %attr(750,suricata,root) %dir %{_sysconfdir}/%{name}
 %attr(750,suricata,root) %dir %{_sysconfdir}/%{name}/rules
 %attr(750,suricata,root) %dir /run/%{name}/
+%attr(644,root,root) %{_datadir}/%{name}/rules
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
-* Sun Mar 25 2018 Jason Ish <ish@unx.ca> - 4.1.0-0.1beta1
-- 4.1.0beta1.
+* Sat Jul 21 2018 Jason Ish <ish@unx.ca> - 4.1.0-0.2rc1
+- 4.1.0rc1.
+
+* Sat Jul 14 2018 Fedora Release Engineering <releng@fedoraproject.org> - 4.0.4-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
+
+* Mon Jul 09 2018 Jason Taylor <jtfas90@gmail.com> - 4.0.4-2
+- bumped release for build against hyperscan 5.0.0
 
 * Fri Feb 16 2018 Jason Ish <ish@unx.ca> - 4.0.3-3
 - Only enable Prelude for Fedora 27+ and EPEL 7+.
