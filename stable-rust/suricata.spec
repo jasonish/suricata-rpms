@@ -48,6 +48,13 @@ Requires: ragel
 %endif
 %endif
 
+%if 0%{?centos} == 7
+%ifarch x86_64
+BuildRequires: hyperscan-static
+BuildRequires: hyperscan-devel
+%endif
+%endif
+
 Requires(pre): /usr/sbin/useradd
 Requires(post): systemd
 Requires(preun): systemd
@@ -74,6 +81,12 @@ install -m 644 %{SOURCE4} doc/
 autoreconf -fv --install
 
 %build
+
+# Required for Hyperscan on CentOS 7.
+%if 0%{?centos} == 7
+export LIBS="-lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc"
+%endif
+
 %configure --enable-gccprotect --enable-pie --disable-gccmarch-native --disable-coccinelle --enable-nfqueue --enable-af-packet --with-libnspr-includes=/usr/include/nspr4 --with-libnss-includes=/usr/include/nss3 --enable-jansson --enable-geoip --enable-lua --enable-hiredis %{_enable_prelude} --enable-rust
 
 %make_build
