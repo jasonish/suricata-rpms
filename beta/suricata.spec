@@ -3,7 +3,7 @@
 Summary: Intrusion Detection System
 Name: suricata
 Version: 4.1.0
-Release: 0.2%{prerelease_tag}%{?dist}
+Release: 0.3%{prerelease_tag}%{?dist}
 License: GPLv2
 Group: Applications/Internet
 URL: http://suricata-ids.org/
@@ -48,6 +48,13 @@ Requires: ragel
 %endif
 %endif
 
+%if 0%{?centos} == 7
+%ifarch x86_64
+BuildRequires: hyperscan-static
+BuildRequires: hyperscan-devel
+%endif
+%endif
+
 Requires(pre): /usr/sbin/useradd
 Requires(post): systemd
 Requires(preun): systemd
@@ -70,6 +77,12 @@ install -m 644 %{SOURCE4} doc/
 autoreconf -fv --install
 
 %build
+
+# Required for Hyperscan on CentOS 7.
+%if 0%{?centos} == 7
+export LIBS="-lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc"
+%endif
+
 %configure --enable-gccprotect --enable-pie --disable-gccmarch-native --disable-coccinelle --enable-nfqueue --enable-af-packet --with-libnspr-includes=/usr/include/nspr4 --with-libnss-includes=/usr/include/nss3 --enable-jansson --enable-geoip --enable-lua --enable-hiredis %{_enable_prelude}
 
 %make_build
@@ -150,6 +163,9 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Mon Jul 30 2018 Jason Ish <ish@unx.ca> - 4.1.0-0.3rc1
+- Enable Hyperscan.
+
 * Sat Jul 21 2018 Jason Ish <ish@unx.ca> - 4.1.0-0.2rc1
 - 4.1.0rc1.
 
