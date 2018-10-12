@@ -11,11 +11,11 @@ fetch::
 		(cd suricata && git clone https://github.com/OISF/libhtp.git)
 	tar zcf suricata.tar.gz suricata
 	sed -e "s#%%VERSION%%#$(DAILY_VERSION)#g" \
-		suricata.spec > suricata.spec.out
+		suricata.spec.in > suricata.spec
 
 dist-clean: clean
 	rm -rf suricata
 
 clean::
-	rm -f suricata-daily.spec.out
+	rm -f suricata.spec
 	rm -f *.rpm *.tar.gz

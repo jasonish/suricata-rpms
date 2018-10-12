@@ -1,5 +1,5 @@
 Summary: Intrusion Detection System
-Name: suricata
+Name: suricata-rust
 Version: %%VERSION%%
 Release: 1%{?dist}
 License: GPLv2
@@ -24,6 +24,8 @@ BuildRequires: autoconf automake libtool
 BuildRequires: systemd
 BuildRequires: hiredis-devel
 BuildRequires: libevent-devel
+BuildRequires: gcc-c++
+BuildRequires: rust cargo
 
 BuildRequires: python-sphinx
 %if 0%{?fedora} >= 25
@@ -41,6 +43,9 @@ Requires(post): systemd
 Requires(preun): systemd
 Requires(postun): systemd
 
+Conflicts: suricata
+%define name suricata
+
 %description
 The Suricata Engine is an Open Source Next Generation Intrusion
 Detection and Prevention Engine. This engine is not intended to
@@ -51,7 +56,7 @@ UDP, ICMP, HTTP, TLS, FTP and SMB! ), Gzip Decompression, Fast IP
 Matching, and GeoIP identification.
 
 %prep
-%setup -q -n suricata
+%setup -q -n %{name}
 install -m 644 %{SOURCE4} doc/
 %patch1 -p1
 
@@ -61,7 +66,7 @@ autoreconf -fv --install
 %if 0%{?centos} == 7
 export LIBS="-lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc"
 %endif
-%configure --enable-gccprotect --enable-pie --disable-gccmarch-native --disable-coccinelle --enable-nfqueue --enable-af-packet --with-libnspr-includes=/usr/include/nspr4 --with-libnss-includes=/usr/include/nss3 --enable-jansson --enable-geoip --enable-lua --enable-hiredis
+%configure --enable-gccprotect --enable-pie --disable-gccmarch-native --disable-coccinelle --enable-nfqueue --enable-af-packet --with-libnspr-includes=/usr/include/nspr4 --with-libnss-includes=/usr/include/nss3 --enable-jansson --enable-geoip --enable-lua --enable-hiredis --enable-rust
 %make_build 
 
 %install
