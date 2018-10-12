@@ -16,6 +16,8 @@ Source5: suricata-tmpfiles.conf
 
 # Irrelevant docs are getting installed, drop them
 Patch1: suricata-2.0.9-docs.patch
+# liblua is not named correctly in epel 7.
+Patch2: suricata-2.0.2-lua.patch
 
 BuildRequires: gcc
 BuildRequires: gcc-c++
@@ -28,18 +30,8 @@ BuildRequires: autoconf automake libtool
 BuildRequires: systemd
 BuildRequires: hiredis-devel
 BuildRequires: libevent-devel
-
-%if 0%{?fedora} >= 27
 BuildRequires: libprelude-devel
 BuildRequires: pkgconfig(gnutls)
-%define _enable_prelude --enable-prelude
-%endif
-
-%if 0%{?epel} >= 7
-BuildRequires: libprelude-devel
-BuildRequires: pkgconfig(gnutls)
-%define _enable_prelude --enable-prelude
-%endif
 
 %if 0%{?fedora} >= 25
 %ifarch x86_64
@@ -77,6 +69,9 @@ Matching, and GeoIP identification.
 %setup -q -n %{distname}-%{version}
 install -m 644 %{SOURCE4} doc/
 %patch1 -p1
+%if 0%{?rhel} == 7
+%patch2 -p1
+%endif
 
 autoreconf -fv --install
 
@@ -87,7 +82,7 @@ autoreconf -fv --install
 export LIBS="-lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc"
 %endif
 
-%configure --enable-gccprotect --enable-pie --disable-gccmarch-native --disable-coccinelle --enable-nfqueue --enable-af-packet --with-libnspr-includes=/usr/include/nspr4 --with-libnss-includes=/usr/include/nss3 --enable-jansson --enable-geoip --enable-lua --enable-hiredis %{_enable_prelude} --enable-rust
+%configure --enable-gccprotect --enable-pie --disable-gccmarch-native --disable-coccinelle --enable-nfqueue --enable-af-packet --with-libnspr-includes=/usr/include/nspr4 --with-libnss-includes=/usr/include/nss3 --enable-jansson --enable-geoip --enable-lua --enable-hiredis --enable-prelude --enable-rust
 
 %make_build
 
@@ -163,6 +158,12 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
+* Mon Aug 13 2018 Steve Grubb <sgrubb@redhat.com> - 4.0.5-3
+- Consolidate branches so that everything is in sync (#1614935)
+
+* Fri Aug 10 2018 Jason Taylor <jtfas90@gmail.com> 4.0.5-2
+- fixes bz#1614935
+
 * Wed Jul 18 2018 Jason Taylor <jtfas90@gmail.com> - 4.0.5-1
 - upstream security fix release
 - addresses CVE-2018-10242, CVE-2018-10243, CVE-2018-10244
@@ -173,8 +174,8 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 * Mon Jul 09 2018 Jason Taylor <jtfas90@gmail.com> - 4.0.4-2
 - bumped release for build against hyperscan 5.0.0
 
-* Fri Feb 16 2018 Jason Ish <ish@unx.ca> - 4.0.3-3
-- Only enable Prelude for Fedora 27+ and EPEL 7+.
+* Mon Jul 09 2018 Jason Taylor <jtfas90@gmail.com> - 4.0.4-1
+- added gcc-c++ buildrequires
 
 * Thu Feb 15 2018 Jason Taylor <jtfas90@gmail.com> - 4.0.4-1
 - fixes bz#1543250 and bz#1543251
@@ -183,23 +184,14 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 * Fri Feb 09 2018 Fedora Release Engineering <releng@fedoraproject.org> - 4.0.3-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
 
-* Wed Feb  7 2018 Jason Ish <ish@unx.ca> 4.0.3-2
-- Sync up with Fedora package.
-
-* Mon Dec 11 2017 Jason Taylor <ftfas90@gmail.com> 4.0.3-2
+* Mon Dec 11 2017 Jason Taylor <jtfas90@gmail.com> 4.0.3-2
 - Added prelude support
 
 * Fri Dec 08 2017 Jason Taylor <jtfas90@gmail.com> 4.0.3-1
 - Upstream bugfix release
 
-* Fri Dec  8 2017 Jason Ish <ish@unx.ca> - 4.0.3-1
-- Update to 4.0.3.
-
 * Wed Oct 18 2017 Steve Grubb <sgrubb@redhat.com> 4.0.1-1
 - Upstream bugfix update
-
-* Wed Oct 18 2017 Jason Ish <ish@unx.ca> - 4.0.1-1
-- Update to Suricata 4.0.1.
 
 * Tue Sep 26 2017 Steve Grubb <sgrubb@redhat.com> 4.0.0-2
 - Make suricata user own /run/suricata (#1396150)
@@ -213,12 +205,6 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 
 * Thu Jul 13 2017 Jason Taylor <jtfas90@gmail.com> 3.2.3-1
 - Upstream bugfix update
-
-* Thu Jul 13 2017 Jason Ish <ish@unx.ca> - 3.2.3-1
-- Update to 3.2.3.
-
-* Wed Jun 07 2017 Jason Ish <ish@unx.ca> - 3.2.2-1
-- Update to 3.2.2.
 
 * Wed Jun 07 2017 Steve Grubb <sgrubb@redhat.com> 3.2.2-1
 - Upstream bugfix update
