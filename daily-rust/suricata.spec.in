@@ -66,7 +66,7 @@ autoreconf -fv --install
 %if 0%{?centos} == 7
 export LIBS="-lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc"
 %endif
-%configure --enable-gccprotect --enable-pie --disable-gccmarch-native --disable-coccinelle --enable-nfqueue --enable-af-packet --with-libnspr-includes=/usr/include/nspr4 --with-libnss-includes=/usr/include/nss3 --enable-jansson --enable-geoip --enable-lua --enable-hiredis --enable-rust
+%configure --enable-gccprotect --enable-pie --disable-gccmarch-native --disable-coccinelle --enable-nfqueue --enable-af-packet --with-libnspr-includes=/usr/include/nspr4 --with-libnss-includes=/usr/include/nss3 --enable-jansson --enable-geoip --enable-lua --enable-hiredis
 %make_build 
 
 %install
@@ -130,9 +130,10 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %{_sbindir}/suricata
 %{_bindir}/suricatasc
 %{_bindir}/suricatactl
+%{_bindir}/suricata-update
 %{_libdir}/libhtp*
 %{python2_sitelib}/suricatasc/*
-%{python2_sitelib}/suricata-*.egg-info
+%{python2_sitelib}/suricata*.egg-info
 %{python2_sitelib}/suricata/*
 %config(noreplace) %attr(-,suricata,-) %{_sysconfdir}/%{name}/suricata.yaml
 %config(noreplace) %attr(-,suricata,-) %{_sysconfdir}/%{name}/*.config
@@ -144,7 +145,8 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %attr(750,suricata,root) %dir %{_sysconfdir}/%{name}
 %attr(750,suricata,root) %dir %{_sysconfdir}/%{name}/rules
 %attr(750,suricata,root) %dir /run/%{name}/
-%attr(644,root,root) %{_datadir}/%{name}/rules
+%attr(755,root,root) %dir %{_datadir}/%{name}/rules
+%attr(644,root,root) %{_datadir}/%{name}/rules/*
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
