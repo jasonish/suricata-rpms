@@ -14,7 +14,11 @@ Source5: suricata-tmpfiles.conf
 
 # Irrelevant docs are getting installed, drop them
 Patch1: suricata-2.0.9-docs.patch
+# liblua is not named correctly in epel 7.
+Patch2: suricata-2.0.2-lua.patch
 
+BuildRequires: gcc
+BuildRequires: gcc-c++
 BuildRequires: libyaml-devel
 BuildRequires: libnfnetlink-devel libnetfilter_queue-devel libnet-devel
 BuildRequires: zlib-devel libpcap-devel pcre-devel libcap-ng-devel
@@ -24,20 +28,28 @@ BuildRequires: autoconf automake libtool
 BuildRequires: systemd
 BuildRequires: hiredis-devel
 BuildRequires: libevent-devel
+BuildRequires: libprelude-devel
+BuildRequires: pkgconfig(gnutls)
+
 BuildRequires: gcc-c++
 BuildRequires: rust cargo
 
 BuildRequires: python-sphinx
+
 %if 0%{?fedora} >= 25
 %ifarch x86_64
 BuildRequires: hyperscan-devel
-Requires: hyperscan
+Requires: ragel
 %endif
 %endif
+
 %if 0%{?centos} == 7
+%ifarch x86_64
 BuildRequires: hyperscan-static
 BuildRequires: hyperscan-devel
 %endif
+%endif
+
 Requires(pre): /usr/sbin/useradd
 Requires(post): systemd
 Requires(preun): systemd
@@ -59,15 +71,22 @@ Matching, and GeoIP identification.
 %setup -q -n %{name}
 install -m 644 %{SOURCE4} doc/
 %patch1 -p1
+%if 0%{?rhel} == 7
+%patch2 -p1
+%endif
 
 autoreconf -fv --install
 
 %build
+
+# Required for Hyperscan on CentOS 7.
 %if 0%{?centos} == 7
 export LIBS="-lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc"
 %endif
-%configure --enable-gccprotect --enable-pie --disable-gccmarch-native --disable-coccinelle --enable-nfqueue --enable-af-packet --with-libnspr-includes=/usr/include/nspr4 --with-libnss-includes=/usr/include/nss3 --enable-jansson --enable-geoip --enable-lua --enable-hiredis
-%make_build 
+
+%configure --enable-gccprotect --enable-pie --disable-gccmarch-native --disable-coccinelle --enable-nfqueue --enable-af-packet --with-libnspr-includes=/usr/include/nspr4 --with-libnss-includes=/usr/include/nss3 --enable-jansson --enable-geoip --enable-lua --enable-hiredis --enable-prelude --enable-rust
+
+%make_build
 
 %install
 make DESTDIR="%{buildroot}" "bindir=%{_sbindir}" install
@@ -103,9 +122,6 @@ install -d -m 0755 %{buildroot}/run/%{name}/
 %check
 make check
 
-%clean
-rm -rf %{buildroot}
-
 %pre
 getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 
@@ -121,7 +137,6 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %systemd_postun_with_restart suricata.service
 
 %files
-%defattr(-,root,root,-)
 %doc doc/Basic_Setup.txt
 %doc doc/Setting_up_IPSinline_for_Linux.txt doc/fedora.notes
 %{!?_licensedir:%global license %%doc}
@@ -150,30 +165,40 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
-* Tue May  8 2018 Jason Ish <ish@unx.ca> - %%VERSION%%-1
-- Remove %file for suricatasc Python egg.
-- Add the rules that are not installed to the datadir.
+* Mon Aug 13 2018 Steve Grubb <sgrubb@redhat.com> - 4.0.5-3
+- Consolidate branches so that everything is in sync (#1614935)
 
-* Wed Feb  7 2018 Jason Ish <ish@unx.ca> 4.0.3-2
-- Sync up with Fedora package.
+* Fri Aug 10 2018 Jason Taylor <jtfas90@gmail.com> 4.0.5-2
+- fixes bz#1614935
 
-* Wed Feb  7 2018 Jason Ish <ish@unx.ca> - %%VERSION%%-1
-- Add support for suricatactl.
+* Wed Jul 18 2018 Jason Taylor <jtfas90@gmail.com> - 4.0.5-1
+- upstream security fix release
+- addresses CVE-2018-10242, CVE-2018-10243, CVE-2018-10244
 
-* Mon Dec 11 2017 Jason Taylor <ftfas90@gmail.com> 4.0.3-2
+* Sat Jul 14 2018 Fedora Release Engineering <releng@fedoraproject.org> - 4.0.4-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
+
+* Mon Jul 09 2018 Jason Taylor <jtfas90@gmail.com> - 4.0.4-2
+- bumped release for build against hyperscan 5.0.0
+
+* Mon Jul 09 2018 Jason Taylor <jtfas90@gmail.com> - 4.0.4-1
+- added gcc-c++ buildrequires
+
+* Thu Feb 15 2018 Jason Taylor <jtfas90@gmail.com> - 4.0.4-1
+- fixes bz#1543250 and bz#1543251
+- multiple upstream bugfixes
+
+* Fri Feb 09 2018 Fedora Release Engineering <releng@fedoraproject.org> - 4.0.3-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
+
+* Mon Dec 11 2017 Jason Taylor <jtfas90@gmail.com> 4.0.3-2
 - Added prelude support
 
 * Fri Dec 08 2017 Jason Taylor <jtfas90@gmail.com> 4.0.3-1
 - Upstream bugfix release
 
-* Fri Dec  8 2017 Jason Ish <ish@unx.ca> - 4.0.3-1
-- Update to 4.0.3.
-
 * Wed Oct 18 2017 Steve Grubb <sgrubb@redhat.com> 4.0.1-1
 - Upstream bugfix update
-
-* Wed Oct 18 2017 Jason Ish <ish@unx.ca> - 4.0.1-1
-- Update to Suricata 4.0.1.
 
 * Tue Sep 26 2017 Steve Grubb <sgrubb@redhat.com> 4.0.0-2
 - Make suricata user own /run/suricata (#1396150)
@@ -182,26 +207,14 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 - Latest upstream major release
 - Build now has hyperscan and redis support
 
-* Thu Jul 27 2017 Jason Ish <ish@unx.ca> - 2017.07.27.1501191550-1
-- Enable Hyperscan on EPEL 7.
-
 * Thu Jul 27 2017 Fedora Release Engineering <releng@fedoraproject.org> - 3.2.3-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Mass_Rebuild
 
 * Thu Jul 13 2017 Jason Taylor <jtfas90@gmail.com> 3.2.3-1
 - Upstream bugfix update
 
-* Thu Jul 13 2017 Jason Ish <ish@unx.ca> - 3.2.3-1
-- Update to 3.2.3.
-
-* Wed Jun 07 2017 Jason Ish <ish@unx.ca> - 3.2.2-1
-- Update to 3.2.2.
-
 * Wed Jun 07 2017 Steve Grubb <sgrubb@redhat.com> 3.2.2-1
 - Upstream bugfix update
-
-* Tue Jun 06 2017 Jason Ish <ish@unx.ca> - 3.2.1-2
-- Enable Hyperscan on Fedora 25+.
 
 * Wed Mar 22 2017 Jason Ish <ish@unx.ca> - 3.2.1-2
 - Re-enable PID file due to selinux issues.
@@ -237,12 +250,6 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 
 * Wed Jun 22 2016 Steve Grubb <sgrubb@redhat.com> 3.1-1
 - New upstream bug fix release
-
-* Tue Jun  7 2016 Jason Ish <ish@unx.ca> - 3.1-0.1RC1
-- Update to Suricata 3.1RC1.
-
-* Tue Apr 26 2016 Jason Ish <ish@unx.ca> - 3.0.1-0.1rc1
-- Basic 3.0.1RC1 RPM on the 3.0.1 stable RPM.
 
 * Mon Apr 04 2016 Steve Grubb <sgrubb@redhat.com> 3.0.1-1
 - New upstream bug fix release
