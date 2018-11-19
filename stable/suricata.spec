@@ -1,7 +1,7 @@
 Summary: Intrusion Detection System
 Name: suricata
-Version: 4.0.5
-Release: 1%{?dist}
+Version: 4.1.0
+Release: 2%{?dist}
 License: GPLv2
 Group: Applications/Internet
 URL: http://suricata-ids.org/
@@ -19,6 +19,7 @@ Patch2: suricata-2.0.2-lua.patch
 
 BuildRequires: gcc
 BuildRequires: gcc-c++
+BuildRequires: rust cargo
 BuildRequires: libyaml-devel
 BuildRequires: libnfnetlink-devel libnetfilter_queue-devel libnet-devel
 BuildRequires: zlib-devel libpcap-devel pcre-devel libcap-ng-devel
@@ -136,9 +137,12 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %attr(644,root,root) %{_mandir}/man1/*
 %{_sbindir}/suricata
 %{_bindir}/suricatasc
+%{_bindir}/suricatactl
+%{_bindir}/suricata-update
 %{_libdir}/libhtp*
-%{python2_sitelib}/suricatasc*.egg-info
 %{python2_sitelib}/suricatasc/*
+%{python2_sitelib}/suricata/*
+%{python2_sitelib}/*egg-info
 %config(noreplace) %attr(-,suricata,-) %{_sysconfdir}/%{name}/suricata.yaml
 %config(noreplace) %attr(-,suricata,-) %{_sysconfdir}/%{name}/*.config
 %config(noreplace) %attr(-,suricata,-) %{_sysconfdir}/%{name}/rules/*.rules
@@ -150,8 +154,16 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %attr(750,suricata,root) %dir %{_sysconfdir}/%{name}/rules
 %attr(750,suricata,root) %dir /run/%{name}/
 %{_tmpfilesdir}/%{name}.conf
+%{_datadir}/%{name}/rules
 
 %changelog
+* Wed Nov 07 2018 Steve Grubb <sgrubb@redhat.com> 4.1.0-2
+- Add cargo BuildRequires
+
+* Tue Nov 06 2018 Steve Grubb <sgrubb@redhat.com> 4.1.0-1
+- Latest upstream major release
+- Fixes CVE-2018-18956 Segmentation fault in the ProcessMimeEntity function
+
 * Mon Aug 13 2018 Steve Grubb <sgrubb@redhat.com> - 4.0.5-3
 - Consolidate branches so that everything is in sync (#1614935)
 
