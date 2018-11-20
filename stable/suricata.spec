@@ -1,14 +1,12 @@
 Summary: Intrusion Detection System
 Name: suricata
 Version: 4.1.0
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2
 Group: Applications/Internet
 URL: http://suricata-ids.org/
 Source0:  http://downloads.suricata-ids.org/%{name}-%{version}.tar.gz
-Source1: suricata.service
 Source2: suricata.sysconfig
-Source3: suricata.logrotate
 Source4: fedora.notes
 Source5: suricata-tmpfiles.conf
 
@@ -35,7 +33,7 @@ BuildRequires: pkgconfig(gnutls)
 %if 0%{?fedora} >= 25
 %ifarch x86_64
 BuildRequires: hyperscan-devel
-Requires: ragel
+BuildRequires: ragel
 %endif
 %endif
 
@@ -90,14 +88,14 @@ install -m 600 rules/*.rules %{buildroot}%{_sysconfdir}/%{name}/rules
 install -m 600 *.config %{buildroot}%{_sysconfdir}/%{name}
 install -m 600 suricata.yaml %{buildroot}%{_sysconfdir}/%{name}
 mkdir -p %{buildroot}%{_unitdir}
-install -m 0644 %{SOURCE1} %{buildroot}%{_unitdir}/
+install -m 0644 etc/%{name}.service %{buildroot}%{_unitdir}/
 mkdir -p %{buildroot}%{_sysconfdir}/sysconfig
 install -m 0755 %{SOURCE2} %{buildroot}%{_sysconfdir}/sysconfig/%{name}
 
 # Set up logging
 mkdir -p %{buildroot}/%{_var}/log/%{name}
 mkdir -p %{buildroot}%{_sysconfdir}/logrotate.d
-install -m 644 %{SOURCE3} %{buildroot}%{_sysconfdir}/logrotate.d/%{name}
+install -m 644 etc/%{name}.logrotate %{buildroot}%{_sysconfdir}/logrotate.d/%{name}
 
 # Remove a couple things so they don't get picked up
 rm -rf %{buildroot}%{_includedir}
@@ -149,7 +147,7 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %config(noreplace) %attr(0600,suricata,root) %{_sysconfdir}/sysconfig/%{name}
 %attr(644,root,root) %{_unitdir}/suricata.service
 %config(noreplace) %attr(644,root,root) %{_sysconfdir}/logrotate.d/%{name}
-%attr(750,suricata,root) %dir %{_var}/log/%{name}
+%attr(750,suricata,suricata) %dir %{_var}/log/%{name}
 %attr(750,suricata,root) %dir %{_sysconfdir}/%{name}
 %attr(750,suricata,root) %dir %{_sysconfdir}/%{name}/rules
 %attr(750,suricata,root) %dir /run/%{name}/
@@ -157,6 +155,10 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %{_datadir}/%{name}/rules
 
 %changelog
+* Tue Nov 20 2018 Steve Grubb <sgrubb@redhat.com> 4.1.0-3
+- Use the upstream service and logrote files (#1330331)
+- Make the log directory readable by members of the suricata group (#1651394)
+
 * Wed Nov 07 2018 Steve Grubb <sgrubb@redhat.com> 4.1.0-2
 - Add cargo BuildRequires
 
