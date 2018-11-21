@@ -33,7 +33,6 @@ BuildRequires: pkgconfig(gnutls)
 %if 0%{?fedora} >= 25
 %ifarch x86_64
 BuildRequires: hyperscan-devel
-BuildRequires: ragel
 %endif
 %endif
 
