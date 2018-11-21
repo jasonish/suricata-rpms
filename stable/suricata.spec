@@ -14,6 +14,8 @@ Source5: suricata-tmpfiles.conf
 Patch1: suricata-2.0.9-docs.patch
 # liblua is not named correctly in epel 7.
 Patch2: suricata-2.0.2-lua.patch
+# Fixup environment file in systemd unit file.
+Patch3: suricata-service-in.patch
 
 BuildRequires: gcc
 BuildRequires: gcc-c++
@@ -64,6 +66,7 @@ install -m 644 %{SOURCE4} doc/
 %if 0%{?rhel} == 7
 %patch2 -p1
 %endif
+%patch3 -p1
 
 autoreconf -fv --install
 

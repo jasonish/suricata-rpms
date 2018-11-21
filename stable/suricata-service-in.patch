@@ -1,0 +1,16 @@
+diff --git a/etc/suricata.service.in b/etc/suricata.service.in
+index cce1baad6..692b8dec9 100644
+--- a/etc/suricata.service.in
++++ b/etc/suricata.service.in
+@@ -4,10 +4,7 @@ Description=Suricata Intrusion Detection Service
+ After=syslog.target network-online.target
+ 
+ [Service]
+-# Environment file to pick up $OPTIONS. On Fedora/EL this would be
+-# /etc/sysconfig/suricata, or on Debian/Ubuntu, /etc/default/suricata.
+-#EnvironmentFile=-/etc/sysconfig/suricata
+-#EnvironmentFile=-/etc/default/suricata
++EnvironmentFile=-/etc/sysconfig/suricata
+ ExecStartPre=/bin/rm -f @e_rundir@suricata.pid
+ ExecStart=/sbin/suricata -c @e_sysconfdir@suricata.yaml --pidfile @e_rundir@suricata.pid $OPTIONS
+ ExecReload=/bin/kill -USR2 $MAINPID
