@@ -1,6 +1,7 @@
-SUBDIRS :=	hyperscan
+NAME :=	hyperscan
 
-all clean copr:
-	for dir in $(SUBDIRS); do \
-		(cd $$dir && $(MAKE) $@) || exit 1; \
-	done
+COPR_PROJECT :=	hyperscan-epel7
+
+DISTS ?=	epel-7-x86_64
+
+include ../common.mk
