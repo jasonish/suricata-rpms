@@ -1,7 +1,7 @@
 Summary: Intrusion Detection System
 Name: suricata
-Version: 4.1.0
-Release: 3%{?dist}
+Version: 4.1.1
+Release: 4%{?dist}
 License: GPLv2
 Group: Applications/Internet
 URL: http://suricata-ids.org/
@@ -12,17 +12,18 @@ Source5: suricata-tmpfiles.conf
 
 # Irrelevant docs are getting installed, drop them
 Patch1: suricata-2.0.9-docs.patch
-# liblua is not named correctly in epel 7.
-Patch2: suricata-2.0.2-lua.patch
-# Fixup environment file in systemd unit file.
-Patch3: suricata-service-in.patch
+# Suricata service file needs some options supplied
+Patch2: suricata-4.1.1-service.patch
+# Suricata 4.1.1 shipped with a program suricata-update/setup.py.
+Patch3: suricata-4.1.1-update.patch
 
 BuildRequires: gcc
 BuildRequires: gcc-c++
 BuildRequires: rust cargo
-BuildRequires: libyaml-devel
+BuildRequires: libyaml-devel python2-pyyaml
 BuildRequires: libnfnetlink-devel libnetfilter_queue-devel libnet-devel
-BuildRequires: zlib-devel libpcap-devel pcre-devel libcap-ng-devel
+BuildRequires: zlib-devel pcre-devel libcap-ng-devel
+BuildRequires: lz4-devel libpcap-devel
 BuildRequires: nspr-devel nss-devel nss-softokn-devel file-devel
 BuildRequires: jansson-devel GeoIP-devel python2-devel lua-devel
 BuildRequires: autoconf automake libtool
@@ -63,20 +64,16 @@ Matching, and GeoIP identification.
 %setup -q
 install -m 644 %{SOURCE4} doc/
 %patch1 -p1
-%if 0%{?rhel} == 7
 %patch2 -p1
-%endif
 %patch3 -p1
 
 autoreconf -fv --install
 
 %build
-
 # Required for Hyperscan on CentOS 7.
 %if 0%{?centos} == 7
 export LIBS="-lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc"
 %endif
-
 %configure --enable-gccprotect --enable-pie --disable-gccmarch-native --disable-coccinelle --enable-nfqueue --enable-af-packet --with-libnspr-includes=/usr/include/nspr4 --with-libnss-includes=/usr/include/nss3 --enable-jansson --enable-geoip --enable-lua --enable-hiredis --enable-prelude
 
 %make_build
@@ -86,7 +83,7 @@ make DESTDIR="%{buildroot}" "bindir=%{_sbindir}" install
 
 # Setup etc directory
 mkdir -p %{buildroot}%{_sysconfdir}/%{name}/rules
-install -m 600 rules/*.rules %{buildroot}%{_sysconfdir}/%{name}/rules
+install -m 640 rules/*.rules %{buildroot}%{_sysconfdir}/%{name}/rules
 install -m 600 *.config %{buildroot}%{_sysconfdir}/%{name}
 install -m 600 suricata.yaml %{buildroot}%{_sysconfdir}/%{name}
 mkdir -p %{buildroot}%{_unitdir}
@@ -106,11 +103,16 @@ rm -f %{buildroot}%{_libdir}/libhtp.a
 rm -f %{buildroot}%{_libdir}/libhtp.so
 rm -rf %{buildroot}%{_libdir}/pkgconfig
 
+# Setup suricata-update data directory
+mkdir -p %{buildroot}/%{_var}/lib/%{name}
+
 # Setup tmpdirs
 mkdir -p %{buildroot}%{_tmpfilesdir}
 install -m 0644 %{SOURCE5} %{buildroot}%{_tmpfilesdir}/%{name}.conf
 mkdir -p %{buildroot}/run
 install -d -m 0755 %{buildroot}/run/%{name}/
+
+cp suricata-update/README.rst doc/suricata-update-README.rst
 
 %check
 make check
@@ -130,7 +132,7 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %systemd_postun_with_restart suricata.service
 
 %files
-%doc doc/Basic_Setup.txt
+%doc doc/Basic_Setup.txt doc/suricata-update-README.rst
 %doc doc/Setting_up_IPSinline_for_Linux.txt doc/fedora.notes
 %{!?_licensedir:%global license %%doc}
 %license COPYING
@@ -143,20 +145,31 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %{python2_sitelib}/suricatasc/*
 %{python2_sitelib}/suricata/*
 %{python2_sitelib}/*egg-info
-%config(noreplace) %attr(-,suricata,-) %{_sysconfdir}/%{name}/suricata.yaml
-%config(noreplace) %attr(-,suricata,-) %{_sysconfdir}/%{name}/*.config
-%config(noreplace) %attr(-,suricata,-) %{_sysconfdir}/%{name}/rules/*.rules
+%config(noreplace) %attr(0640,suricata,suricata) %{_sysconfdir}/%{name}/suricata.yaml
+%config(noreplace) %attr(0640,suricata,suricata) %{_sysconfdir}/%{name}/*.config
+%config(noreplace) %attr(0640,suricata,suricata) %{_sysconfdir}/%{name}/rules/*.rules
 %config(noreplace) %attr(0600,suricata,root) %{_sysconfdir}/sysconfig/%{name}
 %attr(644,root,root) %{_unitdir}/suricata.service
 %config(noreplace) %attr(644,root,root) %{_sysconfdir}/logrotate.d/%{name}
 %attr(750,suricata,suricata) %dir %{_var}/log/%{name}
-%attr(750,suricata,root) %dir %{_sysconfdir}/%{name}
-%attr(750,suricata,root) %dir %{_sysconfdir}/%{name}/rules
-%attr(750,suricata,root) %dir /run/%{name}/
+%attr(750,suricata,suricata) %dir %{_sysconfdir}/%{name}
+%attr(750,suricata,suricata) %dir %{_sysconfdir}/%{name}/rules
+%attr(2770,suricata,suricata) %dir %{_var}/lib/%{name}
+%attr(2770,suricata,suricata) %dir /run/%{name}/
 %{_tmpfilesdir}/%{name}.conf
 %{_datadir}/%{name}/rules
 
 %changelog
+* Mon Dec 17 2018 Steve Grubb <sgrubb@redhat.com> 4.1.1-2
+- Remove ragel requirement
+
+* Mon Dec 17 2018 Steve Grubb <sgrubb@redhat.com> 4.1.1-1
+- Make log directory group readable
+- Allow users of the suricata group to run suricata-update
+- Add lz4-devel BuildRequires to support pcap compression
+- Update service file for systemd security protections
+- Upstream bugfix update
+
 * Tue Nov 20 2018 Steve Grubb <sgrubb@redhat.com> 4.1.0-3
 - Use the upstream service and logrote files (#1330331)
 - Make the log directory readable by members of the suricata group (#1651394)

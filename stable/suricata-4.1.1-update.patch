@@ -1,0 +1,36 @@
+commit 8aa6d2de0eed57c74d425ae38ce463ce10019da6
+Author: Shivani Bhardwaj <shivanib134@gmail.com>
+Date:   Tue Dec 18 16:01:40 2018 +0530
+
+    Fix the broken sys import of distutils
+    
+    Newer distutils versions allow to list and work with `sys` as it is
+    imported in the `__init__.py` however, the older versions of disutils
+    does not contain anything other than the version and revision strings.
+    The current installation procedure relied on the former method which is
+    only adapted in the new versions so make it compatible to the older
+    versions by importing `sys` from `distutils.core`.
+    
+    Closes redmine ticket #2747
+
+diff --git a/suricata-update/setup.py b/suricata-update/setup.py
+index 14a4b0e..3c5c661 100644
+--- a/suricata-update/setup.py
++++ b/suricata-update/setup.py
+@@ -2,6 +2,7 @@ import os.path
+ import subprocess
+ import distutils
+ from distutils.core import setup
++from distutils.core import sys
+ 
+ from suricata.update.version import version
+ 
+@@ -45,7 +46,7 @@ args = {
+     ],
+ }
+ 
+-if any("pip" in arg for arg in distutils.sys.argv):
++if any("pip" in arg for arg in sys.argv):
+     args["install_requires"] = ["pyyaml", ]
+ 
+ setup(**args)
