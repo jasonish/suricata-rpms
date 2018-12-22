@@ -1,7 +1,7 @@
 Summary: Intrusion Detection System
 Name: suricata
-Version: 4.1.1
-Release: 4%{?dist}
+Version: 4.1.2
+Release: 1%{?dist}
 License: GPLv2
 Group: Applications/Internet
 URL: http://suricata-ids.org/
@@ -14,8 +14,6 @@ Source5: suricata-tmpfiles.conf
 Patch1: suricata-2.0.9-docs.patch
 # Suricata service file needs some options supplied
 Patch2: suricata-4.1.1-service.patch
-# Suricata 4.1.1 shipped with a program suricata-update/setup.py.
-Patch3: suricata-4.1.1-update.patch
 
 BuildRequires: gcc
 BuildRequires: gcc-c++
@@ -65,7 +63,6 @@ Matching, and GeoIP identification.
 install -m 644 %{SOURCE4} doc/
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
 
 autoreconf -fv --install
 
@@ -160,6 +157,9 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %{_datadir}/%{name}/rules
 
 %changelog
+* Thu Dec 20 2018 Steve Grubb <sgrubb@redhat.com> 4.1.1-4
+- Adjust permissions on /run/suricata and /var/lib/suricata to group writable
+
 * Mon Dec 17 2018 Steve Grubb <sgrubb@redhat.com> 4.1.1-2
 - Remove ragel requirement
 
