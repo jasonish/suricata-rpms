@@ -1,3 +1,2 @@
-/hyperscan-4.4.1.tar.gz
-/hyperscan-4.5.0.tar.gz
-/hyperscan-4.5.1.tar.gz
+/hyperscan-*.tar.gz
+/boost*.tar.gz
