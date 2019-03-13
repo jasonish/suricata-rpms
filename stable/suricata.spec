@@ -1,11 +1,10 @@
 Summary: Intrusion Detection System
 Name: suricata
-Version: 4.1.2
+Version: 4.1.3
 Release: 1%{?dist}
 License: GPLv2
-Group: Applications/Internet
-URL: http://suricata-ids.org/
-Source0:  http://downloads.suricata-ids.org/%{name}-%{version}.tar.gz
+URL: https://suricata-ids.org/
+Source0: https://www.openinfosecfoundation.org/download/%{name}-%{version}.tar.gz
 Source2: suricata.sysconfig
 Source4: fedora.notes
 Source5: suricata-tmpfiles.conf
@@ -118,14 +117,16 @@ make check
 getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 
 %post
-/sbin/ldconfig
+#/sbin/ldconfig
+%{?ldconfig}
 %systemd_post suricata.service
 
 %preun
 %systemd_preun suricata.service
 
 %postun
-/sbin/ldconfig
+#/sbin/ldconfig
+%{?ldconfig}
 %systemd_postun_with_restart suricata.service
 
 %files
@@ -157,6 +158,16 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %{_datadir}/%{name}/rules
 
 %changelog
+* Thu Mar 07 2019 Steve Grubb <sgrubb@redhat.com> 4.1.3-1
+- Upstream bugfix release
+
+* Sun Feb 03 2019 Fedora Release Engineering <releng@fedoraproject.org> - 4.1.2-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
+
+* Fri Dec 21 2018 Jason Taylor <jtfas90@gmail.com> 4.1.2-1
+- Upstream bugfix release
+- Updated source to use official download site
+
 * Thu Dec 20 2018 Steve Grubb <sgrubb@redhat.com> 4.1.1-4
 - Adjust permissions on /run/suricata and /var/lib/suricata to group writable
 
