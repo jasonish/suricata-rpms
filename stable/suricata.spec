@@ -1,6 +1,6 @@
 Summary: Intrusion Detection System
 Name: suricata
-Version: 4.1.3
+Version: 4.1.4
 Release: 1%{?dist}
 License: GPLv2
 URL: https://suricata-ids.org/
@@ -117,7 +117,6 @@ make check
 getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 
 %post
-#/sbin/ldconfig
 %{?ldconfig}
 %systemd_post suricata.service
 
@@ -125,7 +124,6 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %systemd_preun suricata.service
 
 %postun
-#/sbin/ldconfig
 %{?ldconfig}
 %systemd_postun_with_restart suricata.service
 
@@ -158,6 +156,9 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %{_datadir}/%{name}/rules
 
 %changelog
+* Tue Apr 30 2019 Jason Taylor <jtfas90@gmail.com> 4.1.4-1
+- Upstream bugfix release
+
 * Thu Mar 07 2019 Steve Grubb <sgrubb@redhat.com> 4.1.3-1
 - Upstream bugfix release
 
