@@ -1,0 +1,14 @@
+diff -urp suricata-4.1.4.orig/src/source-af-packet.c suricata-4.1.4/src/source-af-packet.c
+--- suricata-4.1.4.orig/src/source-af-packet.c	2019-04-30 03:14:35.000000000 -0400
++++ suricata-4.1.4/src/source-af-packet.c	2019-08-01 16:40:32.377776940 -0400
+@@ -109,6 +109,10 @@ struct bpf_program {
+ #include <linux/net_tstamp.h>
+ #endif
+ 
++#ifdef HAVE_SYS_SOCKET_H
++#include <linux/sockios.h>
++#endif
++
+ #endif /* HAVE_AF_PACKET */
+ 
+ extern int max_pending_packets;

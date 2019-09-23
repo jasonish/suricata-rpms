@@ -1,45 +1,53 @@
-%define prerelease_tag beta1
+%define prerelease_tag rc1
 
 Summary: Intrusion Detection System
 Name: suricata
 Version: 5.0.0
 Release: 0.1%{prerelease_tag}%{?dist}
 License: GPLv2
-Group: Applications/Internet
 URL: http://suricata-ids.org/
 Source0: https://www.openinfosecfoundation.org/download/%{name}-%{version}-%{prerelease_tag}.tar.gz
-Source1: suricata.service
 Source2: suricata.sysconfig
-Source3: suricata.logrotate
 Source4: fedora.notes
 Source5: suricata-tmpfiles.conf
 
 # Irrelevant docs are getting installed, drop them
 Patch1: suricata-2.0.9-docs.patch
-# liblua is not named correctly in epel 7.
-Patch2: suricata-2.0.2-lua.patch
+# Suricata service file needs some options supplied
+Patch2: suricata-4.1.1-service.patch
+# Linux 5.2 headers moved SIOCGSTAMP to linux/sockios.h. Glibc will
+# include it via sys/socket.h in a future release. This is temporary
+# and should not be needed on other kernel/glibc combos.
+Patch3: suricata-4.1.4-socket.patch
 
 BuildRequires: gcc
 BuildRequires: gcc-c++
+BuildRequires: rust cargo
 BuildRequires: libyaml-devel
 BuildRequires: libnfnetlink-devel libnetfilter_queue-devel libnet-devel
-BuildRequires: zlib-devel libpcap-devel pcre-devel libcap-ng-devel
+BuildRequires: zlib-devel pcre-devel libcap-ng-devel
+BuildRequires: lz4-devel libpcap-devel
 BuildRequires: nspr-devel nss-devel nss-softokn-devel file-devel
-BuildRequires: jansson-devel GeoIP-devel python2-devel lua-devel
+BuildRequires: jansson-devel lua-devel
 BuildRequires: autoconf automake libtool
 BuildRequires: systemd
 BuildRequires: hiredis-devel
 BuildRequires: libevent-devel
 BuildRequires: libprelude-devel
 BuildRequires: pkgconfig(gnutls)
+BuildRequires: libmaxminddb-devel
 
-BuildRequires: gcc-c++
-BuildRequires: rust cargo
+%if 0%{?fedora}
+BuildRequires: python3-pyyaml python3-devel
+%endif
+
+%if 0%{?centos}
+BuildRequires: python-yaml python-devel
+%endif
 
 %if 0%{?fedora} >= 25
 %ifarch x86_64
 BuildRequires: hyperscan-devel
-Requires: ragel
 %endif
 %endif
 
@@ -68,20 +76,16 @@ Matching, and GeoIP identification.
 %setup -q -n suricata-%{version}-%{prerelease_tag}
 install -m 644 %{SOURCE4} doc/
 %patch1 -p1
-%if 0%{?rhel} == 7
 %patch2 -p1
-%endif
 
 autoreconf -fv --install
 
 %build
-
 # Required for Hyperscan on CentOS 7.
 %if 0%{?centos} == 7
 export LIBS="-lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc"
 %endif
-
-%configure --enable-gccprotect --enable-pie --disable-gccmarch-native --disable-coccinelle --enable-nfqueue --enable-af-packet --with-libnspr-includes=/usr/include/nspr4 --with-libnss-includes=/usr/include/nss3 --enable-jansson --enable-geoip --enable-lua --enable-hiredis --enable-prelude
+%configure --enable-gccprotect --enable-pie --disable-gccmarch-native --disable-coccinelle --enable-nfqueue --enable-af-packet --with-libnspr-includes=/usr/include/nspr4 --with-libnss-includes=/usr/include/nss3 --enable-jansson --enable-geoip --enable-lua --enable-hiredis --enable-prelude --enable-rust --enable-python
 
 %make_build
 
@@ -90,18 +94,18 @@ make DESTDIR="%{buildroot}" "bindir=%{_sbindir}" install
 
 # Setup etc directory
 mkdir -p %{buildroot}%{_sysconfdir}/%{name}/rules
-install -m 600 rules/*.rules %{buildroot}%{_sysconfdir}/%{name}/rules
+install -m 640 rules/*.rules %{buildroot}%{_sysconfdir}/%{name}/rules
 install -m 600 *.config %{buildroot}%{_sysconfdir}/%{name}
 install -m 600 suricata.yaml %{buildroot}%{_sysconfdir}/%{name}
 mkdir -p %{buildroot}%{_unitdir}
-install -m 0644 %{SOURCE1} %{buildroot}%{_unitdir}/
+install -m 0644 etc/%{name}.service %{buildroot}%{_unitdir}/
 mkdir -p %{buildroot}%{_sysconfdir}/sysconfig
 install -m 0755 %{SOURCE2} %{buildroot}%{_sysconfdir}/sysconfig/%{name}
 
 # Set up logging
 mkdir -p %{buildroot}/%{_var}/log/%{name}
 mkdir -p %{buildroot}%{_sysconfdir}/logrotate.d
-install -m 644 %{SOURCE3} %{buildroot}%{_sysconfdir}/logrotate.d/%{name}
+install -m 644 etc/%{name}.logrotate %{buildroot}%{_sysconfdir}/logrotate.d/%{name}
 
 # Remove a couple things so they don't get picked up
 rm -rf %{buildroot}%{_includedir}
@@ -110,11 +114,16 @@ rm -f %{buildroot}%{_libdir}/libhtp.a
 rm -f %{buildroot}%{_libdir}/libhtp.so
 rm -rf %{buildroot}%{_libdir}/pkgconfig
 
+# Setup suricata-update data directory
+mkdir -p %{buildroot}/%{_var}/lib/%{name}
+
 # Setup tmpdirs
 mkdir -p %{buildroot}%{_tmpfilesdir}
 install -m 0644 %{SOURCE5} %{buildroot}%{_tmpfilesdir}/%{name}.conf
 mkdir -p %{buildroot}/run
 install -d -m 0755 %{buildroot}/run/%{name}/
+
+cp suricata-update/README.rst doc/suricata-update-README.rst
 
 %check
 make check
@@ -123,18 +132,18 @@ make check
 getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 
 %post
-/sbin/ldconfig
+%{?ldconfig}
 %systemd_post suricata.service
 
 %preun
 %systemd_preun suricata.service
 
 %postun
-/sbin/ldconfig
+%{?ldconfig}
 %systemd_postun_with_restart suricata.service
 
 %files
-%doc doc/Basic_Setup.txt
+%doc doc/Basic_Setup.txt doc/suricata-update-README.rst
 %doc doc/Setting_up_IPSinline_for_Linux.txt doc/fedora.notes
 %{!?_licensedir:%global license %%doc}
 %license COPYING
@@ -144,24 +153,77 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %{_bindir}/suricatactl
 %{_bindir}/suricata-update
 %{_libdir}/libhtp*
+%if 0%{?fedora}
+%{python3_sitelib}/suricatasc/*
+%{python3_sitelib}/suricata*.egg-info
+%{python3_sitelib}/suricata/*
+%endif
+%if 0%{?centos}
 %{python2_sitelib}/suricatasc/*
-%{python2_sitelib}/suricata/*
 %{python2_sitelib}/suricata*.egg-info
-%config(noreplace) %attr(-,suricata,-) %{_sysconfdir}/%{name}/suricata.yaml
-%config(noreplace) %attr(-,suricata,-) %{_sysconfdir}/%{name}/*.config
-%config(noreplace) %attr(-,suricata,-) %{_sysconfdir}/%{name}/rules/*.rules
+%{python2_sitelib}/suricata/*
+%endif
+%config(noreplace) %attr(0640,suricata,suricata) %{_sysconfdir}/%{name}/suricata.yaml
+%config(noreplace) %attr(0640,suricata,suricata) %{_sysconfdir}/%{name}/*.config
+%config(noreplace) %attr(0640,suricata,suricata) %{_sysconfdir}/%{name}/rules/*.rules
 %config(noreplace) %attr(0600,suricata,root) %{_sysconfdir}/sysconfig/%{name}
 %attr(644,root,root) %{_unitdir}/suricata.service
 %config(noreplace) %attr(644,root,root) %{_sysconfdir}/logrotate.d/%{name}
-%attr(750,suricata,root) %dir %{_var}/log/%{name}
-%attr(750,suricata,root) %dir %{_sysconfdir}/%{name}
-%attr(750,suricata,root) %dir %{_sysconfdir}/%{name}/rules
-%attr(750,suricata,root) %dir /run/%{name}/
-%attr(755,root,root) %dir %{_datadir}/%{name}/rules
-%attr(644,root,root) %{_datadir}/%{name}/rules/*
+%attr(750,suricata,suricata) %dir %{_var}/log/%{name}
+%attr(750,suricata,suricata) %dir %{_sysconfdir}/%{name}
+%attr(750,suricata,suricata) %dir %{_sysconfdir}/%{name}/rules
+%attr(2770,suricata,suricata) %dir %{_var}/lib/%{name}
+%attr(2770,suricata,suricata) %dir /run/%{name}/
 %{_tmpfilesdir}/%{name}.conf
+%{_datadir}/%{name}/rules
 
 %changelog
+* Thu Aug 01 2019 Steve Grubb <sgrubb@redhat.com> 4.1.4-4
+- Fix FTBFS bz 1736727
+
+* Sat Jul 27 2019 Fedora Release Engineering <releng@fedoraproject.org> - 4.1.4-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
+
+* Mon Jul 22 2019 Steve Grubb <sgrubb@redhat.com> 4.1.4-2
+- Rebuild for libprelude so bump
+
+* Tue Apr 30 2019 Jason Taylor <jtfas90@gmail.com> 4.1.4-1
+- Upstream bugfix release
+
+* Thu Mar 07 2019 Steve Grubb <sgrubb@redhat.com> 4.1.3-1
+- Upstream bugfix release
+
+* Sun Feb 03 2019 Fedora Release Engineering <releng@fedoraproject.org> - 4.1.2-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
+
+* Fri Dec 21 2018 Jason Taylor <jtfas90@gmail.com> 4.1.2-1
+- Upstream bugfix release
+- Updated source to use official download site
+
+* Thu Dec 20 2018 Steve Grubb <sgrubb@redhat.com> 4.1.1-4
+- Adjust permissions on /run/suricata and /var/lib/suricata to group writable
+
+* Mon Dec 17 2018 Steve Grubb <sgrubb@redhat.com> 4.1.1-2
+- Remove ragel requirement
+
+* Mon Dec 17 2018 Steve Grubb <sgrubb@redhat.com> 4.1.1-1
+- Make log directory group readable
+- Allow users of the suricata group to run suricata-update
+- Add lz4-devel BuildRequires to support pcap compression
+- Update service file for systemd security protections
+- Upstream bugfix update
+
+* Tue Nov 20 2018 Steve Grubb <sgrubb@redhat.com> 4.1.0-3
+- Use the upstream service and logrote files (#1330331)
+- Make the log directory readable by members of the suricata group (#1651394)
+
+* Wed Nov 07 2018 Steve Grubb <sgrubb@redhat.com> 4.1.0-2
+- Add cargo BuildRequires
+
+* Tue Nov 06 2018 Steve Grubb <sgrubb@redhat.com> 4.1.0-1
+- Latest upstream major release
+- Fixes CVE-2018-18956 Segmentation fault in the ProcessMimeEntity function
+
 * Mon Aug 13 2018 Steve Grubb <sgrubb@redhat.com> - 4.0.5-3
 - Consolidate branches so that everything is in sync (#1614935)
 
