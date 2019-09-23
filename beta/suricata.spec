@@ -1,9 +1,9 @@
-%define prerelease_tag rc2
+%define prerelease_tag beta1
 
 Summary: Intrusion Detection System
 Name: suricata
-Version: 4.1.0
-Release: 0.4%{prerelease_tag}%{?dist}
+Version: 5.0.0
+Release: 0.1%{prerelease_tag}%{?dist}
 License: GPLv2
 Group: Applications/Internet
 URL: http://suricata-ids.org/
