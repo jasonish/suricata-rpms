@@ -1,7 +1,7 @@
 Summary: Intrusion Detection System
 Name: suricata
 Version: 4.1.4
-Release: 1%{?dist}
+Release: 4%{?dist}
 License: GPLv2
 URL: https://suricata-ids.org/
 Source0: https://www.openinfosecfoundation.org/download/%{name}-%{version}.tar.gz
@@ -13,6 +13,10 @@ Source5: suricata-tmpfiles.conf
 Patch1: suricata-2.0.9-docs.patch
 # Suricata service file needs some options supplied
 Patch2: suricata-4.1.1-service.patch
+# Linux 5.2 headers moved SIOCGSTAMP to linux/sockios.h. Glibc will
+# include it via sys/socket.h in a future release. This is temporary
+# and should not be needed on other kernel/glibc combos.
+Patch3: suricata-4.1.4-socket.patch
 
 BuildRequires: gcc
 BuildRequires: gcc-c++
@@ -62,6 +66,7 @@ Matching, and GeoIP identification.
 install -m 644 %{SOURCE4} doc/
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 autoreconf -fv --install
 
@@ -70,7 +75,7 @@ autoreconf -fv --install
 %if 0%{?centos} == 7
 export LIBS="-lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc"
 %endif
-%configure --enable-gccprotect --enable-pie --disable-gccmarch-native --disable-coccinelle --enable-nfqueue --enable-af-packet --with-libnspr-includes=/usr/include/nspr4 --with-libnss-includes=/usr/include/nss3 --enable-jansson --enable-geoip --enable-lua --enable-hiredis --enable-prelude
+%configure --enable-gccprotect --enable-pie --disable-gccmarch-native --disable-coccinelle --enable-nfqueue --enable-af-packet --with-libnspr-includes=/usr/include/nspr4 --with-libnss-includes=/usr/include/nss3 --enable-jansson --enable-geoip --enable-lua --enable-hiredis --enable-prelude --enable-rust --enable-python
 
 %make_build
 
@@ -156,6 +161,15 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %{_datadir}/%{name}/rules
 
 %changelog
+* Thu Aug 01 2019 Steve Grubb <sgrubb@redhat.com> 4.1.4-4
+- Fix FTBFS bz 1736727
+
+* Sat Jul 27 2019 Fedora Release Engineering <releng@fedoraproject.org> - 4.1.4-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
+
+* Mon Jul 22 2019 Steve Grubb <sgrubb@redhat.com> 4.1.4-2
+- Rebuild for libprelude so bump
+
 * Tue Apr 30 2019 Jason Taylor <jtfas90@gmail.com> 4.1.4-1
 - Upstream bugfix release
 
