@@ -17,11 +17,11 @@ fetch::
 		cp -a ../../suricata-update/* .
 	tar zcf suricata.tar.gz suricata
 	sed -e "s#%%VERSION%%#$(DAILY_VERSION)#g" \
-		suricata.spec.in > suricata.spec
+		suricata.spec > suricata-daily.spec
 
 dist-clean: clean
 	rm -rf suricata
 
 clean::
-	rm -f suricata.spec
+	rm -f suricata-daily.spec
 	rm -f *.rpm *.tar.gz
