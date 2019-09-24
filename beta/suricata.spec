@@ -3,7 +3,7 @@
 Summary: Intrusion Detection System
 Name: suricata
 Version: 5.0.0
-Release: 0.1%{prerelease_tag}%{?dist}
+Release: 0.2%{prerelease_tag}%{?dist}
 License: GPLv2
 URL: http://suricata-ids.org/
 Source0: https://www.openinfosecfoundation.org/download/%{name}-%{version}-%{prerelease_tag}.tar.gz
@@ -37,25 +37,18 @@ BuildRequires: libprelude-devel
 BuildRequires: pkgconfig(gnutls)
 BuildRequires: libmaxminddb-devel
 
+%ifarch x86_64
+BuildRequires: hyperscan-devel
+%endif
+
 %if 0%{?fedora}
-BuildRequires: python3-pyyaml python3-devel
+BuildRequires: python3-yaml python3-devel
+Requires: python3-yaml
 %endif
 
 %if 0%{?centos}
 BuildRequires: python-yaml python-devel
-%endif
-
-%if 0%{?fedora} >= 25
-%ifarch x86_64
-BuildRequires: hyperscan-devel
-%endif
-%endif
-
-%if 0%{?centos} == 7
-%ifarch x86_64
-BuildRequires: hyperscan-static
-BuildRequires: hyperscan-devel
-%endif
+Requires: python-yaml
 %endif
 
 Requires(pre): /usr/sbin/useradd
