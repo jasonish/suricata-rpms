@@ -1,7 +1,7 @@
 Summary: Intrusion Detection System
 Name: suricata
 Version: 4.1.5
-Release: 1%{?dist}
+Release: 3%{?dist}
 License: GPLv2
 URL: https://suricata-ids.org/
 Source0: https://www.openinfosecfoundation.org/download/%{name}-%{version}.tar.gz
@@ -12,11 +12,13 @@ Source5: suricata-tmpfiles.conf
 # Irrelevant docs are getting installed, drop them
 Patch1: suricata-2.0.9-docs.patch
 # Suricata service file needs some options supplied
-Patch2: suricata-4.1.1-service.patch
+Patch2: suricata-4.1.5-service-1.patch
+# This has security hardeneing measures not applicable to epel 7.
+Patch3: suricata-4.1.5-service-2.patch
 # Linux 5.2 headers moved SIOCGSTAMP to linux/sockios.h. Glibc will
 # include it via sys/socket.h in a future release. This is temporary
 # and should not be needed on other kernel/glibc combos.
-Patch3: suricata-4.1.4-socket.patch
+Patch4: suricata-4.1.4-socket.patch
 
 BuildRequires: gcc
 BuildRequires: gcc-c++
@@ -66,7 +68,10 @@ Matching, and GeoIP identification.
 install -m 644 %{SOURCE4} doc/
 %patch1 -p1
 %patch2 -p1
+%if 0%{?fedora} >= 29
 %patch3 -p1
+%endif
+%patch4 -p1
 
 autoreconf -fv --install
 
@@ -161,6 +166,16 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %{_datadir}/%{name}/rules
 
 %changelog
+* Tue Oct 01 2019 Steve Grubb <sgrubb@redhat.com> 4.1.5-3
+- Don't hardcode python 2
+
+* Wed Sep 25 2019 Steve Grubb <sgrubb@redhat.com> 4.1.5-2
+- Hardcode python 2
+- Breakup service patch so epel 7 can avoid unsupported security hardening (#1736756)
+
+* Tue Sep 24 2019 Steve Grubb <sgrubb@redhat.com> 4.1.5-1
+- New upstream bug and security release.
+
 * Thu Aug 01 2019 Steve Grubb <sgrubb@redhat.com> 4.1.4-4
 - Fix FTBFS bz 1736727
 
