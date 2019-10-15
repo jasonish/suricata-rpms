@@ -1,6 +1,6 @@
 NAME :=	hyperscan
 
-COPR_PROJECT :=	hyperscan-epel7
+COPR_PROJECT :=	hyperscan
 
 DISTS ?=	epel-7-x86_64
 

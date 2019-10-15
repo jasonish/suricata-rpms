@@ -1,0 +1,19 @@
+Index: hyperscan-5.1.0/CMakeLists.txt
+===================================================================
+--- hyperscan-5.1.0.orig/CMakeLists.txt
++++ hyperscan-5.1.0/CMakeLists.txt
+@@ -200,10 +200,10 @@ else()
+             OUTPUT_QUIET ERROR_QUIET
+             INPUT_FILE /dev/null
+             RESULT_VARIABLE GNUCC_TUNE_TEST)
+-        if (NOT GNUCC_TUNE_TEST EQUAL 0)
+-            message(SEND_ERROR "Something went wrong determining gcc tune: -mtune=${GNUCC_ARCH} not valid")
+-        endif()
+-        set(TUNE_FLAG ${GNUCC_ARCH})
++        #if (NOT GNUCC_TUNE_TEST EQUAL 0)
++        #    message(SEND_ERROR "Something went wrong determining gcc tune: -mtune=${GNUCC_ARCH} not valid")
++        #endif()
++        #set(TUNE_FLAG ${GNUCC_ARCH})
+     else ()
+         set(TUNE_FLAG native)
+     endif()
