@@ -1,7 +1,7 @@
 Summary: Intrusion Detection System
 Name: suricata
 Version: 5.0.2
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2
 URL: https://suricata-ids.org/
 Source0: https://www.openinfosecfoundation.org/download/%{name}-%{version}.tar.gz
@@ -20,12 +20,17 @@ Patch3: suricata-4.1.4-socket.patch
 
 BuildRequires: gcc gcc-c++
 BuildRequires: cargo rust >= 1.33
-BuildRequires: libyaml-devel python3-pyyaml
+BuildRequires: libyaml-devel
+%if 0%{?rhel} == 7
+BuildRequires: python2-pyyaml python2-devel
+%else
+BuildRequires: python3-pyyaml python3-devel
+%endif
 BuildRequires: libnfnetlink-devel libnetfilter_queue-devel libnet-devel
 BuildRequires: zlib-devel pcre-devel libcap-ng-devel
 BuildRequires: lz4-devel libpcap-devel
 BuildRequires: nspr-devel nss-devel nss-softokn-devel file-devel
-BuildRequires: jansson-devel libmaxminddb-devel python3-devel lua-devel
+BuildRequires: jansson-devel libmaxminddb-devel lua-devel
 # Next line is for eBPF support
 %if 0%{?fedora} >= 32
 %ifarch x86_64
@@ -153,9 +158,15 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %{_bindir}/suricatactl
 %{_bindir}/suricata-update
 %{_libdir}/libhtp*
+%if 0%{?rhel} == 7
+%{python2_sitelib}/suricatasc/*
+%{python2_sitelib}/suricata/*
+%{python2_sitelib}/*egg-info
+%else
 %{python3_sitelib}/suricatasc/*
 %{python3_sitelib}/suricata/*
 %{python3_sitelib}/*egg-info
+%endif
 %config(noreplace) %attr(0640,suricata,suricata) %{_sysconfdir}/%{name}/suricata.yaml
 %config(noreplace) %attr(0640,suricata,suricata) %{_sysconfdir}/%{name}/*.config
 %config(noreplace) %attr(0640,suricata,suricata) %{_sysconfdir}/%{name}/rules/*.rules
@@ -171,6 +182,9 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %{_datadir}/%{name}/rules
 
 %changelog
+* Mon Mar 30 2020 Jason Ish <jason.ish@oisf.net> - 5.0.2-2
+- Use Python 2 on CentOS
+
 * Thu Feb 13 2020 Steve Grubb <sgrubb@redhat.com> 5.0.2-1
 - New bugfix release
 
