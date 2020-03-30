@@ -1,7 +1,7 @@
 Summary: Intrusion Detection System
 Name: suricata
 Version: 5.0.2
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2
 URL: https://suricata-ids.org/
 Source0: https://www.openinfosecfoundation.org/download/%{name}-%{version}.tar.gz
@@ -22,9 +22,11 @@ BuildRequires: gcc gcc-c++
 BuildRequires: cargo rust >= 1.33
 BuildRequires: libyaml-devel
 %if 0%{?rhel} == 7
-BuildRequires: python2-pyyaml python2-devel
+BuildRequires: python2-devel python2-pyyaml
+Requires: python2-pyyaml
 %else
-BuildRequires: python3-pyyaml python3-devel
+BuildRequires: python3-devel python3-pyyaml
+Requires: python3-pyyaml
 %endif
 BuildRequires: libnfnetlink-devel libnetfilter_queue-devel libnet-devel
 BuildRequires: zlib-devel pcre-devel libcap-ng-devel
@@ -182,6 +184,9 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %{_datadir}/%{name}/rules
 
 %changelog
+* Mon Mar 30 2020 Jason Ish <jason.ish@oisf.net> - 5.0.2-3
+- Add PyYAML as a runtime requirement for suricata-update
+
 * Mon Mar 30 2020 Jason Ish <jason.ish@oisf.net> - 5.0.2-2
 - Use Python 2 on CentOS
 
