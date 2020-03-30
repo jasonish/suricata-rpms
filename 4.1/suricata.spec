@@ -22,8 +22,10 @@ Patch4: suricata-4.1.4-socket.patch
 
 %if 0%{?fedora} >= 32
 BuildRequires: python3-devel python3-pyyaml
+Requires: python3-pyyaml
 %else
 BuildRequires: python2-devel python2-pyyaml
+Requires: python2-pyyaml
 %endif
 BuildRequires: gcc
 BuildRequires: gcc-c++
