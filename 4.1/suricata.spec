@@ -1,7 +1,7 @@
 Summary: Intrusion Detection System
 Name: suricata
 Version: 4.1.7
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2
 URL: https://suricata-ids.org/
 Source0: https://www.openinfosecfoundation.org/download/%{name}-%{version}.tar.gz
@@ -20,15 +20,20 @@ Patch3: suricata-4.1.5-service-2.patch
 # and should not be needed on other kernel/glibc combos.
 Patch4: suricata-4.1.4-socket.patch
 
+%if 0%{?fedora} >= 32
+BuildRequires: python3-devel python3-pyyaml
+%else
+BuildRequires: python2-devel python2-pyyaml
+%endif
 BuildRequires: gcc
 BuildRequires: gcc-c++
 BuildRequires: rust cargo
-BuildRequires: libyaml-devel python2-pyyaml
+BuildRequires: libyaml-devel
 BuildRequires: libnfnetlink-devel libnetfilter_queue-devel libnet-devel
 BuildRequires: zlib-devel pcre-devel libcap-ng-devel
 BuildRequires: lz4-devel libpcap-devel
 BuildRequires: nspr-devel nss-devel nss-softokn-devel file-devel
-BuildRequires: jansson-devel GeoIP-devel python2-devel lua-devel
+BuildRequires: jansson-devel GeoIP-devel lua-devel
 BuildRequires: autoconf automake libtool
 BuildRequires: systemd
 BuildRequires: hiredis-devel
@@ -137,9 +142,15 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %{_bindir}/suricatactl
 %{_bindir}/suricata-update
 %{_libdir}/libhtp*
+%if 0%{?fedora} >= 32
+%{python3_sitelib}/suricatasc/*
+%{python3_sitelib}/suricata/*
+%{python3_sitelib}/*egg-info
+%else
 %{python2_sitelib}/suricatasc/*
 %{python2_sitelib}/suricata/*
 %{python2_sitelib}/*egg-info
+%endif
 %config(noreplace) %attr(0640,suricata,suricata) %{_sysconfdir}/%{name}/suricata.yaml
 %config(noreplace) %attr(0640,suricata,suricata) %{_sysconfdir}/%{name}/*.config
 %config(noreplace) %attr(0640,suricata,suricata) %{_sysconfdir}/%{name}/rules/*.rules
@@ -155,6 +166,9 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %{_datadir}/%{name}/rules
 
 %changelog
+* Mon Mar 30 2020 Jason Ish <jason.ish@oisf.net> - 4.1.7-2
+- Use Python 3 on Fedora 32 to enable building on Fedora 32
+
 * Thu Feb 13 2020 Steve Grubb <sgrubb@redhat.com> 4.1.7-1
 - New upstream bug fix release.
 
