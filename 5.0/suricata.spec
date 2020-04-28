@@ -1,7 +1,7 @@
 Summary: Intrusion Detection System
 Name: suricata
-Version: 5.0.2
-Release: 4%{?dist}
+Version: 5.0.3
+Release: 1%{?dist}
 License: GPLv2
 URL: https://suricata-ids.org/
 Source0: https://www.openinfosecfoundation.org/download/%{name}-%{version}.tar.gz
@@ -188,6 +188,9 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %{_datadir}/%{name}/rules
 
 %changelog
+* Tue Apr 28 2020 Jason <jason@desktop.unx.ca> - 5.0.3-1
+- Update to 5.0.3
+
 * Tue Apr 28 2020 Jason Ish <jason.ish@oisf.net> - 5.0.2-4
 - Sync up with Fedora master
 
