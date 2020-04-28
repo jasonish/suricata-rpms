@@ -1,7 +1,7 @@
 Summary: Intrusion Detection System
 Name: suricata
 Version: 5.0.2
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2
 URL: https://suricata-ids.org/
 Source0: https://www.openinfosecfoundation.org/download/%{name}-%{version}.tar.gz
@@ -23,10 +23,8 @@ BuildRequires: cargo rust >= 1.33
 BuildRequires: libyaml-devel
 %if 0%{?rhel} == 7
 BuildRequires: python2-devel python2-pyyaml
-Requires: python2-pyyaml
 %else
 BuildRequires: python3-devel python3-pyyaml
-Requires: python3-pyyaml
 %endif
 BuildRequires: libnfnetlink-devel libnetfilter_queue-devel libnet-devel
 BuildRequires: zlib-devel pcre-devel libcap-ng-devel
@@ -50,6 +48,12 @@ BuildRequires: pkgconfig(gnutls)
 %ifarch x86_64
 BuildRequires: hyperscan-devel
 %endif
+%endif
+
+%if 0%{?rhel} == 7
+Requires: python2-pyyaml
+%else
+Requires: python3-pyyaml
 %endif
 
 Requires(pre): /usr/sbin/useradd
@@ -184,6 +188,12 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %{_datadir}/%{name}/rules
 
 %changelog
+* Tue Apr 28 2020 Jason Ish <jason.ish@oisf.net> - 5.0.2-4
+- Sync up with Fedora master
+
+* Fri Apr 03 2020 Jason Taylor <jtfas90@gmail.com> 5.0.2-2
+- Add python3-pyyaml to resolve (#1818935)
+
 * Mon Mar 30 2020 Jason Ish <jason.ish@oisf.net> - 5.0.2-3
 - Add PyYAML as a runtime requirement for suricata-update
 
