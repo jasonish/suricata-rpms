@@ -1,7 +1,7 @@
 Summary: Intrusion Detection System
 Name: suricata
-Version: 4.1.7
-Release: 2%{?dist}
+Version: 4.1.8
+Release: 1%{?dist}
 License: GPLv2
 URL: https://suricata-ids.org/
 Source0: https://www.openinfosecfoundation.org/download/%{name}-%{version}.tar.gz
@@ -22,10 +22,8 @@ Patch4: suricata-4.1.4-socket.patch
 
 %if 0%{?fedora} >= 32
 BuildRequires: python3-devel python3-pyyaml
-Requires: python3-pyyaml
 %else
 BuildRequires: python2-devel python2-pyyaml
-Requires: python2-pyyaml
 %endif
 BuildRequires: gcc
 BuildRequires: gcc-c++
@@ -47,6 +45,12 @@ BuildRequires: pkgconfig(gnutls)
 %ifarch x86_64
 BuildRequires: hyperscan-devel
 %endif
+%endif
+
+%if 0%{?fedora} >= 32
+Requires: python3-pyyaml
+%else
+Requires: python2-pyyaml
 %endif
 
 Requires(pre): /usr/sbin/useradd
@@ -168,6 +172,9 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %{_datadir}/%{name}/rules
 
 %changelog
+* Tue Apr 28 2020 Jason Ish <jason.ish@oisf.net> - 4.1.8-1
+- Update to 4.1.8
+
 * Mon Mar 30 2020 Jason Ish <jason.ish@oisf.net> - 4.1.7-2
 - Use Python 3 on Fedora 32 to enable building on Fedora 32
 
