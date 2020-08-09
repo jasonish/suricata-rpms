@@ -88,17 +88,17 @@ autoreconf -fv --install
 
 %build
 %configure --enable-gccprotect --enable-pie --disable-gccmarch-native \
-	--disable-coccinelle --enable-nfqueue --enable-af-packet \
-	--with-libnspr-includes=/usr/include/nspr4 \
-	--with-libnss-includes=/usr/include/nss3 \
-	--enable-jansson --enable-geoip --enable-lua --enable-hiredis \
-	--enable-prelude --enable-rust  \
+        --disable-coccinelle --enable-nfqueue --enable-af-packet \
+        --with-libnspr-includes=/usr/include/nspr4 \
+        --with-libnss-includes=/usr/include/nss3 \
+        --enable-jansson --enable-geoip --enable-lua --enable-hiredis \
+        --enable-prelude --enable-rust  \
 %if 0%{?fedora} >= 32
 %ifarch x86_64
-	--enable-ebpf-build --enable-ebpf \
+        --enable-ebpf-build --enable-ebpf \
 %endif
 %endif
-	--enable-python
+        --enable-python
 
 %make_build
 
@@ -108,7 +108,8 @@ make DESTDIR="%{buildroot}" "bindir=%{_sbindir}" install
 # Setup etc directory
 mkdir -p %{buildroot}%{_sysconfdir}/%{name}/rules
 install -m 640 rules/*.rules %{buildroot}%{_sysconfdir}/%{name}/rules
-install -m 600 *.config %{buildroot}%{_sysconfdir}/%{name}
+install -m 600 etc/*.config %{buildroot}%{_sysconfdir}/%{name}
+install -m 600 threshold.config %{buildroot}%{_sysconfdir}/%{name}
 install -m 600 suricata.yaml %{buildroot}%{_sysconfdir}/%{name}
 mkdir -p %{buildroot}%{_unitdir}
 install -m 0644 etc/%{name}.service %{buildroot}%{_unitdir}/
@@ -193,6 +194,10 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 
 * Tue Apr 28 2020 Jason Ish <jason.ish@oisf.net> - 5.0.2-4
 - Sync up with Fedora master
+
+* Tue Apr 28 2020 Jason Taylor <jtfas90@gmail.com> 5.0.3-1
+- Upstream security/bugfix release
+- Updated reference, classification, threshold config file installs
 
 * Fri Apr 03 2020 Jason Taylor <jtfas90@gmail.com> 5.0.2-2
 - Add python3-pyyaml to resolve (#1818935)
