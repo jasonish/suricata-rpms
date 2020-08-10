@@ -1,4 +1,5 @@
-COPR_REPO :=	jasonish/suricata-5.0
+COPR_REPO :=	jasonish/suricata-5.0 \
+		jasonish/suricata-latest
 NAME :=		suricata
 
 DISTS :=	epel7 epel8 f30 f31 f32
