@@ -8,6 +8,7 @@ Source0: https://www.openinfosecfoundation.org/download/%{name}-%{version}-beta1
 Source1: suricata.sysconfig
 Source2: fedora.notes
 Source3: suricata-tmpfiles.conf
+Source4: acsite.m4
 
 # Irrelevant docs are getting installed, drop them
 Patch1: suricata-2.0.9-docs.patch
@@ -77,6 +78,7 @@ Matching, and GeoIP identification.
 %prep
 %setup -q -n suricata-%{version}-beta1
 install -m 644 %{SOURCE2} doc/
+install -m 644 %{SOURCE4} .
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
