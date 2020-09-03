@@ -1,7 +1,7 @@
 Summary: Intrusion Detection System
 Name: suricata
 Version: 5.0.3
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2
 URL: https://suricata-ids.org/
 Source0: https://www.openinfosecfoundation.org/download/%{name}-%{version}.tar.gz
@@ -44,8 +44,11 @@ BuildRequires: libevent-devel
 BuildRequires: libprelude-devel
 BuildRequires: pkgconfig(gnutls)
 
-%if 0%{?fedora} >= 25
 %ifarch x86_64
+%if 0%{?fedora} >= 25
+BuildRequires: hyperscan-devel
+%endif
+%if 0%{?rhel} == 8
 BuildRequires: hyperscan-devel
 %endif
 %endif
@@ -189,7 +192,10 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %{_datadir}/%{name}/rules
 
 %changelog
-* Tue Apr 28 2020 Jason <jason@desktop.unx.ca> - 5.0.3-1
+* Thu Sep 03 2020 Jason Ish <jason.ish@oisf.net> - 5.0.3-2
+- Enable Hyperscan on CentOS 8
+
+* Tue Apr 28 2020 Jason <jason.ish@oisf.net> - 5.0.3-1
 - Update to 5.0.3
 
 * Tue Apr 28 2020 Jason Ish <jason.ish@oisf.net> - 5.0.2-4
