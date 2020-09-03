@@ -8,7 +8,7 @@ copr-build: srpm
 	done
 
 copr-testing: srpm
-	copr build $(COPR_REPO)-testing $(NAME)*.el7.src.rpm
+	copr build $(COPR_TESTING) $(NAME)*.el7.src.rpm
 
 update-sources:
 	spectool -g suricata.spec
