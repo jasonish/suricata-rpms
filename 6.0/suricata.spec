@@ -1,10 +1,10 @@
 Summary: Intrusion Detection System
 Name: suricata
 Version: 6.0.0
-Release: 0.1beta1%{?dist}
+Release: 0.2rc1%{?dist}
 License: GPLv2
 URL: https://suricata-ids.org/
-Source0: https://www.openinfosecfoundation.org/download/%{name}-%{version}-beta1.tar.gz
+Source0: https://www.openinfosecfoundation.org/download/%{name}-%{version}-rc1.tar.gz
 Source1: suricata.sysconfig
 Source2: fedora.notes
 Source3: suricata-tmpfiles.conf
@@ -45,8 +45,11 @@ BuildRequires: libevent-devel
 BuildRequires: libprelude-devel
 BuildRequires: pkgconfig(gnutls)
 
-%if 0%{?fedora} >= 25
 %ifarch x86_64
+%if 0%{?fedora} >= 25
+BuildRequires: hyperscan-devel
+%endif
+%if 0%{?rhel} == 8
 BuildRequires: hyperscan-devel
 %endif
 %endif
@@ -76,7 +79,7 @@ UDP, ICMP, HTTP, TLS, FTP and SMB! ), Gzip Decompression, Fast IP
 Matching, and GeoIP identification.
 
 %prep
-%setup -q -n suricata-%{version}-beta1
+%setup -q -n suricata-%{version}-rc1
 install -m 644 %{SOURCE2} doc/
 install -m 644 %{SOURCE4} .
 %patch1 -p1
@@ -161,7 +164,7 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %doc doc/Setting_up_IPSinline_for_Linux.txt doc/fedora.notes
 %{!?_licensedir:%global license %%doc}
 %license COPYING
-%attr(644,root,root) %{_mandir}/man1/*
+# %attr(644,root,root) %{_mandir}/man1/*
 %{_sbindir}/suricata
 %{_bindir}/suricatasc
 %{_bindir}/suricatactl
@@ -191,7 +194,10 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %{_datadir}/%{name}/rules
 
 %changelog
-* Tue Apr 28 2020 Jason <jason@desktop.unx.ca> - 5.0.3-1
+* Fri Sep 11 2020 Jason <jason.ish@oisf.net> - 6.0.0-0.2rc1
+- Update to Suricat 6.0.0-rc1
+
+* Tue Apr 28 2020 Jason <jason.ish@oisf.net> - 5.0.3-1
 - Update to 5.0.3
 
 * Tue Apr 28 2020 Jason Ish <jason.ish@oisf.net> - 5.0.2-4
