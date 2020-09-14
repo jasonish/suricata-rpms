@@ -2,6 +2,7 @@ Summary: Intrusion Detection System
 Name: suricata
 Version: 4.1.8
 Release: 1%{?dist}
+Epoch: 1
 License: GPLv2
 URL: https://suricata-ids.org/
 Source0: https://www.openinfosecfoundation.org/download/%{name}-%{version}.tar.gz
@@ -172,6 +173,9 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %{_datadir}/%{name}/rules
 
 %changelog
+* Mon Sep 14 2020 Jason Ish <jason.ish@oisf.net> - 1:4.1.8-1
+- Set epoch to 1, to be chosen over a higher version found in EPEL
+
 * Tue Apr 28 2020 Jason Ish <jason.ish@oisf.net> - 4.1.8-1
 - Update to 4.1.8
 
