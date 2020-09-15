@@ -1,14 +1,14 @@
 Summary: Intrusion Detection System
 Name: suricata
 Version: 6.0.0
-Release: 0.2rc1%{?dist}
+Release: 0.1rc1%{?dist}
+Epoch: 1
 License: GPLv2
 URL: https://suricata-ids.org/
 Source0: https://www.openinfosecfoundation.org/download/%{name}-%{version}-rc1.tar.gz
 Source1: suricata.sysconfig
 Source2: fedora.notes
 Source3: suricata-tmpfiles.conf
-Source4: acsite.m4
 
 # Irrelevant docs are getting installed, drop them
 Patch1: suricata-2.0.9-docs.patch
@@ -81,7 +81,6 @@ Matching, and GeoIP identification.
 %prep
 %setup -q -n suricata-%{version}-rc1
 install -m 644 %{SOURCE2} doc/
-install -m 644 %{SOURCE4} .
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
@@ -194,6 +193,9 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %{_datadir}/%{name}/rules
 
 %changelog
+* Mon Sep 14 2020 Jason Ish <jason.ish@oisf.net> - 1:6.0.0-0.1rc1
+- Set epoch to 1 so this package will take precedence over anything in EPEL, etc.
+
 * Fri Sep 11 2020 Jason <jason.ish@oisf.net> - 6.0.0-0.2rc1
 - Update to Suricat 6.0.0-rc1
 
