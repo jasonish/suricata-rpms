@@ -1,7 +1,7 @@
 Summary: Intrusion Detection System
 Name: suricata
 Version: 5.0.3
-Release: 2%{?dist}
+Release: 1%{?dist}
 License: GPLv2
 URL: https://suricata-ids.org/
 Source0: https://www.openinfosecfoundation.org/download/%{name}-%{version}.tar.gz
@@ -192,6 +192,9 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %{_datadir}/%{name}/rules
 
 %changelog
+* Mon Sep 14 2020 Jason Ish <jason.ish@oisf.net> - 1:5.0.3-1
+- Set epoch to 1 so this package will take precedence over anything in EPEL, etc.
+
 * Thu Sep 03 2020 Jason Ish <jason.ish@oisf.net> - 5.0.3-2
 - Enable Hyperscan on CentOS 8
 
