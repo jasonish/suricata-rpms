@@ -1,14 +1,29 @@
+NAME :=		suricata
+MAJOR :=	$(shell basename $(shell pwd))
+LATEST:=	$(shell cat ../LATEST)
+
+DISTS :=	epel8 epel7 f33 f32 f31
+
 srpm:
 	fedpkg --name $(NAME) --dist epel7 srpm
 
 copr-build: srpm
-	for repo in $(COPR_REPO); do \
-		echo "Push to $$repo"; \
-		copr build $$repo $(NAME)*.el7.src.rpm; \
-	done
+	@if [ "$(COPR)" = "" ]; then \
+		echo "error: COPR environment variable must be set"; \
+		exit 1; \
+	fi
+	copr build $(COPR)/suricata-$(MAJOR) suricata*.el7.src.rpm
+
+	if [ "$(MAJOR)" = "$(LATEST)" ]; then \
+		copr build $(COPR)/suricata-latest suricata*.el7.src.rpm; \
+	fi
 
 copr-testing: srpm
-	copr build $(COPR_TESTING) $(NAME)*.el7.src.rpm
+	@if [ "$(COPR)" = "" ]; then \
+		echo "error: COPR environment variable must be set"; \
+		exit 1; \
+	fi
+	copr build $(COPR)/suricata-$(MAJOR)-testing suricata*.el7.src.rpm
 
 update-sources:
 	spectool -g suricata.spec
