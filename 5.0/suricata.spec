@@ -2,6 +2,7 @@ Summary: Intrusion Detection System
 Name: suricata
 Version: 5.0.3
 Release: 1%{?dist}
+Epoch: 1
 License: GPLv2
 URL: https://suricata-ids.org/
 Source0: https://www.openinfosecfoundation.org/download/%{name}-%{version}.tar.gz
