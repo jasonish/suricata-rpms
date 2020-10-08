@@ -1,8 +1,3 @@
-/.vagrant
-*~
-*.rpm
-/*/output
-
-/daily/suricata.tar.gz
-/daily/suricata
-/daily/suricata-daily.spec
+*.tar.gz
+*.src.rpm
+/*/results_suricata/
