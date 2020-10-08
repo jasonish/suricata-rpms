@@ -1,11 +1,11 @@
 Summary: Intrusion Detection System
 Name: suricata
 Version: 6.0.0
-Release: 0.1rc1%{?dist}
+Release: 1%{?dist}
 Epoch: 1
 License: GPLv2
 URL: https://suricata-ids.org/
-Source0: https://www.openinfosecfoundation.org/download/%{name}-%{version}-rc1.tar.gz
+Source0: https://www.openinfosecfoundation.org/download/%{name}-%{version}.tar.gz
 Source1: suricata.sysconfig
 Source2: fedora.notes
 Source3: suricata-tmpfiles.conf
@@ -79,7 +79,7 @@ UDP, ICMP, HTTP, TLS, FTP and SMB! ), Gzip Decompression, Fast IP
 Matching, and GeoIP identification.
 
 %prep
-%setup -q -n suricata-%{version}-rc1
+%setup -q -n suricata-%{version}
 install -m 644 %{SOURCE2} doc/
 %patch1 -p1
 %patch2 -p1
@@ -163,7 +163,7 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %doc doc/Setting_up_IPSinline_for_Linux.txt doc/fedora.notes
 %{!?_licensedir:%global license %%doc}
 %license COPYING
-# %attr(644,root,root) %{_mandir}/man1/*
+%attr(644,root,root) %{_mandir}/man1/*
 %{_sbindir}/suricata
 %{_bindir}/suricatasc
 %{_bindir}/suricatactl
@@ -193,6 +193,9 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %{_datadir}/%{name}/rules
 
 %changelog
+* Thu Oct 08 2020 Jason Ish <jason.ish@oisf.net> - 1:6.0.0-1
+- Update to Suricata 6.0.0 release.
+
 * Mon Sep 14 2020 Jason Ish <jason.ish@oisf.net> - 1:6.0.0-0.1rc1
 - Set epoch to 1 so this package will take precedence over anything in EPEL, etc.
 
