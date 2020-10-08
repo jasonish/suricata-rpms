@@ -27,7 +27,7 @@ copr-testing: srpm
 
 update-sources:
 	spectool -g suricata.spec
-	sha512sum --tag suricata-*.tar.gz > sources
+	sha512sum --tag `basename $$(spectool -l suricata.spec | awk '/^Source0/ { print $$2 }')` > sources
 
 $(DISTS):
 	fedpkg --name $(NAME) --dist $@ mockbuild
