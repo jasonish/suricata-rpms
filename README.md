@@ -33,3 +33,10 @@ Then the following commands can be used to start a build on COPR:
 - `COPR=YOUR_COPR_USERNAME make copr-build`
 
 Where the `testing` variation will start the build on the `-testing` project.
+
+Example:
+
+```
+make update-sources
+COPR=jasonish make copr-testing
+```
