@@ -2,6 +2,8 @@ NAME :=		suricata
 MAJOR :=	$(shell basename $(shell pwd))
 LATEST:=	$(shell cat ../LATEST)
 
+VERSION := $(shell rpm --define 'dist .el7' -q --qf "%{VERSION}-%{RELEASE}\n" --specfile suricata.spec| head -n1)
+
 DISTS :=	epel8 epel7 f33 f32 f31
 
 srpm:
@@ -23,7 +25,8 @@ copr-testing: srpm
 		echo "error: COPR environment variable must be set"; \
 		exit 1; \
 	fi
-	copr build $(COPR)/suricata-$(MAJOR)-testing suricata*.el7.src.rpm
+	copr build $(COPR)/suricata-$(MAJOR)-testing \
+		suricata-$(VERSION).src.rpm
 
 update-sources:
 	spectool -g suricata.spec
