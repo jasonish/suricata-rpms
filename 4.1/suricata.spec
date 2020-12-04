@@ -1,6 +1,6 @@
 Summary: Intrusion Detection System
 Name: suricata
-Version: 4.1.9
+Version: 4.1.10
 Release: 1%{?dist}
 Epoch: 1
 License: GPLv2
@@ -173,6 +173,9 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %{_datadir}/%{name}/rules
 
 %changelog
+* Fri Dec  4 2020 Jason Ish <jason.ish@oisf.net> - 1:4.1.10-1
+- Update to 4.1.10
+
 * Thu Oct 08 2020 Jason Ish <jason.ish@oisf.net> - 1:4.1.9-1
 - Update to Suricata 4.1.9
 
