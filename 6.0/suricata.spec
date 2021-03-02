@@ -1,6 +1,6 @@
 Summary: Intrusion Detection System
 Name: suricata
-Version: 6.0.1
+Version: 6.0.2
 Release: 1%{?dist}
 Epoch: 1
 License: GPLv2
@@ -193,6 +193,9 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %{_datadir}/%{name}/rules
 
 %changelog
+* Tue Mar  2 2021 Jason <jason.ish@oisf.net> - 1:6.0.2-1
+- Update to 6.0.2
+
 * Fri Dec  4 2020 Jason Ish <jason.ish@oisf.net> - 1:6.0.1-1
 - Update to 6.0.1
 
@@ -203,7 +206,7 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 - Set epoch to 1 so this package will take precedence over anything in EPEL, etc.
 
 * Fri Sep 11 2020 Jason <jason.ish@oisf.net> - 6.0.0-0.2rc1
-- Update to Suricat 6.0.0-rc1
+- Update to Suricata 6.0.0-rc1
 
 * Tue Apr 28 2020 Jason <jason.ish@oisf.net> - 5.0.3-1
 - Update to 5.0.3
