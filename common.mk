@@ -4,10 +4,10 @@ LATEST:=	$(shell cat ../LATEST)
 
 VERSION := $(shell rpm --define 'dist .el7' -q --qf "%{VERSION}-%{RELEASE}\n" --specfile suricata.spec| head -n1)
 
-DISTS :=	epel8 epel7 f33 f32 f31
+RELEASES :=	$(shell fedpkg releases-info --join)
 
 srpm:
-	fedpkg --name $(NAME) --dist epel7 srpm
+	fedpkg --name $(NAME) --release epel7 srpm
 
 copr-build: srpm
 	@if [ "$(COPR)" = "" ]; then \
@@ -32,8 +32,8 @@ update-sources:
 	spectool -g suricata.spec
 	sha512sum --tag `basename $$(spectool -l suricata.spec | awk '/^Source0/ { print $$2 }')` > sources
 
-$(DISTS):
-	fedpkg --name $(NAME) --dist $@ mockbuild
+$(RELEASES):
+	fedpkg --name $(NAME) --release $@ mockbuild
 
 clean:
 	rm -f *.src.rpm
