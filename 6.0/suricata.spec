@@ -1,7 +1,7 @@
 Summary: Intrusion Detection System
 Name: suricata
 Version: 6.0.5
-Release: 1%{?dist}
+Release: 2%{?dist}
 Epoch: 1
 License: GPLv2
 URL: https://suricata-ids.org/
@@ -146,7 +146,8 @@ cp suricata-update/README.rst doc/suricata-update-README.rst
 make check
 
 %pre
-getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
+getent group suricata > /dev/null || groupadd -r suricata
+getent passwd suricata >/dev/null || useradd -r -M -g suricata -s /sbin/nologin suricata
 
 %post
 %systemd_post suricata.service
@@ -192,6 +193,9 @@ getent passwd suricata >/dev/null || useradd -r -M -s /sbin/nologin suricata
 %{_datadir}/%{name}/rules
 
 %changelog
+* Tue May 10 2022 Jason Ish <jason.ish@oisf.net> - 1:6.0.5-2
+- Don't fail if group already exists.
+
 * Thu Apr 21 2022 Jason Ish <jason.ish@oisf.net> - 1:6.0.5-1
 - Update to 6.0.5.
 
