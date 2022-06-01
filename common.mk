@@ -1,13 +1,23 @@
 NAME :=		suricata
 MAJOR :=	$(shell basename $(shell pwd))
-LATEST:=	$(shell cat ../LATEST)
+LATEST :=	$(shell cat ../LATEST)
+SRCDIR :=	$(shell pwd)
 
-VERSION := $(shell rpm --define 'dist .el7' -q --qf "%{VERSION}-%{RELEASE}\n" --specfile suricata.spec| head -n1)
+VERSION := $(shell rpm --undefine 'dist' -q --qf "%{VERSION}-%{RELEASE}\n" --specfile suricata.spec| head -n1)
 
 RELEASES :=	$(shell fedpkg releases-info --join)
 
 srpm:
-	fedpkg --name $(NAME) --release epel7 srpm
+	rpmbuild \
+		--define "_sourcedir $(PWD)" \
+		--define "_specdir $(PWD)" \
+		--define "_builddir $(PWD)" \
+		--define "_srcrpmdir $(PWD)" \
+		--define "_rpmdir $(PWD)" \
+		--eval "%undefine dist" \
+		--define "_rpmfilename %%{ARCH}/%%{NAME}-%%{VERSION}-%%{RELEASE}.%%{ARCH}.rpm" \
+		--nodeps \
+		-bs suricata.spec
 
 copr-build: srpm
 	@if [ "$(COPR)" = "" ]; then \

@@ -8,6 +8,7 @@ Building these RPMs requires a recent Fedora or CentOS release with the
 following packages installed:
 - fedpkg
 - copr
+- mock
 
 ### Building Locally
 
@@ -16,11 +17,24 @@ and run commands like the following:
 
 ```
 make update-sources
-fedpkg --name suricata --dist epel8 mockbuild
+make srpm
+rpmbuild --rebuild suricata-6.0.5-2.src.rpm
 ```
 
-Replace the `--dist` argument with another valid mock distribution to build for
-a different version. For example `--dist f32` or `--dist epel7`.
+This will attempt to build the RPM locally which means all the
+dependencies need to be installed. It may be more useful to build with
+mock, which also allows building for a different version of CentOS or
+Fedora.  For example, to build for CentOS 7:
+
+```
+mock -r epel-7-x86_64 --resultdir . --rebuild suricata-6.0.5-2.src.rpm
+```
+
+Or to build for AlmaLinux 8:
+
+```
+mock -r alma+epel-8-x86_64 --resultdir . --rebuild suricata-6.0.5-2.src.rpm
+```
 
 ### Building on COPR
 
