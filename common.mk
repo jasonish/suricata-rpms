@@ -40,7 +40,11 @@ copr-testing: srpm
 
 update-sources:
 	spectool -g suricata.spec
-	sha512sum --tag `basename $$(spectool -l suricata.spec | awk '/^Source0/ { print $$2 }')` > sources
+	rm -f sources
+	for source in $$(spectool -l suricata.spec | awk '/^Source.*http/ { print $$2 }'); do \
+		echo $$source; \
+		sha512sum --tag $$(basename $$source) >> sources; \
+	done
 
 $(RELEASES):
 	fedpkg --name $(NAME) --release $@ mockbuild
