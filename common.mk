@@ -24,10 +24,10 @@ copr-build: srpm
 		echo "error: COPR environment variable must be set"; \
 		exit 1; \
 	fi
-	copr build $(COPR)/suricata-$(MAJOR) suricata*.el7.src.rpm
+	copr build $(COPR)/suricata-$(MAJOR) suricata-$(VERSION).src.rpm
 
 	if [ "$(MAJOR)" = "$(LATEST)" ]; then \
-		copr build $(COPR)/suricata-latest suricata*.el7.src.rpm; \
+		copr build $(COPR)/suricata-latest suricata-$(VERSION).src.rpm; \
 	fi
 
 copr-testing: srpm
