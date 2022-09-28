@@ -1,6 +1,6 @@
 Summary: Intrusion Detection System
 Name: suricata
-Version: 6.0.6
+Version: 6.0.8
 Release: 1%{?dist}
 Epoch: 1
 License: GPLv2
@@ -80,6 +80,7 @@ Matching, and GeoIP identification.
 %prep
 %setup -q -n suricata-%{version}
 install -m 644 %{SOURCE2} doc/
+
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
@@ -88,6 +89,9 @@ sed -i 's/(datadir)/(sysconfdir)/' etc/Makefile.am
 sed -i 's/-D__KERNEL__/-D__KERNEL__ -D__x86_64__/' ebpf/Makefile.am
 %endif
 autoreconf -fv --install
+
+# Patch suricatasc.py as RPM won't allow the ambiguous hashbang path.
+sed -i '1d' python/suricata/sc/suricatasc.py
 
 %build
 %configure --enable-gccprotect --enable-pie --disable-gccmarch-native \
@@ -107,6 +111,11 @@ autoreconf -fv --install
 
 %install
 make DESTDIR="%{buildroot}" "bindir=%{_sbindir}" install
+
+# Move utilities back to bindir.
+mv %{buildroot}%{_sbindir}/suricata-update %{buildroot}%{_bindir}/
+mv %{buildroot}%{_sbindir}/suricatasc %{buildroot}%{_bindir}/
+mv %{buildroot}%{_sbindir}/suricatactl %{buildroot}%{_bindir}/
 
 # Setup etc directory
 mkdir -p %{buildroot}%{_sysconfdir}/%{name}/rules
@@ -169,15 +178,7 @@ getent passwd suricata >/dev/null || useradd -r -M -g suricata -s /sbin/nologin 
 %{_bindir}/suricatactl
 %{_bindir}/suricata-update
 %{_libdir}/libhtp*
-%if 0%{?rhel} == 7
-%{python2_sitelib}/suricatasc/*
-%{python2_sitelib}/suricata/*
-%{python2_sitelib}/*egg-info
-%else
-%{python3_sitelib}/suricatasc/*
-%{python3_sitelib}/suricata/*
-%{python3_sitelib}/*egg-info
-%endif
+%{_prefix}/lib/suricata/python/*
 %config(noreplace) %attr(0640,suricata,suricata) %{_sysconfdir}/%{name}/suricata.yaml
 %config(noreplace) %attr(0640,suricata,suricata) %{_sysconfdir}/%{name}/*.config
 %config(noreplace) %attr(0640,suricata,suricata) %{_sysconfdir}/%{name}/rules/*.rules
@@ -193,6 +194,11 @@ getent passwd suricata >/dev/null || useradd -r -M -g suricata -s /sbin/nologin 
 %{_datadir}/%{name}/rules
 
 %changelog
+* Tue Sep 27 2022 Jason Ish <jason.ish@oisf.net> - 1:6.0.8-1
+- Update to 6.0.8.
+- Update handling for Python files as Suricata 6.0.8 moved away from
+  using distuils.
+
 * Tue Jul 12 2022 Jason Ish <jason.ish@oisf.net> - 1:6.0.6-1
 - Update to 6.0.6.
 
