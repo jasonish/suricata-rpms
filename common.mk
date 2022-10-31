@@ -49,6 +49,15 @@ update-sources:
 $(RELEASES):
 	fedpkg --name $(NAME) --release $@ mockbuild
 
+
+mock:
+	mock -r alma+epel-9-x86_64 suricata-$(VERSION).src.rpm
+	mock -r alma+epel-8-x86_64 suricata-$(VERSION).src.rpm
+	mock -r epel-7-x86_64 suricata-$(VERSION).src.rpm
+	mock -r fedora-37-x86_64 suricata-$(VERSION).src.rpm
+	mock -r fedora-36-x86_64 suricata-$(VERSION).src.rpm
+	mock -r fedora-35-x86_64 suricata-$(VERSION).src.rpm
+
 clean:
 	rm -f *.src.rpm
 	rm -rf results_suricata
