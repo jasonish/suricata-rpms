@@ -1,11 +1,11 @@
 Summary: Intrusion Detection System
 Name: suricata
 Version: 7.0.0
-Release: 0.1beta1%{?dist}
+Release: 0.1rc1%{?dist}
 Epoch: 1
 License: GPLv2
 URL: https://suricata-ids.org/
-Source0: https://www.openinfosecfoundation.org/download/%{name}-%{version}-beta1.tar.gz
+Source0: https://www.openinfosecfoundation.org/download/%{name}-%{version}-rc1.tar.gz
 Source1: suricata.sysconfig
 Source2: fedora.notes
 Source3: suricata-tmpfiles.conf
@@ -67,7 +67,6 @@ Requires(postun): systemd
 # Rust is not working on ppc64le systems (bz 1757548)
 ExcludeArch: ppc64le
 
-
 %description
 The Suricata Engine is an Open Source Next Generation Intrusion
 Detection and Prevention Engine. This engine is not intended to
@@ -78,7 +77,7 @@ UDP, ICMP, HTTP, TLS, FTP and SMB! ), Gzip Decompression, Fast IP
 Matching, and GeoIP identification.
 
 %prep
-%setup -q -n suricata-%{version}-beta1
+%setup -q -n suricata-%{version}-rc1
 find rust -type f -exec chmod 644 {} \;
 install -m 644 %{SOURCE2} doc/
 
@@ -192,8 +191,11 @@ getent passwd suricata >/dev/null || useradd -r -M -g suricata -s /sbin/nologin 
 %{_datadir}/%{name}/rules
 
 %changelog
+* Tue Jan 31 2023 Jason Ish <jason.ish@oisf.net> - 1:7.0.0-0.2rc1
+- Update to 7.0.0 rc1.
+
 * Sat Oct 29 2022 Jason Ish <jason.ish@oisf.net> - 1:7.0.0-0.1beta1
-- Update to 7.0.0beta1.
+- Update to 7.0.0 beta1.
 - Engine provided rules no longer installed to /etc/suricata/rules.
 
 * Tue Sep 27 2022 Jason Ish <jason.ish@oisf.net> - 1:6.0.8-1
