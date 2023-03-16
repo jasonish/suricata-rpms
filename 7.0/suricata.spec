@@ -4,7 +4,7 @@
 Summary: Intrusion Detection System
 Name: suricata
 Version: 7.0.0
-Release: 0.1rc1%{?dist}
+Release: 0.2rc1%{?dist}
 Epoch: 1
 License: GPLv2
 URL: https://suricata-ids.org/
@@ -207,7 +207,11 @@ getent passwd suricata >/dev/null || useradd -r -M -g suricata -s /sbin/nologin 
 %{_datadir}/%{name}/rules
 
 %changelog
-* Tue Jan 31 2023 Jason Ish <jason.ish@oisf.net> - 1:7.0.0-0.2rc1
+* Thu Mar 16 2023 Jason Ish <jason.ish@oisf.net> - 1:7.0.0-0.2rc1
+- Enable DPDK.
+- Enable Hyperscan on RHEL 8+ instead of just 8.
+
+* Tue Jan 31 2023 Jason Ish <jason.ish@oisf.net> - 1:7.0.0-0.1rc1
 - Update to 7.0.0 rc1.
 
 * Sat Oct 29 2022 Jason Ish <jason.ish@oisf.net> - 1:7.0.0-0.1beta1
