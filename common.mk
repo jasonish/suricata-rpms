@@ -50,13 +50,13 @@ $(RELEASES):
 	fedpkg --name $(NAME) --release $@ mockbuild
 
 
+MOCK_RESULTDIR := ./mock-results
 mock:
-	mock -r alma+epel-9-x86_64 suricata-$(VERSION).src.rpm
-	mock -r alma+epel-8-x86_64 suricata-$(VERSION).src.rpm
-	mock -r epel-7-x86_64 suricata-$(VERSION).src.rpm
-	mock -r fedora-37-x86_64 suricata-$(VERSION).src.rpm
-	mock -r fedora-36-x86_64 suricata-$(VERSION).src.rpm
-	mock -r fedora-35-x86_64 suricata-$(VERSION).src.rpm
+	mock -r alma+epel-9-x86_64 --resultdir $(MOCK_RESULTDIR) suricata-$(VERSION).src.rpm
+	mock -r alma+epel-8-x86_64 --resultdir $(MOCK_RESULTDIR) suricata-$(VERSION).src.rpm
+	mock -r epel-7-x86_64      --resultdir $(MOCK_RESULTDIR) suricata-$(VERSION).src.rpm
+	mock -r fedora-37-x86_64   --resultdir $(MOCK_RESULTDIR) suricata-$(VERSION).src.rpm
+	mock -r fedora-36-x86_64   --resultdir $(MOCK_RESULTDIR) suricata-$(VERSION).src.rpm
 
 clean:
 	rm -f *.src.rpm
