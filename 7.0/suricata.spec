@@ -1,3 +1,6 @@
+# Linking with DPDK breaks rpath checks currently.
+%global __brp_check_rpaths %{nil}
+
 Summary: Intrusion Detection System
 Name: suricata
 Version: 7.0.0
@@ -59,6 +62,14 @@ Requires: python2-pyyaml
 Requires: python3-pyyaml
 %endif
 
+%if 0%{?rhel} >= 8
+BuildRequires: dpdk-devel numactl-devel
+%endif
+
+%if 0%{?fedora} >= 36
+BuildRequires: dpdk-devel numactl-devel
+%endif
+
 Requires(pre): /usr/sbin/useradd
 Requires(post): systemd
 Requires(preun): systemd
@@ -99,13 +110,18 @@ sed -i '1d' python/suricata/sc/suricatasc.py
         --with-libnspr-includes=/usr/include/nspr4 \
         --with-libnss-includes=/usr/include/nss3 \
         --enable-jansson --enable-geoip --enable-lua --enable-hiredis \
-        --enable-rust  \
+        --enable-rust --enable-python \
+%if 0%{?rhel} >= 8
+        --enable-dpdk \
+%endif
+%if 0%{?fedora} >= 36
+        --enable-dpdk \
+%endif
 %if 0%{?fedora} >= 32
 %ifarch x86_64
 	--enable-ebpf-build --enable-ebpf \
 %endif
 %endif
-	--enable-python
 
 %make_build
 
