@@ -4,53 +4,59 @@ Spec files and build infrastucture for building Suricata RPMs.
 
 ## Building
 
-Building these RPMs requires a recent Fedora or CentOS release with the
+Building these RPMs requires a recent Fedora or EL release with the
 following packages installed:
-- fedpkg
 - copr
 - mock
 
-### Building Locally
+## Makefile Targets
 
-To build an RPM locally, enter the directory for the version you want to build
-and run commands like the following:
+### Default (all)
 
-```
-make update-sources
-make srpm
-rpmbuild --rebuild suricata-6.0.5-2.src.rpm
-```
+This target will build RPMs for all currently supported distributions
+using Mock.
 
-This will attempt to build the RPM locally which means all the
-dependencies need to be installed. It may be more useful to build with
-mock, which also allows building for a different version of CentOS or
-Fedora.  For example, to build for CentOS 7:
+### local
 
-```
-mock -r epel-7-x86_64 --resultdir . --rebuild suricata-6.0.5-2.src.rpm
-```
+Builds the RPM locally with rpmbuild. This does require that all the
+dependencies are installed.
 
-Or to build for AlmaLinux 8:
+### $(DIST)
+
+Build for a specific distribution supported by Mock. For example:
 
 ```
-mock -r alma+epel-8-x86_64 --resultdir . --rebuild suricata-6.0.5-2.src.rpm
+make epel-7-x86_64
 ```
 
-### Building on COPR
+### copr-testing
 
-To build on COPR you must have COPR projects created with the following pattern:
-- suricata-MAJOR_VERSION
-- suricata-MAJOR_VERSION-testing
+Upload SRPM to the testing project on COPR.
 
-Then the following commands can be used to start a build on COPR:
-- `COPR=YOUR_COPR_USERNAME make copr-testing`
-- `COPR=YOUR_COPR_USERNAME make copr-build`
+By default this is: `@oisf/suricata-${VERSION}-testing`
 
-Where the `testing` variation will start the build on the `-testing` project.
+### copr-build
 
-Example:
+Upload SRPM to the release project on COPR.
 
-```
-make update-sources
-COPR=jasonish make copr-testing
-```
+By default this is: `@oisf/suricata-${VERSION}`
+
+## Updating for a Patch Release
+
+Given an update from version 6.0.10 to 6.0.11, the process of an
+update might look like (note all command are to be run in the
+directory corresponding to the version being updated):
+
+- Edit `6.0/suricata.spec`
+  - Update `Version` to `6.0.11`
+  - If `Release` is different than `1%{?dist}`, change it back to `1%{?dist}`
+  - Add a new entry to the top of the `%changelog` section
+- Run: `make update-sources`
+  - This will download the new release file and generate checksums for
+    it
+- Push to testing COPR project:
+  - `make copr-testing`
+- Monitor the build at https://copr.fedorainfracloud.org/coprs/g/oisf/suricata-6.0/monitor/
+- If successful, push to the COPR release repo:
+  - `make copr-build`
+

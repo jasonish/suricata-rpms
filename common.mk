@@ -1,3 +1,4 @@
+COPR ?=		@oisf
 NAME :=		suricata
 MAJOR :=	$(shell basename $(shell pwd))
 LATEST :=	$(shell cat ../LATEST)
@@ -5,7 +6,22 @@ SRCDIR :=	$(shell pwd)
 
 VERSION := $(shell rpm --undefine 'dist' -q --qf "%{VERSION}-%{RELEASE}\n" --specfile suricata.spec| head -n1)
 
-RELEASES :=	$(shell fedpkg releases-info --join)
+# Current support RPM distribution releases. This relate to the
+# support chroots in COPR.
+DISTS :=	fedora-37-x86_64 \
+		fedora-36-x86_64 \
+		alma+epel-9-x86_64 \
+		alma+epel-8-x86_64 \
+		epel-7-x86_64
+
+# The default make target. Builds the SRPM then build Suricata for
+# each supported distributions.
+all:
+	$(MAKE) update-sources
+	$(MAKE) srpm
+	@for dist in $(DISTS); do \
+		$(MAKE) "$$dist"; \
+	done
 
 srpm:
 	rpmbuild \
@@ -18,6 +34,22 @@ srpm:
 		--define "_rpmfilename %%{ARCH}/%%{NAME}-%%{VERSION}-%%{RELEASE}.%%{ARCH}.rpm" \
 		--nodeps \
 		-bs suricata.spec
+
+update-sources:
+	spectool -g suricata.spec
+	rm -f sources
+	for source in $$(spectool -l suricata.spec | awk '/^Source.*http/ { print $$2 }'); do \
+		echo $$source; \
+		sha512sum --tag $$(basename $$source) >> sources; \
+	done
+
+$(DISTS):
+	bash -xc "mock -r $@ --resultdir output/$@ suricata-$(VERSION).src.rpm"
+
+local:
+	$(MAKE) update-sources
+	$(MAKE) srpm
+	rpmbuild --rebuild suricata-$(VERSION).src.rpm
 
 copr-build: srpm
 	@if [ "$(COPR)" = "" ]; then \
@@ -38,26 +70,5 @@ copr-testing: srpm
 	copr build $(COPR)/suricata-$(MAJOR)-testing \
 		suricata-$(VERSION).src.rpm
 
-update-sources:
-	spectool -g suricata.spec
-	rm -f sources
-	for source in $$(spectool -l suricata.spec | awk '/^Source.*http/ { print $$2 }'); do \
-		echo $$source; \
-		sha512sum --tag $$(basename $$source) >> sources; \
-	done
-
-$(RELEASES):
-	fedpkg --name $(NAME) --release $@ mockbuild
-
-
-MOCK_RESULTDIR := ./mock-results
-mock:
-	mock -r alma+epel-9-x86_64 --resultdir $(MOCK_RESULTDIR) suricata-$(VERSION).src.rpm
-	mock -r alma+epel-8-x86_64 --resultdir $(MOCK_RESULTDIR) suricata-$(VERSION).src.rpm
-	mock -r epel-7-x86_64      --resultdir $(MOCK_RESULTDIR) suricata-$(VERSION).src.rpm
-	mock -r fedora-37-x86_64   --resultdir $(MOCK_RESULTDIR) suricata-$(VERSION).src.rpm
-	mock -r fedora-36-x86_64   --resultdir $(MOCK_RESULTDIR) suricata-$(VERSION).src.rpm
-
 clean:
-	rm -f *.src.rpm
-	rm -rf results_suricata
+	rm -rf *.src.rpm *.tar.gz output
