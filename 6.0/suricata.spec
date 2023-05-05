@@ -48,7 +48,7 @@ BuildRequires: pkgconfig(gnutls)
 %if 0%{?fedora} >= 25
 BuildRequires: hyperscan-devel
 %endif
-%if 0%{?rhel} == 8
+%if 0%{?rhel} >= 8
 BuildRequires: hyperscan-devel
 %endif
 %endif
