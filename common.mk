@@ -8,7 +8,8 @@ VERSION := $(shell rpm --undefine 'dist' -q --qf "%{VERSION}-%{RELEASE}\n" --spe
 
 # Current support RPM distribution releases. This relate to the
 # support chroots in COPR.
-DISTS :=	fedora-37-x86_64 \
+DISTS :=	fedora-38-x86_64 \
+		fedora-37-x86_64 \
 		fedora-36-x86_64 \
 		alma+epel-9-x86_64 \
 		alma+epel-8-x86_64 \
@@ -57,7 +58,9 @@ copr-build: srpm
 		exit 1; \
 	fi
 	copr build $(COPR)/suricata-$(MAJOR) suricata-$(VERSION).src.rpm
+	$(MAKE) copr-build-latest
 
+copr-build-latest: srpm
 	if [ "$(MAJOR)" = "$(LATEST)" ]; then \
 		copr build $(COPR)/suricata-latest suricata-$(VERSION).src.rpm; \
 	fi
