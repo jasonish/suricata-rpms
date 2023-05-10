@@ -1,6 +1,6 @@
 Summary: Intrusion Detection System
 Name: suricata
-Version: 6.0.11
+Version: 6.0.12
 Release: 1%{?dist}
 Epoch: 1
 License: GPLv2
@@ -44,6 +44,14 @@ BuildRequires: hiredis-devel
 BuildRequires: libevent-devel
 BuildRequires: pkgconfig(gnutls)
 
+%if 0%{?fedora} >= 36
+BuildRequires: rust-packaging
+%endif
+
+%if 0%{?rhel} >= 9
+BuildRequires: rust-packaging
+%endif
+
 %ifarch x86_64
 %if 0%{?fedora} >= 25
 BuildRequires: hyperscan-devel
@@ -81,9 +89,9 @@ Matching, and GeoIP identification.
 %setup -q -n suricata-%{version}
 install -m 644 %{SOURCE2} doc/
 
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
+%patch -P1 -p1
+%patch -P2 -p1
+%patch -P3 -p1
 sed -i 's/(datadir)/(sysconfdir)/' etc/Makefile.am
 %ifarch x86_64
 sed -i 's/-D__KERNEL__/-D__KERNEL__ -D__x86_64__/' ebpf/Makefile.am
@@ -94,6 +102,10 @@ autoreconf -fv --install
 sed -i '1d' python/suricata/sc/suricatasc.py
 
 %build
+%if 0%{?build_rustflags:1}
+export RUSTFLAGS="%build_rustflags"
+%endif
+
 %configure --enable-gccprotect --enable-pie --disable-gccmarch-native \
         --disable-coccinelle --enable-nfqueue --enable-af-packet \
         --with-libnspr-includes=/usr/include/nspr4 \
@@ -194,6 +206,13 @@ getent passwd suricata >/dev/null || useradd -r -M -g suricata -s /sbin/nologin 
 %{_datadir}/%{name}/rules
 
 %changelog
+* Tue May 09 2023 Jason Ish <jason.ish@oisf.net> - 1:6.0.12-1
+- Update to 6.0.12.
+- Hyperscan now enabled for EPEL9.
+- From Fedora:
+  * Mon Feb 06 2023 Fabio Valentini <decathorpe@gmail.com> - 6.0.9-3
+  - Ensure standard Rust compiler flags are set.
+
 * Fri Apr 14 2023 Jason Ish <jason.ish@oisf.net> - 1:6.0.11-1
 - Update to 6.0.11.
 
