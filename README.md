@@ -44,7 +44,7 @@ By default this is: `@oisf/suricata-${VERSION}`
 ## Updating for a Patch Release
 
 Given an update from version 6.0.10 to 6.0.11, the process of an
-update might look like (note all command are to be run in the
+update might look like (note all commands are to be run in the
 directory corresponding to the version being updated):
 
 - Edit `6.0/suricata.spec`
