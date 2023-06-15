@@ -1,6 +1,6 @@
 Summary: Intrusion Detection System
 Name: suricata
-Version: 6.0.12
+Version: 6.0.13
 Release: 1%{?dist}
 Epoch: 1
 License: GPLv2
@@ -206,63 +206,66 @@ getent passwd suricata >/dev/null || useradd -r -M -g suricata -s /sbin/nologin 
 %{_datadir}/%{name}/rules
 
 %changelog
-* Tue May 09 2023 Jason Ish <jason.ish@oisf.net> - 1:6.0.12-1
+* Thu Jun 15 2023 Jason Ish <jish@oisf.net> - 1:60.0.13-1
+- Update to 6.0.13
+
+* Tue May 09 2023 Jason Ish <jish@oisf.net> - 1:6.0.12-1
 - Update to 6.0.12.
 - Hyperscan now enabled for EPEL9.
 - From Fedora:
   * Mon Feb 06 2023 Fabio Valentini <decathorpe@gmail.com> - 6.0.9-3
   - Ensure standard Rust compiler flags are set.
 
-* Fri Apr 14 2023 Jason Ish <jason.ish@oisf.net> - 1:6.0.11-1
+* Fri Apr 14 2023 Jason Ish <jish@oisf.net> - 1:6.0.11-1
 - Update to 6.0.11.
 
-* Tue Jan 31 2023 Jason Ish <jason.ish@oisf.net> - 1:6.0.10-1
+* Tue Jan 31 2023 Jason Ish <jish@oisf.net> - 1:6.0.10-1
 - Update to 6.0.10.
 
-* Tue Nov 29 2022 Jason Ish <jason.ish@oisf.net> - 1:6.0.9-1
+* Tue Nov 29 2022 Jason Ish <jish@oisf.net> - 1:6.0.9-1
 - Update to 6.0.9.
 
-* Tue Sep 27 2022 Jason Ish <jason.ish@oisf.net> - 1:6.0.8-1
+* Tue Sep 27 2022 Jason Ish <jish@oisf.net> - 1:6.0.8-1
 - Update to 6.0.8.
 - Update handling for Python files as Suricata 6.0.8 moved away from
   using distuils.
 
-* Tue Jul 12 2022 Jason Ish <jason.ish@oisf.net> - 1:6.0.6-1
+* Tue Jul 12 2022 Jason Ish <jish@oisf.net> - 1:6.0.6-1
 - Update to 6.0.6.
 
-* Tue May 10 2022 Jason Ish <jason.ish@oisf.net> - 1:6.0.5-2
+* Tue May 10 2022 Jason Ish <jish@oisf.net> - 1:6.0.5-2
 - Don't fail if group already exists.
 
-* Thu Apr 21 2022 Jason Ish <jason.ish@oisf.net> - 1:6.0.5-1
+* Thu Apr 21 2022 Jason Ish <jish@oisf.net> - 1:6.0.5-1
 - Update to 6.0.5.
 
-* Thu Nov 18 2021 Jason Ish <jason.ish@oisf.net> - 1:6.0.4-1
+* Thu Nov 18 2021 Jason Ish <jish@oisf.net> - 1:6.0.4-1
 - Update to 6.0.4
 - Remove libprelude as a dependency as support for prelude is broken in
   Suricata 6.0.x.
 
-* Wed Jun 30 2021 Jason Ish <jason.ish@oisf.net> - 1:6.0.3-1
+* Wed Jun 30 2021 Jason Ish <jish@oisf.net> - 1:6.0.3-1
 - Update to 6.0.3
 
-* Tue Mar  2 2021 Jason Ish <jason.ish@oisf.net> - 1:6.0.2-1
+* Tue Mar  2 2021 Jason Ish <jish@oisf.net> - 1:6.0.2-1
 - Update to 6.0.2
 
-* Fri Dec  4 2020 Jason Ish <jason.ish@oisf.net> - 1:6.0.1-1
+* Fri Dec  4 2020 Jason Ish <jish@oisf.net> - 1:6.0.1-1
 - Update to 6.0.1
 
-* Thu Oct 08 2020 Jason Ish <jason.ish@oisf.net> - 1:6.0.0-1
+* Thu Oct 08 2020 Jason Ish <jish@oisf.net> - 1:6.0.0-1
 - Update to Suricata 6.0.0 release.
 
-* Mon Sep 14 2020 Jason Ish <jason.ish@oisf.net> - 1:6.0.0-0.1rc1
+* Mon Sep 14 2020 Jason Ish <jish@oisf.net> - 1:6.0.0-0.1rc1
 - Set epoch to 1 so this package will take precedence over anything in EPEL, etc.
 
-* Fri Sep 11 2020 Jason <jason.ish@oisf.net> - 6.0.0-0.2rc1
+* Fri Sep 11 2020 Jason <jish@oisf.net> - 6.0.0-0.2rc1
 - Update to Suricata 6.0.0-rc1
 
-* Tue Apr 28 2020 Jason <jason.ish@oisf.net> - 5.0.3-1
+* Tue Apr 28 2020 Jason <jish@oisf.net> - 5.0.3-1
 - Update to 5.0.3
 
-* Tue Apr 28 2020 Jason Ish <jason.ish@oisf.net> - 5.0.2-4
+* Tue Apr 28 2020 Jason Ish <jish@oisf.net> - 5.0.2-4
 - Sync up with Fedora master
 
 * Tue Apr 28 2020 Jason Taylor <jtfas90@gmail.com> 5.0.3-1
@@ -272,10 +275,10 @@ getent passwd suricata >/dev/null || useradd -r -M -g suricata -s /sbin/nologin 
 * Fri Apr 03 2020 Jason Taylor <jtfas90@gmail.com> 5.0.2-2
 - Add python3-pyyaml to resolve (#1818935)
 
-* Mon Mar 30 2020 Jason Ish <jason.ish@oisf.net> - 5.0.2-3
+* Mon Mar 30 2020 Jason Ish <jish@oisf.net> - 5.0.2-3
 - Add PyYAML as a runtime requirement for suricata-update
 
-* Mon Mar 30 2020 Jason Ish <jason.ish@oisf.net> - 5.0.2-2
+* Mon Mar 30 2020 Jason Ish <jish@oisf.net> - 5.0.2-2
 - Use Python 2 on CentOS
 
 * Thu Feb 13 2020 Steve Grubb <sgrubb@redhat.com> 5.0.2-1
