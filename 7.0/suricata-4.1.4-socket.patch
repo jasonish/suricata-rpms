@@ -11,4 +11,4 @@ diff -urp suricata-4.1.4.orig/src/source-af-packet.c suricata-4.1.4/src/source-a
 +
  #endif /* HAVE_AF_PACKET */
  
- extern int max_pending_packets;
+ extern uint16_t max_pending_packets;

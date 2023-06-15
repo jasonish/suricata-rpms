@@ -1,14 +1,16 @@
 # Linking with DPDK breaks rpath checks currently.
 %global __brp_check_rpaths %{nil}
 
+%define prerelease rc2
+
 Summary: Intrusion Detection System
 Name: suricata
 Version: 7.0.0
-Release: 0.2rc1%{?dist}
+Release: 0.3%{prerelease}%{?dist}
 Epoch: 1
 License: GPLv2
 URL: https://suricata-ids.org/
-Source0: https://www.openinfosecfoundation.org/download/%{name}-%{version}-rc1.tar.gz
+Source0: https://www.openinfosecfoundation.org/download/%{name}-%{version}-%{prerelease}.tar.gz
 Source1: suricata.sysconfig
 Source2: fedora.notes
 Source3: suricata-tmpfiles.conf
@@ -88,13 +90,13 @@ UDP, ICMP, HTTP, TLS, FTP and SMB! ), Gzip Decompression, Fast IP
 Matching, and GeoIP identification.
 
 %prep
-%setup -q -n suricata-%{version}-rc1
+%setup -q -n suricata-%{version}-%{prerelease}
 find rust -type f -exec chmod 644 {} \;
 install -m 644 %{SOURCE2} doc/
 
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
+%patch -P1 -p1
+%patch -P2 -p1
+%patch -P3 -p1
 sed -i 's/(datadir)/(sysconfdir)/' etc/Makefile.am
 %ifarch x86_64
 sed -i 's/-D__KERNEL__/-D__KERNEL__ -D__x86_64__/' ebpf/Makefile.am
@@ -114,7 +116,7 @@ sed -i '1d' python/suricata/sc/suricatasc.py
 %if 0%{?rhel} >= 8
         --enable-dpdk \
 %endif
-%if 0%{?fedora} >= 36
+%if 0%{?fedora} >= 37
         --enable-dpdk \
 %endif
 %if 0%{?fedora} >= 32
@@ -207,58 +209,61 @@ getent passwd suricata >/dev/null || useradd -r -M -g suricata -s /sbin/nologin 
 %{_datadir}/%{name}/rules
 
 %changelog
-* Thu Mar 16 2023 Jason Ish <jason.ish@oisf.net> - 1:7.0.0-0.2rc1
+* Thu Jun 15 2023 Jason Ish <jish@oisf.net> - 1:7.0.0-0.3rc2
+- Update to 7.0.0rc2
+
+* Thu Mar 16 2023 Jason Ish <jish@oisf.net> - 1:7.0.0-0.2rc1
 - Enable DPDK.
 - Enable Hyperscan on RHEL 8+ instead of just 8.
 
-* Tue Jan 31 2023 Jason Ish <jason.ish@oisf.net> - 1:7.0.0-0.1rc1
+* Tue Jan 31 2023 Jason Ish <jish@oisf.net> - 1:7.0.0-0.1rc1
 - Update to 7.0.0 rc1.
 
-* Sat Oct 29 2022 Jason Ish <jason.ish@oisf.net> - 1:7.0.0-0.1beta1
+* Sat Oct 29 2022 Jason Ish <jish@oisf.net> - 1:7.0.0-0.1beta1
 - Update to 7.0.0 beta1.
 - Engine provided rules no longer installed to /etc/suricata/rules.
 
-* Tue Sep 27 2022 Jason Ish <jason.ish@oisf.net> - 1:6.0.8-1
+* Tue Sep 27 2022 Jason Ish <jish@oisf.net> - 1:6.0.8-1
 - Update to 6.0.8.
 - Update handling for Python files as Suricata 6.0.8 moved away from
   using distuils.
 
-* Tue Jul 12 2022 Jason Ish <jason.ish@oisf.net> - 1:6.0.6-1
+* Tue Jul 12 2022 Jason Ish <jish@oisf.net> - 1:6.0.6-1
 - Update to 6.0.6.
 
-* Tue May 10 2022 Jason Ish <jason.ish@oisf.net> - 1:6.0.5-2
+* Tue May 10 2022 Jason Ish <jish@oisf.net> - 1:6.0.5-2
 - Don't fail if group already exists.
 
-* Thu Apr 21 2022 Jason Ish <jason.ish@oisf.net> - 1:6.0.5-1
+* Thu Apr 21 2022 Jason Ish <jish@oisf.net> - 1:6.0.5-1
 - Update to 6.0.5.
 
-* Thu Nov 18 2021 Jason Ish <jason.ish@oisf.net> - 1:6.0.4-1
+* Thu Nov 18 2021 Jason Ish <jish@oisf.net> - 1:6.0.4-1
 - Update to 6.0.4
 - Remove libprelude as a dependency as support for prelude is broken in
   Suricata 6.0.x.
 
-* Wed Jun 30 2021 Jason Ish <jason.ish@oisf.net> - 1:6.0.3-1
+* Wed Jun 30 2021 Jason Ish <jish@oisf.net> - 1:6.0.3-1
 - Update to 6.0.3
 
-* Tue Mar  2 2021 Jason Ish <jason.ish@oisf.net> - 1:6.0.2-1
+* Tue Mar  2 2021 Jason Ish <jish@oisf.net> - 1:6.0.2-1
 - Update to 6.0.2
 
-* Fri Dec  4 2020 Jason Ish <jason.ish@oisf.net> - 1:6.0.1-1
+* Fri Dec  4 2020 Jason Ish <jish@oisf.net> - 1:6.0.1-1
 - Update to 6.0.1
 
-* Thu Oct 08 2020 Jason Ish <jason.ish@oisf.net> - 1:6.0.0-1
+* Thu Oct 08 2020 Jason Ish <jish@oisf.net> - 1:6.0.0-1
 - Update to Suricata 6.0.0 release.
 
-* Mon Sep 14 2020 Jason Ish <jason.ish@oisf.net> - 1:6.0.0-0.1rc1
+* Mon Sep 14 2020 Jason Ish <jish@oisf.net> - 1:6.0.0-0.1rc1
 - Set epoch to 1 so this package will take precedence over anything in EPEL, etc.
 
-* Fri Sep 11 2020 Jason <jason.ish@oisf.net> - 6.0.0-0.2rc1
+* Fri Sep 11 2020 Jason <jish@oisf.net> - 6.0.0-0.2rc1
 - Update to Suricata 6.0.0-rc1
 
-* Tue Apr 28 2020 Jason <jason.ish@oisf.net> - 5.0.3-1
+* Tue Apr 28 2020 Jason <jish@oisf.net> - 5.0.3-1
 - Update to 5.0.3
 
-* Tue Apr 28 2020 Jason Ish <jason.ish@oisf.net> - 5.0.2-4
+* Tue Apr 28 2020 Jason Ish <jish@oisf.net> - 5.0.2-4
 - Sync up with Fedora master
 
 * Tue Apr 28 2020 Jason Taylor <jtfas90@gmail.com> 5.0.3-1
@@ -268,10 +273,10 @@ getent passwd suricata >/dev/null || useradd -r -M -g suricata -s /sbin/nologin 
 * Fri Apr 03 2020 Jason Taylor <jtfas90@gmail.com> 5.0.2-2
 - Add python3-pyyaml to resolve (#1818935)
 
-* Mon Mar 30 2020 Jason Ish <jason.ish@oisf.net> - 5.0.2-3
+* Mon Mar 30 2020 Jason Ish <jish@oisf.net> - 5.0.2-3
 - Add PyYAML as a runtime requirement for suricata-update
 
-* Mon Mar 30 2020 Jason Ish <jason.ish@oisf.net> - 5.0.2-2
+* Mon Mar 30 2020 Jason Ish <jish@oisf.net> - 5.0.2-2
 - Use Python 2 on CentOS
 
 * Thu Feb 13 2020 Steve Grubb <sgrubb@redhat.com> 5.0.2-1
