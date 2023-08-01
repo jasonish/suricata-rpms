@@ -1,16 +1,14 @@
 # Linking with DPDK breaks rpath checks currently.
 %global __brp_check_rpaths %{nil}
 
-%define prerelease rc2
-
 Summary: Intrusion Detection System
 Name: suricata
 Version: 7.0.0
-Release: 0.4%{prerelease}%{?dist}
+Release: 1%{?dist}
 Epoch: 1
 License: GPLv2
 URL: https://suricata-ids.org/
-Source0: https://www.openinfosecfoundation.org/download/%{name}-%{version}-%{prerelease}.tar.gz
+Source0: https://www.openinfosecfoundation.org/download/%{name}-%{version}.tar.gz
 Source1: suricata.sysconfig
 Source2: fedora.notes
 Source3: suricata-tmpfiles.conf
@@ -90,7 +88,7 @@ UDP, ICMP, HTTP, TLS, FTP and SMB! ), Gzip Decompression, Fast IP
 Matching, and GeoIP identification.
 
 %prep
-%setup -q -n suricata-%{version}-%{prerelease}
+%setup -q -n suricata-%{version}
 find rust -type f -exec chmod 644 {} \;
 install -m 644 %{SOURCE2} doc/
 
@@ -209,41 +207,44 @@ getent passwd suricata >/dev/null || useradd -r -M -g suricata -s /sbin/nologin 
 %{_datadir}/%{name}/rules
 
 %changelog
+* Tue Aug 01 2023 Jason Ish <jish@oisf.net> - 1:7.0.0-1
+- Update to Suricata 7.0.0
+
 * Tue Jul 04 2023 Jason Ish <jish@oisf.net> - 1:7.0.0-0.4rc2
-- Version to bump to push out bad version from COPR.
+- Version to bump to push out bad version from COPR
 
 * Thu Jun 15 2023 Jason Ish <jish@oisf.net> - 1:7.0.0-0.3rc2
 - Update to 7.0.0rc2
 
 * Thu Mar 16 2023 Jason Ish <jish@oisf.net> - 1:7.0.0-0.2rc1
 - Enable DPDK.
-- Enable Hyperscan on RHEL 8+ instead of just 8.
+- Enable Hyperscan on RHEL 8+ instead of just 8
 
 * Tue Jan 31 2023 Jason Ish <jish@oisf.net> - 1:7.0.0-0.1rc1
-- Update to 7.0.0 rc1.
+- Update to 7.0.0 rc1
 
 * Sat Oct 29 2022 Jason Ish <jish@oisf.net> - 1:7.0.0-0.1beta1
-- Update to 7.0.0 beta1.
-- Engine provided rules no longer installed to /etc/suricata/rules.
+- Update to 7.0.0 beta1
+- Engine provided rules no longer installed to /etc/suricata/rules
 
 * Tue Sep 27 2022 Jason Ish <jish@oisf.net> - 1:6.0.8-1
-- Update to 6.0.8.
+- Update to 6.0.8
 - Update handling for Python files as Suricata 6.0.8 moved away from
-  using distuils.
+  using distuils
 
 * Tue Jul 12 2022 Jason Ish <jish@oisf.net> - 1:6.0.6-1
-- Update to 6.0.6.
+- Update to 6.0.6
 
 * Tue May 10 2022 Jason Ish <jish@oisf.net> - 1:6.0.5-2
-- Don't fail if group already exists.
+- Don't fail if group already exists
 
 * Thu Apr 21 2022 Jason Ish <jish@oisf.net> - 1:6.0.5-1
-- Update to 6.0.5.
+- Update to 6.0.5
 
 * Thu Nov 18 2021 Jason Ish <jish@oisf.net> - 1:6.0.4-1
 - Update to 6.0.4
 - Remove libprelude as a dependency as support for prelude is broken in
-  Suricata 6.0.x.
+  Suricata 6.0.x
 
 * Wed Jun 30 2021 Jason Ish <jish@oisf.net> - 1:6.0.3-1
 - Update to 6.0.3
@@ -258,7 +259,7 @@ getent passwd suricata >/dev/null || useradd -r -M -g suricata -s /sbin/nologin 
 - Update to Suricata 6.0.0 release.
 
 * Mon Sep 14 2020 Jason Ish <jish@oisf.net> - 1:6.0.0-0.1rc1
-- Set epoch to 1 so this package will take precedence over anything in EPEL, etc.
+- Set epoch to 1 so this package will take precedence over anything in EPEL, etc
 
 * Fri Sep 11 2020 Jason <jish@oisf.net> - 6.0.0-0.2rc1
 - Update to Suricata 6.0.0-rc1
