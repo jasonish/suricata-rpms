@@ -14,11 +14,14 @@ Source3: suricata-tmpfiles.conf
 Patch1: suricata-2.0.9-docs.patch
 # Suricata service file needs some options supplied
 Patch2: suricata-4.1.1-service.patch
-# Linux 5.2 headers moved SIOCGSTAMP to linux/sockios.h. Glibc will
-# include it via sys/socket.h in a future release. This is temporary
-# and should not be needed on other kernel/glibc combos.
-Patch3: suricata-4.1.4-socket.patch
+# The default path needs to be fixed up to where Fedora keeps it
+Patch3: suricata-5.0.4-geolite-path-fixup.patch
+# The log path has an extra '/' at the end
+Patch4: suricata-6.0.3-log-path-fixup.patch
+# Build fails with ambiguous python shebang
+Patch5: suricata-6.0.9-python.patch
 
+BuildRequires: make
 BuildRequires: gcc gcc-c++
 BuildRequires: cargo rust >= 1.33
 BuildRequires: libyaml-devel
@@ -39,7 +42,7 @@ BuildRequires: clang llvm libbpf-devel
 %endif
 %endif
 BuildRequires: autoconf automake libtool
-BuildRequires: systemd
+BuildRequires: systemd-devel
 BuildRequires: hiredis-devel
 BuildRequires: libevent-devel
 BuildRequires: pkgconfig(gnutls)
@@ -92,6 +95,8 @@ install -m 644 %{SOURCE2} doc/
 %patch -P1 -p1
 %patch -P2 -p1
 %patch -P3 -p1
+%patch -P4 -p1
+%patch -P5 -p1
 sed -i 's/(datadir)/(sysconfdir)/' etc/Makefile.am
 %ifarch x86_64
 sed -i 's/-D__KERNEL__/-D__KERNEL__ -D__x86_64__/' ebpf/Makefile.am
@@ -114,10 +119,10 @@ export RUSTFLAGS="%build_rustflags"
         --enable-rust  \
 %if 0%{?fedora} >= 32
 %ifarch x86_64
-	--enable-ebpf-build --enable-ebpf \
+        --enable-ebpf-build --enable-ebpf \
 %endif
 %endif
-	--enable-python
+        --enable-python
 
 %make_build
 
@@ -172,6 +177,12 @@ getent passwd suricata >/dev/null || useradd -r -M -g suricata -s /sbin/nologin 
 
 %post
 %systemd_post suricata.service
+if [ -d %{_var}/log/%{name} ] ; then
+	file=$(ls %{_var}/log/%{name}/* 2> /dev/null | wc -l)
+	if [ -n "$files" ] && [ "$files" != "0" ] ; then
+		chown suricata %{_var}/log/%{name}/* 2> /dev/null
+	fi
+fi
 
 %preun
 %systemd_preun suricata.service
