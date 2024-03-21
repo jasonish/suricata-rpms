@@ -1,6 +1,6 @@
 Summary: Intrusion Detection System
 Name: suricata
-Version: 6.0.17
+Version: 6.0.18
 Release: 1%{?dist}
 Epoch: 1
 License: GPLv2
@@ -217,6 +217,9 @@ fi
 %{_datadir}/%{name}/rules
 
 %changelog
+* Thu Mar 21 2024 Jason Ish <jish@oisf.net> - 1:6.0.18-1
+- Update to Suricata 6.0.18
+
 * Tue Mar 19 2024 Jason Ish <jish@oisf.net> - 1:6.0.17-1
 - Update to Suricata 6.0.17
 
