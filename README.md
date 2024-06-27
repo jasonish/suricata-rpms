@@ -43,12 +43,12 @@ By default this is: `@oisf/suricata-${VERSION}`
 
 ## Updating for a Patch Release
 
-Given an update from version 6.0.10 to 6.0.11, the process of an
-update might look like (note all commands are to be run in the
-directory corresponding to the version being updated):
+Given an update from version 7.0.5 to 7.0.6, the process of an update
+might look like (note all commands are to be run in the directory
+corresponding to the version being updated):
 
-- Edit `6.0/suricata.spec`
-  - Update `Version` to `6.0.11`
+- Edit `7.0/suricata.spec`
+  - Update `Version` to `7.0.6`
   - If `Release` is different than `1%{?dist}`, change it back to `1%{?dist}`
   - Add a new entry to the top of the `%changelog` section
 - Run: `make update-sources`
@@ -56,7 +56,8 @@ directory corresponding to the version being updated):
     it
 - Push to testing COPR project:
   - `make copr-testing`
-- Monitor the build at https://copr.fedorainfracloud.org/coprs/g/oisf/suricata-6.0/monitor/
+- Monitor the build at
+  https://copr.fedorainfracloud.org/coprs/g/oisf/suricata-7.0-testing/monitor/
 - If successful, push to the COPR release repo:
   - `make copr-build`
 
