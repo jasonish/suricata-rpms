@@ -3,8 +3,8 @@
 
 Summary: Intrusion Detection System
 Name: suricata
-Version: 7.0.5
-Release: 3%{?dist}
+Version: 7.0.6
+Release: 1%{?dist}
 Epoch: 1
 License: GPLv2
 URL: https://suricata.io/
@@ -207,6 +207,9 @@ getent passwd suricata >/dev/null || useradd -r -M -g suricata -s /sbin/nologin 
 %{_datadir}/%{name}/rules
 
 %changelog
+* Thu Jun 27 2024 Jason Ish <jish@oisf.net> - 1:7.0.6-1
+- Update to Suricata 7.0.6
+
 * Tue Apr 23 2024 Jason Ish <jish@oisf.net> - 1:7.0.5-2
 - Update to Suricata 7.0.5
 
