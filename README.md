@@ -43,6 +43,30 @@ By default this is: `@oisf/suricata-${VERSION}`
 
 ## Updating for a Patch Release
 
+### The easy way
+
+- Use the update-version script:
+    ```
+    cd 7.0
+    ./update-version.py 7.0.7
+    ```
+- Run `git diff` to verify the changes.
+- If you are not Jason, please update the changelog entry to your name and email.
+- Update the sources:
+    ```
+    make update-sources
+    ```
+- Run a test build:
+    ```
+    make copr-testing
+    ```
+    - If all looks good:
+    ```
+    make copr-build
+    ```
+
+### Or the more detailed way
+
 Given an update from version 7.0.5 to 7.0.6, the process of an update
 might look like (note all commands are to be run in the directory
 corresponding to the version being updated):
