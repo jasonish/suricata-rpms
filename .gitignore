@@ -1,3 +1,4 @@
 *.tar.gz
 *.src.rpm
 /*/results_suricata/
+*~
