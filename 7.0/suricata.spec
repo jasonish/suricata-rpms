@@ -609,4 +609,3 @@ getent passwd suricata >/dev/null || useradd -r -M -g suricata -s /sbin/nologin 
 
 * Sat Feb 27 2010 Steve Grubb <sgrubb@redhat.com> 0.8.1-1
 - Initial packaging
-
