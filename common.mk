@@ -6,6 +6,9 @@ SRCDIR :=	$(shell pwd)
 
 VERSION := $(shell rpm --undefine 'dist' -q --qf "%{VERSION}-%{RELEASE}\n" --specfile suricata.spec| head -n1)
 
+# Used for version the "devel" package.
+DATE :=	$(shell date +%Y%m%d%H%M)
+
 # Current support RPM distribution releases. This relate to the
 # support chroots in COPR.
 DISTS :=	fedora-38-x86_64 \
@@ -24,7 +27,9 @@ all:
 	done
 
 srpm:
+	rm -f *.src.rpm
 	rpmbuild \
+		--define "date $(DATE)" \
 		--define "_sourcedir $(PWD)" \
 		--define "_specdir $(PWD)" \
 		--define "_builddir $(PWD)" \
@@ -56,7 +61,7 @@ copr-build: srpm
 		echo "error: COPR environment variable must be set"; \
 		exit 1; \
 	fi
-	copr build $(COPR)/suricata-$(MAJOR) suricata-$(VERSION).src.rpm
+	copr build $(COPR)/suricata-$(MAJOR) suricata-$(VERSION)*.src.rpm
 	$(MAKE) copr-build-latest
 
 copr-build-latest: srpm
