@@ -19,7 +19,7 @@ Patch1: suricata-2.0.9-docs.patch
 Patch2: suricata-4.1.1-service.patch
 
 BuildRequires: gcc gcc-c++
-BuildRequires: cargo rust >= 1.33
+BuildRequires: cargo rust
 BuildRequires: libyaml-devel
 %if 0%{?rhel} == 7
 BuildRequires: python2-devel python2-pyyaml
