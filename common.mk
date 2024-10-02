@@ -14,15 +14,6 @@ DISTS :=	fedora-38-x86_64 \
 		alma+epel-8-x86_64 \
 		epel-7-x86_64
 
-# The default make target. Builds the SRPM then build Suricata for
-# each supported distributions.
-all:
-	$(MAKE) update-sources
-	$(MAKE) srpm
-	@for dist in $(DISTS); do \
-		$(MAKE) "$$dist"; \
-	done
-
 srpm:
 	rm -f *.src.rpm
 	rpmbuild \
@@ -50,7 +41,7 @@ $(DISTS):
 local:
 	$(MAKE) update-sources
 	$(MAKE) srpm
-	rpmbuild --rebuild suricata-$(VERSION).src.rpm
+	rpmbuild -D '_rpmdir ./rpms' --rebuild suricata-$(VERSION).src.rpm
 
 copr-build: srpm
 	@if [ "$(COPR)" = "" ]; then \
