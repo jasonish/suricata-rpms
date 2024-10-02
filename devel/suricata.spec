@@ -4,7 +4,7 @@
 Summary: Intrusion Detection System
 Name: suricata
 Version: 8.0.0
-Release: 0.%{?date}%{?dist}
+Release: 0.202410021215%{?dist}
 Epoch: 1
 License: GPLv2
 URL: https://suricata.io/
@@ -30,7 +30,7 @@ BuildRequires: libnfnetlink-devel libnetfilter_queue-devel libnet-devel
 BuildRequires: zlib-devel pcre2-devel libcap-ng-devel
 BuildRequires: lz4-devel libpcap-devel
 BuildRequires: nspr-devel nss-devel nss-softokn-devel file-devel
-BuildRequires: jansson-devel libmaxminddb-devel lua-devel
+BuildRequires: jansson-devel libmaxminddb-devel
 # Next line is for eBPF support
 %if 0%{?fedora} >= 32
 %ifarch x86_64
@@ -42,10 +42,6 @@ BuildRequires: systemd
 BuildRequires: hiredis-devel
 BuildRequires: libevent-devel
 BuildRequires: pkgconfig(gnutls)
-
-# Only because we're building from git
-BuildRequires: cbindgen
-BuildRequires: python3-sphinx
 
 %ifarch x86_64
 %if 0%{?fedora} >= 25
@@ -108,7 +104,7 @@ sed -i '1d' python/suricata/sc/suricatasc.py
         --disable-coccinelle --enable-nfqueue --enable-af-packet \
         --with-libnspr-includes=/usr/include/nspr4 \
         --with-libnss-includes=/usr/include/nss3 \
-        --enable-jansson --enable-geoip --enable-lua --enable-hiredis \
+        --enable-jansson --enable-geoip --enable-hiredis \
         --enable-rust --enable-python \
 %if 0%{?rhel} >= 8
         --enable-dpdk \
