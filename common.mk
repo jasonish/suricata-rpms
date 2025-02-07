@@ -8,8 +8,8 @@ VERSION := $(shell rpm --undefine 'dist' -q --qf "%{VERSION}-%{RELEASE}\n" --spe
 
 # Current support RPM distribution releases. This relate to the
 # support chroots in COPR.
-DISTS :=	fedora-38-x86_64 \
-		fedora-37-x86_64 \
+DISTS :=	fedora-40-x86_64 \
+		fedora-41-x86_64 \
 		alma+epel-9-x86_64 \
 		alma+epel-8-x86_64 \
 		epel-7-x86_64
