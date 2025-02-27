@@ -4,7 +4,7 @@
 Summary: Intrusion Detection System
 Name: suricata
 Version: 8.0.0
-Release: 0.202410021237%{?dist}
+Release: 0.202502270923%{?dist}
 Epoch: 1
 License: GPLv2
 URL: https://suricata.io/
@@ -96,9 +96,6 @@ sed -i 's/-D__KERNEL__/-D__KERNEL__ -D__x86_64__/' ebpf/Makefile.am
 %endif
 autoreconf -fv --install
 
-# Patch suricatasc.py as RPM won't allow the ambiguous hashbang path.
-sed -i '1d' python/suricata/sc/suricatasc.py
-
 %build
 %configure --enable-gccprotect --enable-pie --disable-gccmarch-native \
         --disable-coccinelle --enable-nfqueue --enable-af-packet \
@@ -124,6 +121,7 @@ sed -i '1d' python/suricata/sc/suricatasc.py
 make DESTDIR="%{buildroot}" "bindir=%{_sbindir}" install
 
 # Move utilities back to bindir.
+mkdir -p %{buildroot}%{_bindir}
 mv %{buildroot}%{_sbindir}/suricata-update %{buildroot}%{_bindir}/
 mv %{buildroot}%{_sbindir}/suricatasc %{buildroot}%{_bindir}/
 mv %{buildroot}%{_sbindir}/suricatactl %{buildroot}%{_bindir}/
