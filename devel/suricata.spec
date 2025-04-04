@@ -4,7 +4,7 @@
 Summary: Intrusion Detection System
 Name: suricata
 Version: 8.0.0
-Release: 0.202502270923%{?dist}
+Release: 0.202504040953%{?dist}
 Epoch: 1
 License: GPLv2
 URL: https://suricata.io/
@@ -44,7 +44,9 @@ BuildRequires: libevent-devel
 BuildRequires: pkgconfig(gnutls)
 
 %ifarch x86_64
-%if 0%{?fedora} >= 25
+%if 0%{?fedora} >= 41
+BuildRequires: vectorscan-devel
+%else
 BuildRequires: hyperscan-devel
 %endif
 %if 0%{?rhel} >= 8
@@ -141,13 +143,6 @@ mkdir -p %{buildroot}/%{_var}/log/%{name}
 mkdir -p %{buildroot}%{_sysconfdir}/logrotate.d
 install -m 644 etc/%{name}.logrotate %{buildroot}%{_sysconfdir}/logrotate.d/%{name}
 
-# Remove a couple things so they don't get picked up
-rm -rf %{buildroot}%{_includedir}
-rm -f %{buildroot}%{_libdir}/libhtp.la
-rm -f %{buildroot}%{_libdir}/libhtp.a
-rm -f %{buildroot}%{_libdir}/libhtp.so
-rm -rf %{buildroot}%{_libdir}/pkgconfig
-
 # Setup suricata-update data directory
 mkdir -p %{buildroot}/%{_var}/lib/%{name}
 
@@ -185,7 +180,6 @@ getent passwd suricata >/dev/null || useradd -r -M -g suricata -s /sbin/nologin 
 %{_bindir}/suricatasc
 %{_bindir}/suricatactl
 %{_bindir}/suricata-update
-%{_libdir}/libhtp*
 %{_prefix}/lib/suricata/python/*
 %config(noreplace) %attr(0640,suricata,suricata) %{_sysconfdir}/%{name}/suricata.yaml
 %config(noreplace) %attr(0640,suricata,suricata) %{_sysconfdir}/%{name}/*.config
@@ -200,6 +194,10 @@ getent passwd suricata >/dev/null || useradd -r -M -g suricata -s /sbin/nologin 
 %{_datadir}/%{name}/rules
 
 %changelog
+* Fri Apr 04 2025 Jason Ish <jish@oisf.net> - 8.0.0-0.202504040953
+- Update for removal of libhtp.
+- Use vectorscan on Fedora 41+.
+
 * Tue Oct 01 2024 Jason Ish <jish@oisf.net> - 1:7.0.7-1
 - Update to Suricata 7.0.7
 
