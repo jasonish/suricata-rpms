@@ -1,0 +1,3 @@
+all:
+
+include ../common.mk

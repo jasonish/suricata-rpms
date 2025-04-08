@@ -1,0 +1,3 @@
+To set the interface to liston on, edit /etc/sysconfig/suricata.
+
+For more information on getting started, see https://docs.suricata.io.
