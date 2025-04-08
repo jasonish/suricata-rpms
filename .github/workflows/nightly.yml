@@ -1,0 +1,49 @@
+name: nightly
+
+on:
+  push:
+
+jobs:
+  devel:
+    runs-on: ubuntu-latest
+    container: fedora:41
+    steps:
+      - run: |
+          dnf -y install \
+                autoconf \
+                automake \
+                bindgen \
+                cargo \
+                cbindgen \
+                clang \
+                curl \
+                diffutils \
+                file-devel \
+                gcc \
+                git \
+                git \
+                jansson-devel \
+                libcap-ng-devel \
+                libevent-devel \
+                libmaxminddb-devel \
+                libnet-devel \
+                libnetfilter_queue-devel \
+                libnfnetlink-devel \
+                libpcap-devel \
+                libtool \
+                libyaml-devel \
+                llvm-devel \
+                lz4-devel \
+                make \
+                pcre2-devel \
+                pkgconfig \
+                python3-sphinx \
+                python3-yaml \
+                rpmdevtools \
+                rust \
+                sudo \
+                which \
+                zlib-devel
+      - uses: actions/checkout@v4
+      - run: make
+        working-directory: devel
