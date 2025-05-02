@@ -4,11 +4,11 @@
 Summary: Intrusion Detection System
 Name: suricata
 Version: 8.0.0
-Release: 0.202504081437%{?dist}
+Release: 0.202505011500%{?dist}
 Epoch: 1
 License: GPLv2
 URL: https://suricata.io/
-Source0: suricata-8.0.0-dev.tar.gz
+Source0: suricata-8.0.0-rc1-dev.tar.gz
 Source1: suricata.sysconfig
 Source2: fedora.notes
 Source3: suricata-tmpfiles.conf
@@ -29,7 +29,7 @@ BuildRequires: python3-devel python3-pyyaml
 BuildRequires: libnfnetlink-devel libnetfilter_queue-devel libnet-devel
 BuildRequires: zlib-devel pcre2-devel libcap-ng-devel
 BuildRequires: lz4-devel libpcap-devel
-BuildRequires: nspr-devel nss-devel nss-softokn-devel file-devel
+BuildRequires: file-devel
 BuildRequires: jansson-devel libmaxminddb-devel
 # Next line is for eBPF support
 %if 0%{?fedora} >= 32
@@ -41,7 +41,7 @@ BuildRequires: autoconf automake libtool
 BuildRequires: systemd
 BuildRequires: hiredis-devel
 BuildRequires: libevent-devel
-BuildRequires: pkgconfig(gnutls)
+#BuildRequires: pkgconfig(gnutls)
 
 %ifarch x86_64
 %if 0%{?fedora} >= 41
@@ -85,8 +85,20 @@ supports Multi-threading, Automatic Protocol Detection (IP, TCP,
 UDP, ICMP, HTTP, TLS, FTP and SMB! ), Gzip Decompression, Fast IP
 Matching, and GeoIP identification.
 
+%package libs
+Summary: Suricata shared library.
+
+%description libs
+This package contains the shared library for %{name}.
+
+%package devel
+Summary: Development files for %{name}.
+
+%description devel
+This package contains header files and static libraries for %{name}.
+
 %prep
-%setup -q -n suricata-8.0.0-dev
+%setup -q -n suricata-8.0.0-rc1-dev
 find rust -type f -exec chmod 644 {} \;
 install -m 644 %{SOURCE2} doc/
 
@@ -101,10 +113,8 @@ autoreconf -fv --install
 %build
 %configure --enable-gccprotect --enable-pie --disable-gccmarch-native \
         --disable-coccinelle --enable-nfqueue --enable-af-packet \
-        --with-libnspr-includes=/usr/include/nspr4 \
-        --with-libnss-includes=/usr/include/nss3 \
-        --enable-jansson --enable-geoip --enable-hiredis \
-        --enable-rust --enable-python \
+        --enable-geoip --enable-hiredis \
+        --enable-python \
 %if 0%{?rhel} >= 8
         --enable-dpdk \
 %endif
@@ -121,12 +131,15 @@ autoreconf -fv --install
 
 %install
 make DESTDIR="%{buildroot}" "bindir=%{_sbindir}" install
+make DESTDIR="%{buildroot}" "bindir=%{_sbindir}" install-library
+make DESTDIR="%{buildroot}" "bindir=%{_sbindir}" install-headers
 
 # Move utilities back to bindir.
 mkdir -p %{buildroot}%{_bindir}
 mv %{buildroot}%{_sbindir}/suricata-update %{buildroot}%{_bindir}/
 mv %{buildroot}%{_sbindir}/suricatasc %{buildroot}%{_bindir}/
 mv %{buildroot}%{_sbindir}/suricatactl %{buildroot}%{_bindir}/
+mv %{buildroot}%{_sbindir}/libsuricata-config %{buildroot}%{_bindir}/
 
 # Setup etc directory
 mkdir -p %{buildroot}%{_sysconfdir}/%{name}/rules
@@ -192,6 +205,14 @@ getent passwd suricata >/dev/null || useradd -r -M -g suricata -s /sbin/nologin 
 %attr(2770,suricata,suricata) %dir /run/%{name}/
 %{_tmpfilesdir}/%{name}.conf
 %{_datadir}/%{name}/rules
+
+%files libs
+%{_libdir}/libsuricata.so*
+
+%files devel
+%{_includedir}/suricata/*.h
+%{_libdir}/libsuricata_*.a
+%{_bindir}/libsuricata-config
 
 %changelog
 * Fri Apr 04 2025 Jason Ish <jish@oisf.net> - 8.0.0-0.202504040953
