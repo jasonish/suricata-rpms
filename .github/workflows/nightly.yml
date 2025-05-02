@@ -6,7 +6,9 @@ on:
 jobs:
   devel:
     runs-on: ubuntu-latest
-    container: fedora:41
+    container: 
+      image: fedora:41
+      options: --privileged
     steps:
       - run: |
           dnf -y install \
