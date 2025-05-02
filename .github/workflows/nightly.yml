@@ -50,5 +50,5 @@ jobs:
       - uses: actions/checkout@v4
       - run: make
         working-directory: devel
-      - run: mock -r fedora-41-x86_64 suricata-*.src.rpm
+      - run: make local
         working-directory: devel
