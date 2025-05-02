@@ -49,3 +49,4 @@ jobs:
       - run: make
         working-directory: devel
       - run: mock -r fedora-41-x86_64 suricata-*.src.rpm
+        working-directory: devel
