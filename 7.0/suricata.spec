@@ -4,7 +4,7 @@
 Summary: Intrusion Detection System
 Name: suricata
 Version: 7.0.10
-Release: 1%{?dist}
+Release: 3%{?dist}
 Epoch: 1
 License: GPLv2
 URL: https://suricata.io/
@@ -33,7 +33,7 @@ BuildRequires: python3-devel python3-pyyaml
 BuildRequires: libnfnetlink-devel libnetfilter_queue-devel libnet-devel
 BuildRequires: zlib-devel pcre2-devel libcap-ng-devel
 BuildRequires: lz4-devel libpcap-devel
-BuildRequires: nspr-devel nss-devel nss-softokn-devel file-devel
+BuildRequires: file-devel
 BuildRequires: jansson-devel libmaxminddb-devel lua-devel
 # Next line is for eBPF support
 %if 0%{?fedora} >= 32
@@ -45,10 +45,11 @@ BuildRequires: autoconf automake libtool
 BuildRequires: systemd
 BuildRequires: hiredis-devel
 BuildRequires: libevent-devel
-BuildRequires: pkgconfig(gnutls)
 
 %ifarch x86_64
-%if 0%{?fedora} >= 25
+%if 0%{?fedora} >= 41
+BuildRequires: vectorscan-devel
+%else
 BuildRequires: hyperscan-devel
 %endif
 %if 0%{?rhel} >= 8
@@ -129,9 +130,16 @@ sed -i '1d' python/suricata/sc/suricatasc.py
 make DESTDIR="%{buildroot}" "bindir=%{_sbindir}" install
 
 # Move utilities back to bindir.
-mv %{buildroot}%{_sbindir}/suricata-update %{buildroot}%{_bindir}/
-mv %{buildroot}%{_sbindir}/suricatasc %{buildroot}%{_bindir}/
-mv %{buildroot}%{_sbindir}/suricatactl %{buildroot}%{_bindir}/
+# Not required on Fedora 42 as /bin and /sbin are the same.
+if ! test -e %{buildroot}%{_bindir}/suricata-update; then
+	mv %{buildroot}%{_sbindir}/suricata-update %{buildroot}%{_bindir}/
+fi
+if ! test -e %{buildroot}%{_bindir}/suricatasc; then
+	mv %{buildroot}%{_sbindir}/suricatasc %{buildroot}%{_bindir}/
+fi
+if ! test -e %{buildroot}%{_bindir}/suricatactl; then
+	mv %{buildroot}%{_sbindir}/suricatactl %{buildroot}%{_bindir}/
+fi
 
 # Setup etc directory
 mkdir -p %{buildroot}%{_sysconfdir}/%{name}/rules
@@ -207,6 +215,12 @@ getent passwd suricata >/dev/null || useradd -r -M -g suricata -s /sbin/nologin 
 %{_datadir}/%{name}/rules
 
 %changelog
+* Thu May 15 2025 Jason Ish <jish@oisf.net> - 1:7.0.10-3
+- Rebuild for update RHEL distribution.
+
+* Tue May 13 2025 Jason Ish <jish@oisf.net> - 1:7.0.10-2
+- Rebuild for update RHEL distribution.
+
 * Tue Mar 25 2025 Jason Ish <jish@oisf.net> - 1:7.0.10-1
 - Update to Suricata 7.0.10
 
