@@ -23,52 +23,39 @@ Patch2: suricata-4.1.1-service.patch
 Patch3: suricata-4.1.4-socket.patch
 
 BuildRequires: gcc gcc-c++
-BuildRequires: cargo rust >= 1.33
+BuildRequires: cargo rust
 BuildRequires: libyaml-devel
-%if 0%{?rhel} == 7
-BuildRequires: python2-devel python2-pyyaml
-%else
 BuildRequires: python3-devel python3-pyyaml
-%endif
 BuildRequires: libnfnetlink-devel libnetfilter_queue-devel libnet-devel
 BuildRequires: zlib-devel pcre2-devel libcap-ng-devel
 BuildRequires: lz4-devel libpcap-devel
 BuildRequires: file-devel
-BuildRequires: jansson-devel libmaxminddb-devel lua-devel
-# Next line is for eBPF support
-%if 0%{?fedora} >= 32
-%ifarch x86_64
+BuildRequires: jansson-devel libmaxminddb-devel
+BuildRequires: lua-devel
 BuildRequires: clang llvm libbpf-devel
-%endif
-%endif
 BuildRequires: autoconf automake libtool
 BuildRequires: systemd
 BuildRequires: hiredis-devel
 BuildRequires: libevent-devel
+BuildRequires: dpdk-devel numactl-devel
+Requires: python3-pyyaml
 
 %ifarch x86_64
+
+%if 0%{?fedora}
 %if 0%{?fedora} >= 41
 BuildRequires: vectorscan-devel
 %else
 BuildRequires: hyperscan-devel
 %endif
-%if 0%{?rhel} >= 8
+%endif
+
+%if 0%{?rhel}
+%if 0%{?rhel} < 10
 BuildRequires: hyperscan-devel
 %endif
 %endif
 
-%if 0%{?rhel} == 7
-Requires: python2-pyyaml
-%else
-Requires: python3-pyyaml
-%endif
-
-%if 0%{?rhel} >= 8
-BuildRequires: dpdk-devel numactl-devel
-%endif
-
-%if 0%{?fedora} >= 36
-BuildRequires: dpdk-devel numactl-devel
 %endif
 
 Requires(pre): /usr/sbin/useradd
@@ -108,21 +95,11 @@ sed -i '1d' python/suricata/sc/suricatasc.py
 %build
 %configure --enable-gccprotect --enable-pie --disable-gccmarch-native \
         --disable-coccinelle --enable-nfqueue --enable-af-packet \
-        --with-libnspr-includes=/usr/include/nspr4 \
-        --with-libnss-includes=/usr/include/nss3 \
-        --enable-jansson --enable-geoip --enable-lua --enable-hiredis \
-        --enable-rust --enable-python \
-%if 0%{?rhel} >= 8
+        --enable-jansson --enable-geoip --enable-hiredis \
+        --enable-python \
         --enable-dpdk \
-%endif
-%if 0%{?fedora} >= 37
-        --enable-dpdk \
-%endif
-%if 0%{?fedora} >= 32
-%ifarch x86_64
 	--enable-ebpf-build --enable-ebpf \
-%endif
-%endif
+	--enable-lua
 
 %make_build
 
@@ -131,6 +108,7 @@ make DESTDIR="%{buildroot}" "bindir=%{_sbindir}" install
 
 # Move utilities back to bindir.
 # Not required on Fedora 42 as /bin and /sbin are the same.
+mkdir -p %{buildroot}%{_bindir}
 if ! test -e %{buildroot}%{_bindir}/suricata-update; then
 	mv %{buildroot}%{_sbindir}/suricata-update %{buildroot}%{_bindir}/
 fi
