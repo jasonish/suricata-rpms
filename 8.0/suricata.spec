@@ -4,11 +4,11 @@
 Summary: Intrusion Detection System
 Name: suricata
 Version: 8.0.0
-Release: 0.1.beta1%{?dist}
+Release: 0.1.rc1%{?dist}
 Epoch: 1
 License: GPLv2
 URL: https://suricata.io/
-Source0: https://www.openinfosecfoundation.org/download/%{name}-%{version}-beta1.tar.gz
+Source0: https://www.openinfosecfoundation.org/download/%{name}-%{version}-rc1.tar.gz
 Source1: suricata.sysconfig
 Source2: fedora.notes
 Source3: suricata-tmpfiles.conf
@@ -21,39 +21,32 @@ Patch2: suricata-4.1.1-service.patch
 BuildRequires: gcc gcc-c++
 BuildRequires: cargo rust
 BuildRequires: libyaml-devel
-%if 0%{?rhel} == 7
-BuildRequires: python2-devel python2-pyyaml
-%else
 BuildRequires: python3-devel python3-pyyaml
-%endif
 BuildRequires: libnfnetlink-devel libnetfilter_queue-devel libnet-devel
 BuildRequires: zlib-devel pcre2-devel libcap-ng-devel
 BuildRequires: lz4-devel libpcap-devel
-BuildRequires: nspr-devel nss-devel nss-softokn-devel file-devel
+BuildRequires: file-devel
 BuildRequires: jansson-devel libmaxminddb-devel
-# Next line is for eBPF support
-%if 0%{?fedora} >= 32
-%ifarch x86_64
 BuildRequires: clang llvm libbpf-devel
-%endif
-%endif
 BuildRequires: autoconf automake libtool
 BuildRequires: systemd
 BuildRequires: hiredis-devel
 BuildRequires: libevent-devel
-BuildRequires: pkgconfig(gnutls)
 BuildRequires: dpdk-devel numactl-devel
 Requires: python3-pyyaml
 
 %ifarch x86_64
-%if 0%{?fedora} >= 41
+
+%if 0%{?fedora}
 BuildRequires: vectorscan-devel
-%else
+%endif
+
+%if 0%{?rhel}
+%if 0%{?rhel} < 10
 BuildRequires: hyperscan-devel
 %endif
-%if 0%{?rhel} >= 8
-BuildRequires: hyperscan-devel
 %endif
+
 %endif
 
 Requires(pre): /usr/sbin/useradd
@@ -74,7 +67,7 @@ UDP, ICMP, HTTP, TLS, FTP and SMB! ), Gzip Decompression, Fast IP
 Matching, and GeoIP identification.
 
 %prep
-%setup -q -n suricata-%{version}-beta1
+%setup -q -n suricata-%{version}-rc1
 find rust -type f -exec chmod 644 {} \;
 install -m 644 %{SOURCE2} doc/
 
@@ -92,11 +85,7 @@ autoreconf -fv --install
         --enable-jansson --enable-geoip --enable-hiredis \
         --enable-python \
         --enable-dpdk \
-%if 0%{?fedora} >= 32
-%ifarch x86_64
-	--enable-ebpf-build --enable-ebpf \
-%endif
-%endif
+	--enable-ebpf-build --enable-ebpf
 
 %make_build
 
@@ -104,10 +93,17 @@ autoreconf -fv --install
 make DESTDIR="%{buildroot}" "bindir=%{_sbindir}" install
 
 # Move utilities back to bindir.
+# Not required on Fedora 42 as /bin and /sbin are the same.
 mkdir -p %{buildroot}%{_bindir}
-mv %{buildroot}%{_sbindir}/suricata-update %{buildroot}%{_bindir}/
-mv %{buildroot}%{_sbindir}/suricatasc %{buildroot}%{_bindir}/
-mv %{buildroot}%{_sbindir}/suricatactl %{buildroot}%{_bindir}/
+if ! test -e %{buildroot}%{_bindir}/suricata-update; then
+	mv %{buildroot}%{_sbindir}/suricata-update %{buildroot}%{_bindir}/
+fi
+if ! test -e %{buildroot}%{_bindir}/suricatasc; then
+	mv %{buildroot}%{_sbindir}/suricatasc %{buildroot}%{_bindir}/
+fi
+if ! test -e %{buildroot}%{_bindir}/suricatactl; then
+	mv %{buildroot}%{_sbindir}/suricatactl %{buildroot}%{_bindir}/
+fi
 
 # Setup etc directory
 mkdir -p %{buildroot}%{_sysconfdir}/%{name}/rules
@@ -175,6 +171,9 @@ getent passwd suricata >/dev/null || useradd -r -M -g suricata -s /sbin/nologin 
 %{_datadir}/%{name}/rules
 
 %changelog
+* Fri Jun 13 2025 Jason Ish <jish@oisf.net> - 1:8.0.0-0.1.rc1
+- Update to Suricata 8.0.0-rc1
+
 * Tue Apr 08 2025 Jason Ish <jish@oisf.net> - 1:8.0.0-0.1.beta1
 - Update to Suricata 8.0.0-beta1
 
