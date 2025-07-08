@@ -4,11 +4,11 @@
 Summary: Intrusion Detection System
 Name: suricata
 Version: 8.0.0
-Release: 0.1.rc1%{?dist}
+Release: 1%{?dist}
 Epoch: 1
 License: GPLv2
 URL: https://suricata.io/
-Source0: https://www.openinfosecfoundation.org/download/%{name}-%{version}-rc1.tar.gz
+Source0: https://www.openinfosecfoundation.org/download/%{name}-%{version}.tar.gz
 Source1: suricata.sysconfig
 Source2: fedora.notes
 Source3: suricata-tmpfiles.conf
@@ -67,7 +67,7 @@ UDP, ICMP, HTTP, TLS, FTP and SMB! ), Gzip Decompression, Fast IP
 Matching, and GeoIP identification.
 
 %prep
-%setup -q -n suricata-%{version}-rc1
+%setup -q -n suricata-%{version}
 find rust -type f -exec chmod 644 {} \;
 install -m 644 %{SOURCE2} doc/
 
@@ -171,6 +171,9 @@ getent passwd suricata >/dev/null || useradd -r -M -g suricata -s /sbin/nologin 
 %{_datadir}/%{name}/rules
 
 %changelog
+* Tue Jul 08 2025 Jason Ish <jish@oisf.net> - 1:8.0.0-1
+- Update to Suricata 8.0.0
+
 * Fri Jun 13 2025 Jason Ish <jish@oisf.net> - 1:8.0.0-0.1.rc1
 - Update to Suricata 8.0.0-rc1
 
