@@ -1,10 +1,13 @@
 # Linking with DPDK breaks rpath checks currently.
 %global __brp_check_rpaths %{nil}
 
+# Breaks Hyper/Vectorsan caching.
+%undefine _lto_cflags
+
 Summary: Intrusion Detection System
 Name: suricata
 Version: 8.0.0
-Release: 1%{?dist}
+Release: 3%{?dist}
 Epoch: 1
 License: GPLv2
 URL: https://suricata.io/
@@ -82,7 +85,7 @@ autoreconf -fv --install
 %build
 %configure --enable-gccprotect --enable-pie --disable-gccmarch-native \
         --disable-coccinelle --enable-nfqueue --enable-af-packet \
-        --enable-jansson --enable-geoip --enable-hiredis \
+        --enable-geoip --enable-hiredis \
         --enable-python \
         --enable-dpdk \
 	--enable-ebpf-build --enable-ebpf
@@ -171,6 +174,13 @@ getent passwd suricata >/dev/null || useradd -r -M -g suricata -s /sbin/nologin 
 %{_datadir}/%{name}/rules
 
 %changelog
+* Mon Jul 21 2025 Jason Ish <jish@oisf.net> - 1:8.0.0-3
+- Disable LTO, as it breaks Vectorscan caching. Could also
+  disable caching, but that could require users to modify
+  their configurations.
+- Also remove the --enable-jansson configuration option as
+  it no longer exists.
+
 * Tue Jul 08 2025 Jason Ish <jish@oisf.net> - 1:8.0.0-1
 - Update to Suricata 8.0.0
 
