@@ -6,8 +6,8 @@
 
 Summary: Intrusion Detection System
 Name: suricata
-Version: 8.0.0
-Release: 3%{?dist}
+Version: 8.0.1
+Release: 1%{?dist}
 Epoch: 1
 License: GPLv2
 URL: https://suricata.io/
@@ -174,6 +174,9 @@ getent passwd suricata >/dev/null || useradd -r -M -g suricata -s /sbin/nologin 
 %{_datadir}/%{name}/rules
 
 %changelog
+* Tue Sep 16 2025 Jason Ish <jish@oisf.net> - 1:8.0.1-1
+- Update to Suricata 8.0.1
+
 * Mon Jul 21 2025 Jason Ish <jish@oisf.net> - 1:8.0.0-3
 - Disable LTO, as it breaks Vectorscan caching. Could also
   disable caching, but that could require users to modify
