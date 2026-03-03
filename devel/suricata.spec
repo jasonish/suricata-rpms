@@ -123,10 +123,17 @@ autoreconf -fv --install
 make DESTDIR="%{buildroot}" "bindir=%{_sbindir}" install
 
 # Move utilities back to bindir.
+# Not required on Fedora 42+ as /bin and /sbin are the same.
 mkdir -p %{buildroot}%{_bindir}
-mv %{buildroot}%{_sbindir}/suricata-update %{buildroot}%{_bindir}/
-mv %{buildroot}%{_sbindir}/suricatasc %{buildroot}%{_bindir}/
-mv %{buildroot}%{_sbindir}/suricatactl %{buildroot}%{_bindir}/
+if ! test -e %{buildroot}%{_bindir}/suricata-update; then
+        mv %{buildroot}%{_sbindir}/suricata-update %{buildroot}%{_bindir}/
+fi
+if ! test -e %{buildroot}%{_bindir}/suricatasc; then
+        mv %{buildroot}%{_sbindir}/suricatasc %{buildroot}%{_bindir}/
+fi
+if ! test -e %{buildroot}%{_bindir}/suricatactl; then
+        mv %{buildroot}%{_sbindir}/suricatactl %{buildroot}%{_bindir}/
+fi
 
 # Setup etc directory
 mkdir -p %{buildroot}%{_sysconfdir}/%{name}/rules
