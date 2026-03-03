@@ -3,12 +3,12 @@
 
 Summary: Intrusion Detection System
 Name: suricata
-Version: 8.0.0
-Release: 0.202504040953%{?dist}
+Version: 9.0.0
+Release: 0.202603031633%{?dist}
 Epoch: 1
 License: GPLv2
 URL: https://suricata.io/
-Source0: suricata-8.0.0-dev.tar.gz
+Source0: suricata-9.0.0-dev.tar.gz
 Source1: suricata.sysconfig
 Source2: fedora.notes
 Source3: suricata-tmpfiles.conf
@@ -86,7 +86,7 @@ UDP, ICMP, HTTP, TLS, FTP and SMB! ), Gzip Decompression, Fast IP
 Matching, and GeoIP identification.
 
 %prep
-%setup -q -n suricata-8.0.0-dev
+%setup -q -n suricata-9.0.0-dev
 find rust -type f -exec chmod 644 {} \;
 install -m 644 %{SOURCE2} doc/
 
