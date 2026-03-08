@@ -4,7 +4,7 @@
 Summary: Intrusion Detection System
 Name: suricata
 Version: 9.0.0
-Release: 0.202603031633%{?dist}
+Release: 0.202603072333%{?dist}
 Epoch: 1
 License: GPLv2
 URL: https://suricata.io/
@@ -72,6 +72,11 @@ Requires(pre): /usr/sbin/useradd
 Requires(post): systemd
 Requires(preun): systemd
 Requires(postun): systemd
+
+%if 0%{?fedora} >= 43
+Provides: user(suricata)
+Provides: group(suricata)
+%endif
 
 # Rust is not working on ppc64le systems (bz 1757548)
 ExcludeArch: ppc64le
@@ -161,6 +166,13 @@ install -d -m 0755 %{buildroot}/run/%{name}/
 
 cp suricata-update/README.rst doc/suricata-update-README.rst
 
+mkdir -p %{buildroot}%{_mandir}/man1
+echo '%dir %{_mandir}/man1' > manpages.list
+for manpage in %{buildroot}%{_mandir}/man1/*; do
+    [ -e "$manpage" ] || continue
+    echo "%attr(644,root,root) %{_mandir}/man1/$(basename "$manpage")" >> manpages.list
+done
+
 %check
 make check
 
@@ -177,12 +189,11 @@ getent passwd suricata >/dev/null || useradd -r -M -g suricata -s /sbin/nologin 
 %postun
 %systemd_postun_with_restart suricata.service
 
-%files
+%files -f manpages.list
 %doc doc/Basic_Setup.txt doc/suricata-update-README.rst
 %doc doc/Setting_up_IPSinline_for_Linux.txt doc/fedora.notes
 %{!?_licensedir:%global license %%doc}
 %license COPYING
-%attr(644,root,root) %{_mandir}/man1/*
 %{_sbindir}/suricata
 %{_bindir}/suricatasc
 %{_bindir}/suricatactl
@@ -201,6 +212,9 @@ getent passwd suricata >/dev/null || useradd -r -M -g suricata -s /sbin/nologin 
 %{_datadir}/%{name}/rules
 
 %changelog
+* Sat Mar 07 2026 Jason Ish <jish@oisf.net> - 9.0.0-0.202603072333
+- Add user/group Provides on Fedora 43+
+
 * Fri Apr 04 2025 Jason Ish <jish@oisf.net> - 8.0.0-0.202504040953
 - Update for removal of libhtp.
 - Use vectorscan on Fedora 41+.

@@ -4,7 +4,7 @@
 Summary: Intrusion Detection System
 Name: suricata
 Version: 7.0.14
-Release: 1%{?dist}
+Release: 2%{?dist}
 Epoch: 1
 License: GPLv2
 URL: https://suricata.io/
@@ -62,6 +62,11 @@ Requires(pre): /usr/sbin/useradd
 Requires(post): systemd
 Requires(preun): systemd
 Requires(postun): systemd
+
+%if 0%{?fedora} >= 43
+Provides: user(suricata)
+Provides: group(suricata)
+%endif
 
 # Rust is not working on ppc64le systems (bz 1757548)
 ExcludeArch: ppc64le
@@ -193,6 +198,9 @@ getent passwd suricata >/dev/null || useradd -r -M -g suricata -s /sbin/nologin 
 %{_datadir}/%{name}/rules
 
 %changelog
+* Sat Mar 07 2026 Jason Ish <jish@oisf.net> - 1:7.0.14-2
+- Add user/group Provides on Fedora 43+
+
 * Tue Jan 13 2026 Jason Ish <jish@oisf.net> - 1:7.0.14-1
 - Update to Suricata 7.0.14
 
