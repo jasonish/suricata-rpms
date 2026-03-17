@@ -166,13 +166,6 @@ install -d -m 0755 %{buildroot}/run/%{name}/
 
 cp suricata-update/README.rst doc/suricata-update-README.rst
 
-mkdir -p %{buildroot}%{_mandir}/man1
-echo '%dir %{_mandir}/man1' > manpages.list
-for manpage in %{buildroot}%{_mandir}/man1/*; do
-    [ -e "$manpage" ] || continue
-    echo "%attr(644,root,root) %{_mandir}/man1/$(basename "$manpage")" >> manpages.list
-done
-
 %check
 make check
 
@@ -189,11 +182,12 @@ getent passwd suricata >/dev/null || useradd -r -M -g suricata -s /sbin/nologin 
 %postun
 %systemd_postun_with_restart suricata.service
 
-%files -f manpages.list
+%files
 %doc doc/Basic_Setup.txt doc/suricata-update-README.rst
 %doc doc/Setting_up_IPSinline_for_Linux.txt doc/fedora.notes
 %{!?_licensedir:%global license %%doc}
 %license COPYING
+%attr(644,root,root) %{_mandir}/man1/*
 %{_sbindir}/suricata
 %{_bindir}/suricatasc
 %{_bindir}/suricatactl
