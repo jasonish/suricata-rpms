@@ -3,8 +3,8 @@
 
 Summary: Intrusion Detection System
 Name: suricata
-Version: 7.0.14
-Release: 2%{?dist}
+Version: 7.0.15
+Release: 1%{?dist}
 Epoch: 1
 License: GPLv2
 URL: https://suricata.io/
@@ -198,6 +198,9 @@ getent passwd suricata >/dev/null || useradd -r -M -g suricata -s /sbin/nologin 
 %{_datadir}/%{name}/rules
 
 %changelog
+* Tue Mar 17 2026 Jason Ish <jish@oisf.net> - 1:7.0.15-1
+- Update to Suricata 7.0.15
+
 * Sat Mar 07 2026 Jason Ish <jish@oisf.net> - 1:7.0.14-2
 - Add user/group Provides on Fedora 43+
 
