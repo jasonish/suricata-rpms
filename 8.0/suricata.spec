@@ -6,7 +6,7 @@
 
 Summary: Intrusion Detection System
 Name: suricata
-Version: 8.0.6
+Version: 8.0.7
 Release: 1%{?dist}
 Epoch: 1
 License: GPLv2
@@ -47,6 +47,9 @@ BuildRequires: vectorscan-devel
 %if 0%{?rhel}
 %if 0%{?rhel} < 10
 BuildRequires: hyperscan-devel
+%endif
+%if 0%{?rhel} > 9
+BuildRequires: vectorscan-devel
 %endif
 %endif
 
@@ -179,6 +182,9 @@ getent passwd suricata >/dev/null || useradd -r -M -g suricata -s /sbin/nologin 
 %{_datadir}/%{name}/rules
 
 %changelog
+* Tue Sep 15 2026 Jason Ish <jish@oisf.net> - 1:8.0.7-1
+- Update to Suricata 8.0.7
+
 * Tue Jul 07 2026 Jason Ish <jish@oisf.net> - 1:8.0.6-1
 - Update to Suricata 8.0.6
 
