@@ -8,11 +8,14 @@ VERSION := $(shell rpm --undefine 'dist' -q --qf "%{VERSION}-%{RELEASE}\n" --spe
 
 # Current support RPM distribution releases. This relate to the
 # support chroots in COPR.
-DISTS :=	fedora-40-x86_64 \
-		fedora-41-x86_64 \
+#
+# epel-9-x86_64 - uses RHEL on COPR, use alma locally
+# epel-8-x86_64 - uses RHEL on COPR, use alma locally
+DISTS :=	fedora-43-x86_64 \
+		fedora-44-x86_64 \
+		epel-10-x86_64 \
 		alma+epel-9-x86_64 \
-		alma+epel-8-x86_64 \
-		epel-7-x86_64
+		alma+epel-8-x86_64
 
 srpm:
 	rm -f *.src.rpm
@@ -35,6 +38,11 @@ update-sources:
 		sha512sum --tag $$(basename $$source) >> sources; \
 	done
 
+.PHONY: mock-all $(DISTS)
+
+mock-all: srpm
+	$(MAKE) $(DISTS)
+
 $(DISTS):
 	bash -xc "mock -r $@ --resultdir output/$@ suricata-$(VERSION).src.rpm"
 
@@ -43,15 +51,15 @@ local:
 	$(MAKE) srpm
 	rpmbuild -D '_rpmdir ./rpms' --rebuild suricata-$(VERSION).src.rpm
 
-copr-build: srpm
+copr-release: srpm
 	@if [ "$(COPR)" = "" ]; then \
 		echo "error: COPR environment variable must be set"; \
 		exit 1; \
 	fi
 	copr build $(COPR)/suricata-$(MAJOR) suricata-$(VERSION)*.src.rpm
-	$(MAKE) copr-build-latest
+	$(MAKE) copr-release-latest
 
-copr-build-latest: srpm
+copr-release-latest: srpm
 	if [ "$(MAJOR)" = "$(LATEST)" ]; then \
 		copr build $(COPR)/suricata-latest suricata-$(VERSION).src.rpm; \
 	fi
