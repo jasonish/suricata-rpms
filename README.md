@@ -96,3 +96,20 @@ corresponding to the version being updated):
   https://copr.fedorainfracloud.org/coprs/g/oisf/suricata-8.0-testing/monitor/
 - If successful, push to the COPR release repo:
   - `make copr-release`
+
+## Distrobox Initialization
+
+If not running on a recent Fedora version, Distrobox can be used.
+
+* `distrobox assemble create`
+* `distrobox enter suricata-rpms`
+
+This should drop you into a Fedora environment suitable for building RPMs and
+uploading them to COPR.
+
+To clean-up after, run:
+
+``` shell
+distrobox assemble rm
+```
+
