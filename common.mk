@@ -11,11 +11,12 @@ VERSION := $(shell rpm --undefine 'dist' -q --qf "%{VERSION}-%{RELEASE}\n" --spe
 #
 # epel-9-x86_64 - uses RHEL on COPR, use alma locally
 # epel-8-x86_64 - uses RHEL on COPR, use alma locally
-DISTS :=	fedora-43-x86_64 \
-		fedora-44-x86_64 \
-		epel-10-x86_64 \
-		alma+epel-9-x86_64 \
-		alma+epel-8-x86_64
+DISTS := \
+	fedora-44-x86_64 \
+	fedora-45-x86_64 \
+	epel-10-x86_64 \
+	alma+epel-9-x86_64 \
+	alma+epel-8-x86_64
 
 srpm:
 	rm -f *.src.rpm

@@ -2,3 +2,4 @@
 *.src.rpm
 /*/results_suricata/
 *~
+/*/output
